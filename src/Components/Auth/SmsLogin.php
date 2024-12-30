@@ -3,16 +3,15 @@
 namespace Wsmallnews\User\Components\Auth;
 
 use Filament\Forms\Components;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -26,7 +25,7 @@ class SmsLogin extends Component implements HasForms
     public ?array $formData = [];
 
     public bool $showRegister = true;
-    
+
     public function form(Form $form): Form
     {
         return $form
@@ -40,17 +39,13 @@ class SmsLogin extends Component implements HasForms
                     ->suffixAction(
                         Components\Actions\Action::make('send_sms')
                             ->requiresConfirmation()
-                            ->action(function () {
-                                
-                            })
+                            ->action(function () {})
                     ),
 
-                Components\Checkbox::make('remember')->inline()
+                Components\Checkbox::make('remember')->inline(),
             ])
             ->statePath('formData');
     }
-
-
 
     public function login(): RedirectResponse
     {
@@ -63,12 +58,11 @@ class SmsLogin extends Component implements HasForms
         return redirect()->route(User::routeNames('index'));
     }
 
-
     protected function authenticate(): void
     {
         $formData = $this->form->getState();
 
-        if (!Auth::attemptWhen(Arr::only($formData, ['email', 'password']), function ($user) {
+        if (! Auth::attemptWhen(Arr::only($formData, ['email', 'password']), function ($user) {
             return $user->status === Status::Normal->value;
         }, $formData['remember'])) {
             RateLimiter::hit($this->throttleKey());
@@ -80,7 +74,6 @@ class SmsLogin extends Component implements HasForms
 
         RateLimiter::clear($this->throttleKey());
     }
-
 
     /**
      * Ensure the authentication request is not rate limited.
@@ -109,10 +102,9 @@ class SmsLogin extends Component implements HasForms
     protected function throttleKey(): string
     {
         $formData = $this->form->getState();
+
         return Str::transliterate(Str::lower($formData['email']) . '|' . request()->ip());
     }
-
-
 
     public function render()
     {

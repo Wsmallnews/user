@@ -20,8 +20,9 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
-use Wsmallnews\User\Testing\TestsUser;
 use Wsmallnews\User\Components\Auth\Login;
+use Wsmallnews\User\Testing\TestsUser;
+
 // use Wsmallnews\User\Actions\Fortify\{
 //     CreateNewUser,
 //     ResetUserPassword,
@@ -98,9 +99,7 @@ class UserServiceProvider extends PackageServiceProvider
             }
         }
 
-
         Livewire::component('sn-user-auth-login', Login::class);
-
 
         // Fortify 逻辑注册
         // Fortify::createUsersUsing(CreateNewUser::class);
@@ -124,7 +123,6 @@ class UserServiceProvider extends PackageServiceProvider
         //     return view('auth.login');
         // });
         // Fortify 逻辑注册完毕
-
 
         // Testing
         Testable::mixin(new TestsUser);

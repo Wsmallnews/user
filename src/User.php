@@ -2,9 +2,8 @@
 
 namespace Wsmallnews\User;
 
-class User 
+class User
 {
-
     /**
      * The user model that should be used by Jetstream.
      *
@@ -12,9 +11,7 @@ class User
      */
     public static $userModel = 'App\\Models\\User';
 
-
     public static $routeNames = [];
-
 
     /**
      * Get the name of the user model used by the application.
@@ -38,8 +35,6 @@ class User
         return new $model;
     }
 
-
-
     public static function routeNames($name = null)
     {
         if ($name) {
@@ -48,7 +43,4 @@ class User
 
         return static::$routeNames;
     }
-
-
-    
 }
