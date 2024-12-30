@@ -8,19 +8,32 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Laravel\Fortify\Fortify;
 use Livewire\Features\SupportTesting\Testable;
+use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Testing\TestsUser;
+use Wsmallnews\User\Components\Auth\Login;
+// use Wsmallnews\User\Actions\Fortify\{
+//     CreateNewUser,
+//     ResetUserPassword,
+//     UpdateUserPassword,
+//     UpdateUserProfileInformation
+// };
 
 class UserServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'user';
+    public static string $name = 'sn-user';
 
-    public static string $viewNamespace = 'user';
+    public static string $viewNamespace = 'sn-user';
 
     public function configurePackage(Package $package): void
     {
@@ -85,6 +98,34 @@ class UserServiceProvider extends PackageServiceProvider
             }
         }
 
+
+        Livewire::component('sn-user-auth-login', Login::class);
+
+
+        // Fortify 逻辑注册
+        // Fortify::createUsersUsing(CreateNewUser::class);
+        // Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+        // Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
+        // Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+
+        // Fortify::viewPrefix('auth.');
+
+        // RateLimiter::for('login', function (Request $request) {
+        //     $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
+
+        //     return Limit::perMinute(5)->by($throttleKey);
+        // });
+
+        // RateLimiter::for('two-factor', function (Request $request) {
+        //     return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        // });
+
+        // Fortify::loginView(function () {
+        //     return view('auth.login');
+        // });
+        // Fortify 逻辑注册完毕
+
+
         // Testing
         Testable::mixin(new TestsUser);
     }
@@ -101,8 +142,8 @@ class UserServiceProvider extends PackageServiceProvider
     {
         return [
             // AlpineComponent::make('user', __DIR__ . '/../resources/dist/components/user.js'),
-            Css::make('user-styles', __DIR__ . '/../resources/dist/user.css'),
-            Js::make('user-scripts', __DIR__ . '/../resources/dist/user.js'),
+            // Css::make('user-styles', __DIR__ . '/../resources/dist/user.css'),
+            // Js::make('user-scripts', __DIR__ . '/../resources/dist/user.js'),
         ];
     }
 
