@@ -185,7 +185,7 @@ class UserServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            'create_user_table',
+            // 'create_user_table',
         ];
     }
 }
