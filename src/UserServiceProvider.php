@@ -9,6 +9,7 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -21,6 +22,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Auth\Login;
+use Wsmallnews\User\Components\Address;
 use Wsmallnews\User\Testing\TestsUser;
 
 // use Wsmallnews\User\Actions\Fortify\{
@@ -61,6 +63,7 @@ class UserServiceProvider extends PackageServiceProvider
 
         if (file_exists($package->basePath('/../database/migrations'))) {
             $package->hasMigrations($this->getMigrations());
+            $package->runsMigrations();
         }
 
         if (file_exists($package->basePath('/../resources/lang'))) {
@@ -76,6 +79,12 @@ class UserServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        // 注册模型别名
+        Relation::enforceMorphMap([
+            'sn_user_address' => 'Wsmallnews\User\Models\Address',
+        ]);
+
+
         // Asset Registration
         FilamentAsset::register(
             $this->getAssets(),
@@ -100,6 +109,8 @@ class UserServiceProvider extends PackageServiceProvider
         }
 
         Livewire::component('sn-user-auth-login', Login::class);
+
+        Livewire::component('sn-user-address', Address::class);
 
         // Fortify 逻辑注册
         // Fortify::createUsersUsing(CreateNewUser::class);
@@ -185,7 +196,7 @@ class UserServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            // 'create_user_table',
+            '2025_02_28_111049_create_sn_user_addresses_table',
         ];
     }
 }
