@@ -13,7 +13,7 @@ enum Gender: string implements HasColor, HasLabel
     case Male = 'male';
 
     case Female = 'female';
-    
+
     case Other = 'other';
 
     public function getLabel(): ?string

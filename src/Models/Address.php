@@ -18,12 +18,8 @@ class Address extends SupportModel
         'gender' => Enums\Gender::class,
     ];
 
-
-
     /**
      * 所属用户信息
-     * 
-     * @return MorphTo
      */
     public function user(): MorphTo
     {

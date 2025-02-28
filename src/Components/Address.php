@@ -16,11 +16,11 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Wsmallnews\Support\Concerns\HasColumns;
 use Wsmallnews\User\Contracts\UserInterface;
 use Wsmallnews\User\Enums;
 use Wsmallnews\User\Exceptions\UserException;
 use Wsmallnews\User\Models\Address as UserAddressModel;
-use Wsmallnews\Support\Concerns\HasColumns;
 
 class Address extends Component implements HasActions, HasForms
 {

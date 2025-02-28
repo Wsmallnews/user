@@ -9,6 +9,5 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 interface UserInterface
 {
-
     public function addresses(): MorphMany;
 }

@@ -21,8 +21,8 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
-use Wsmallnews\User\Components\Auth\Login;
 use Wsmallnews\User\Components\Address;
+use Wsmallnews\User\Components\Auth\Login;
 use Wsmallnews\User\Testing\TestsUser;
 
 // use Wsmallnews\User\Actions\Fortify\{
@@ -83,7 +83,6 @@ class UserServiceProvider extends PackageServiceProvider
         Relation::enforceMorphMap([
             'sn_user_address' => 'Wsmallnews\User\Models\Address',
         ]);
-
 
         // Asset Registration
         FilamentAsset::register(

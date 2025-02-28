@@ -4,7 +4,4 @@ namespace Wsmallnews\User\Exceptions;
 
 use Wsmallnews\Support\Exceptions\SupportException;
 
-class UserException extends SupportException 
-{
-
-}
+class UserException extends SupportException {}
