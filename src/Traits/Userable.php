@@ -14,12 +14,10 @@ trait Userable
         return $this->morphMany(Address::class, 'user');
     }
 
-
     public function orders(): MorphMany
     {
         return $this->morphMany(Order::class, 'buyer');
     }
-
 
     public function orderItems(): MorphMany
     {
