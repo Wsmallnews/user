@@ -22,8 +22,8 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Address;
-use Wsmallnews\User\Components\ChooseAddress;
 use Wsmallnews\User\Components\Auth\Login;
+use Wsmallnews\User\Components\ChooseAddress;
 use Wsmallnews\User\Testing\TestsUser;
 
 // use Wsmallnews\User\Actions\Fortify\{

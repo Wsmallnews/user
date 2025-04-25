@@ -65,6 +65,7 @@ class Address extends Component implements HasActions, HasForms
         return EditAction::make('edit')
             ->record(function (array $arguments) {
                 $id = $arguments['id'] ?? 0;
+
                 return $this->user->addresses()->findOrFail($id);
             })
             ->mutateFormDataUsing(function (array $data): array {
@@ -76,13 +77,13 @@ class Address extends Component implements HasActions, HasForms
             ->successNotificationTitle('编辑成功');
     }
 
-    
     public function setDefaultAction(): Action
     {
         return Action::make('setDefault')
             ->label('设为默认')
             ->record(function (array $arguments) {
                 $id = $arguments['id'] ?? 0;
+
                 return $this->user->addresses()->findOrFail($id);
             })
             ->action(function (UserAddressModel $record) {
@@ -99,13 +100,13 @@ class Address extends Component implements HasActions, HasForms
         return DeleteAction::make('delete')
             ->record(function (array $arguments) {
                 $id = $arguments['id'] ?? 0;
+
                 return $this->user->addresses()->findOrFail($id);
             })
             ->color('danger')
             ->requiresConfirmation()
             ->link();
     }
-
 
     private function schema()
     {
@@ -132,12 +133,8 @@ class Address extends Component implements HasActions, HasForms
         ];
     }
 
-
     /**
      * 这里处理省市区数据
-     *
-     * @param array $data
-     * @return array
      */
     private function operDistrict(array $data): array
     {
@@ -152,7 +149,6 @@ class Address extends Component implements HasActions, HasForms
 
         return $data;
     }
-
 
     public function render()
     {

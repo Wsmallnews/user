@@ -61,12 +61,12 @@ class ChooseAddress extends Component implements HasActions, HasForms
             ->successNotificationTitle('创建成功');
     }
 
-
     public function editAction(): Action
     {
         return EditAction::make('edit')
             ->record(function (array $arguments) {
                 $id = $arguments['id'] ?? 0;
+
                 return $this->user->addresses()->findOrFail($id);
             })
             ->mutateFormDataUsing(function (array $data): array {
@@ -78,23 +78,18 @@ class ChooseAddress extends Component implements HasActions, HasForms
             ->successNotificationTitle('编辑成功');
     }
 
-
     public function manageAction(): Action
     {
         return Action::make('manage')
             ->label('管理地址')
             ->link()
-            ->url(fn(): string => '跳转新地址');
+            ->url(fn (): string => '跳转新地址');
     }
-
-    
 
     public function choose($id)
     {
         $this->current = $this->addresses->where('id', $id)->first();
     }
-
-
 
     private function schema()
     {
@@ -121,13 +116,8 @@ class ChooseAddress extends Component implements HasActions, HasForms
         ];
     }
 
-
-
     /**
      * 这里处理省市区数据
-     *
-     * @param array $data
-     * @return array
      */
     private function operDistrict(array $data): array
     {
@@ -142,7 +132,6 @@ class ChooseAddress extends Component implements HasActions, HasForms
 
         return $data;
     }
-
 
     public function render()
     {
