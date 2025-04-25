@@ -22,6 +22,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Address;
+use Wsmallnews\User\Components\ChooseAddress;
 use Wsmallnews\User\Components\Auth\Login;
 use Wsmallnews\User\Testing\TestsUser;
 
@@ -108,8 +109,10 @@ class UserServiceProvider extends PackageServiceProvider
         }
 
         Livewire::component('sn-user-auth-login', Login::class);
-
+        // 管理收货地址
         Livewire::component('sn-user-address', Address::class);
+        // 选择收货地址
+        Livewire::component('sn-user-choose-address', ChooseAddress::class);
 
         // Fortify 逻辑注册
         // Fortify::createUsersUsing(CreateNewUser::class);

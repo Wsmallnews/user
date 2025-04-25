@@ -6,7 +6,6 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Textarea;
@@ -21,7 +20,7 @@ use Wsmallnews\User\Contracts\UserInterface;
 use Wsmallnews\User\Enums;
 use Wsmallnews\User\Models\Address as UserAddressModel;
 
-class Address extends Component implements HasActions, HasForms
+class ChooseAddress extends Component implements HasActions, HasForms
 {
     use HasColumns;
     use InteractsWithActions;
@@ -36,6 +35,8 @@ class Address extends Component implements HasActions, HasForms
 
     public Collection $addresses;
 
+    public $current = null;
+
     public function mount($columns = null)
     {
         $this->columns($columns);
@@ -46,7 +47,7 @@ class Address extends Component implements HasActions, HasForms
     public function createAction(): Action
     {
         return CreateAction::make()
-            ->label('创建新地址')
+            ->label('使用新地址')
             ->mutateFormDataUsing(function (array $data): array {
                 // 处理数据
                 return $this->operDistrict($data);
@@ -59,6 +60,7 @@ class Address extends Component implements HasActions, HasForms
             ->createAnother(false)
             ->successNotificationTitle('创建成功');
     }
+
 
     public function editAction(): Action
     {
@@ -76,35 +78,22 @@ class Address extends Component implements HasActions, HasForms
             ->successNotificationTitle('编辑成功');
     }
 
-    
-    public function setDefaultAction(): Action
+
+    public function manageAction(): Action
     {
-        return Action::make('setDefault')
-            ->label('设为默认')
-            ->record(function (array $arguments) {
-                $id = $arguments['id'] ?? 0;
-                return $this->user->addresses()->findOrFail($id);
-            })
-            ->action(function (UserAddressModel $record) {
-                $this->user->addresses()->update(['is_default' => 0]);
-                $record->is_default = 1;
-                $record->save();
-            })
-            ->requiresConfirmation()
-            ->link();
+        return Action::make('manage')
+            ->label('管理地址')
+            ->link()
+            ->url(fn(): string => '跳转新地址');
     }
 
-    public function deleteAction(): Action
+    
+
+    public function choose($id)
     {
-        return DeleteAction::make('delete')
-            ->record(function (array $arguments) {
-                $id = $arguments['id'] ?? 0;
-                return $this->user->addresses()->findOrFail($id);
-            })
-            ->color('danger')
-            ->requiresConfirmation()
-            ->link();
+        $this->current = $this->addresses->where('id', $id)->first();
     }
+
 
 
     private function schema()
@@ -133,6 +122,7 @@ class Address extends Component implements HasActions, HasForms
     }
 
 
+
     /**
      * 这里处理省市区数据
      *
@@ -156,7 +146,7 @@ class Address extends Component implements HasActions, HasForms
 
     public function render()
     {
-        return view('sn-user::livewire.address.index', [
-        ])->title('我的收货地址');
+        return view('sn-user::livewire.choose-address.index', [
+        ])->title('选择收货地址');
     }
 }

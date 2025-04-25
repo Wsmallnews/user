@@ -2,15 +2,15 @@
     <div class="w-full flex flex-col gap-4">
         <div class="flex justify-between items-center">
             <div class="text-base font-bold">
-                我的收货地址
+                确认收货地址
             </div>
     
             <div class="flex justify-between items-center gap-4">
                 {{$this->createAction}}
+                {{$this->manageAction}}
             </div>
         </div>
-
-
+    
         <x-filament::grid
             :default="$this->getColumns('default')"
             :sm="$this->getColumns('sm')"
@@ -23,9 +23,13 @@
             @foreach($addresses as $key => $address)
                 <div
                     @class([
-                        'w-full flex flex-col border rounded-lg p-4',
-                        "ring-1 ring-gray-950/10 hover:ring-2 dark:ring-white/20 hover:ring-primary-600",
+                        'w-full flex flex-col rounded-lg p-4',
+                        "ring-1 ring-gray-950/10 hover:ring-2 dark:ring-white/20 hover:ring-primary-600" => !$current || $current->id != $address->id,
+                        'ring-2 ring-primary-600' => $current && $current->id == $address->id,
                     ])
+                    @if(!$current || $current->id != $address->id)
+                    wire:click="choose({{$address->id}})"
+                    @endif
                 >
                     <div class="flex">
                         @if($address->is_default)
@@ -42,16 +46,10 @@
                         <div class="mr-2.5">{{ $address->consignee }}</div>
                         <div>{{ $address->mobile }}</div>
                     </div>
-
+    
                     <div class="flex justify-end">
-                        <div class="mr-2.5">
-                            {{ ($this->setDefaultAction)(['id' => $address->id]) }}
-                        </div>
                         <div>
                             {{ ($this->editAction)(['id' => $address->id]) }}
-                        </div>
-                        <div class="ml-2.5">
-                            {{ ($this->deleteAction)(['id' => $address->id]) }}
                         </div>
                     </div>
                 </div>

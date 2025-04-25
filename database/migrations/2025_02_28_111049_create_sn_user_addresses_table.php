@@ -14,7 +14,7 @@ return new class extends Migration
             $table->id();
             $table->morphs('user');
             $table->string('consignee')->nullable()->comment('收货人');
-            $table->tinyInteger('gender')->default(0)->comment('性别');
+            $table->string('gender', 20)->nullable()->comment('性别');
             $table->string('mobile', 30)->nullable()->comment('收货手机');
             $table->string('province_name', 30)->nullable()->comment('省份');
             $table->string('city_name', 30)->nullable()->comment('城市');
