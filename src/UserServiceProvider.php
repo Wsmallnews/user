@@ -41,11 +41,6 @@ class UserServiceProvider extends PackageServiceProvider
 
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
         $package->name(static::$name)
             ->hasCommands($this->getCommands())
             ->hasInstallCommand(function (InstallCommand $command) {
@@ -108,11 +103,11 @@ class UserServiceProvider extends PackageServiceProvider
             }
         }
 
-        Livewire::component('sn-user-auth-login', Login::class);
-        // 管理收货地址
-        Livewire::component('sn-user-address', Address::class);
-        // 选择收货地址
-        Livewire::component('sn-user-choose-address', ChooseAddress::class);
+        // Livewire::component('sn-user-auth-login', Login::class);
+        // // 管理收货地址
+        // Livewire::component('sn-user-address', Address::class);
+        // // 选择收货地址
+        // Livewire::component('sn-user-choose-address', ChooseAddress::class);
 
         // Fortify 逻辑注册
         // Fortify::createUsersUsing(CreateNewUser::class);

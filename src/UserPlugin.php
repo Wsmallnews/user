@@ -9,7 +9,7 @@ class UserPlugin implements Plugin
 {
     public function getId(): string
     {
-        return 'user';
+        return 'sn-user';
     }
 
     public function register(Panel $panel): void
