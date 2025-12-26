@@ -2,5 +2,4 @@
 
 namespace Wsmallnews\User;
 
-class User
-{}
+class User {}
