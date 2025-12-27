@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
-use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -24,7 +23,6 @@ use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Address;
 use Wsmallnews\User\Components\Auth\Login;
 use Wsmallnews\User\Components\ChooseAddress;
-use Wsmallnews\User\Testing\TestsUser;
 
 class UserServiceProvider extends PackageServiceProvider
 {

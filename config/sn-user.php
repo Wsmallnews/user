@@ -10,6 +10,4 @@ return [
         'redirect_if_two_factor_authenticatable' => Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable::class,
     ],
 
-
-    
 ];
