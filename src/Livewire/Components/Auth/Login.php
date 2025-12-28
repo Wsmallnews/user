@@ -2,14 +2,10 @@
 
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
+use Filament\Forms\Components;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Livewire\Component;
-
-
-use Filament\Forms\Components;
-use Filament\Forms\Form;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
@@ -18,8 +14,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Livewire\Component;
 use Wsmallnews\User\Enums\Status;
-use Wsmallnews\User\User;
 
 class Login extends Component implements HasSchemas
 {
@@ -27,8 +23,7 @@ class Login extends Component implements HasSchemas
 
     public ?array $formData = [];
 
-
-    public function form(Schema  $schema): Schema
+    public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
