@@ -94,31 +94,31 @@ class UserServiceProvider extends PackageServiceProvider
             }
         }
 
-        // Livewire::component('sn-user-auth-login', Login::class);
+        Livewire::component('sn-user-components-auth-login', Login::class);
         // // 管理收货地址
         // Livewire::component('sn-user-address', Address::class);
         // // 选择收货地址
         // Livewire::component('sn-user-choose-address', ChooseAddress::class);
 
-        $actions = config('sn-user.actions');
-        Fortify::createUsersUsing($actions['create_new_user']);
-        Fortify::updateUserProfileInformationUsing($actions['update_user_profile_information']);
-        Fortify::updateUserPasswordsUsing($actions['update_user_password']);
-        Fortify::resetUserPasswordsUsing($actions['reset_user_password']);
-        Fortify::redirectUserForTwoFactorAuthenticationUsing($actions['redirect_if_two_factor_authenticatable']);
+        // $actions = config('sn-user.actions');
+        // Fortify::createUsersUsing($actions['create_new_user']);
+        // Fortify::updateUserProfileInformationUsing($actions['update_user_profile_information']);
+        // Fortify::updateUserPasswordsUsing($actions['update_user_password']);
+        // Fortify::resetUserPasswordsUsing($actions['reset_user_password']);
+        // Fortify::redirectUserForTwoFactorAuthenticationUsing($actions['redirect_if_two_factor_authenticatable']);
 
-        RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
+        // RateLimiter::for('login', function (Request $request) {
+        //     $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
 
-            return Limit::perMinute(5)->by($throttleKey);
-        });
+        //     return Limit::perMinute(5)->by($throttleKey);
+        // });
 
-        RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by($request->session()->get('login.id'));
-        });
+        // RateLimiter::for('two-factor', function (Request $request) {
+        //     return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        // });
 
-        // 注册所有认证页面
-        Fortify::viewPrefix('sn-user::auth.');
+        // // 注册所有认证页面
+        // Fortify::viewPrefix('sn-user::auth.');
         // Fortify 逻辑注册完毕
     }
 
