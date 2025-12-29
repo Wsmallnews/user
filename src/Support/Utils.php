@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace Wsmallnews\User\Support;
 
-use Wsmallnews\User\Exceptions\UserException;
-use Wsmallnews\User\Models;
-use Wsmallnews\Support\Models\Tag as SupportTagModel;
-
 class Utils
 {
-
     public static $route = [
         // 'sn-module' => [
         //     'login' => 'login',
@@ -35,7 +30,6 @@ class Utils
         }
     }
 
-
     public static function setRoute($module, $key, $route)
     {
         self::setRoutes($module, [$key => $route]);
@@ -45,8 +39,6 @@ class Utils
     {
         return self::$route[$module][$key] ?? $default;
     }
-
-
 
     public static function getConfig($name = null, $default = null)
     {
