@@ -53,10 +53,9 @@ class Login extends Component implements HasSchemas
 
         Session::regenerate();
 
-        // 退回上个url 
+        // 退回上个url
         $this->redirectIntended(AuthsConfig::getConfig($this->module, 'urls.index'));
     }
-
 
     protected function authenticate(): void
     {

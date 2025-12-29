@@ -5,25 +5,22 @@ namespace Wsmallnews\User;
 use Closure;
 use Illuminate\Support\Collection;
 
-class AuthsConfig {
-
-
+class AuthsConfig
+{
     // $auth = [
     //     'guard' => 'web',
     //     'urls' => [
-    //         'index' => '/index', 
+    //         'index' => '/index',
     //         'login' => '/login',
     //         'logout' => '/logout',
     //     ],
     // ];
     protected ?Collection $auths;
 
-
     public function __construct()
     {
         $this->auths = collect();
     }
-
 
     public function config($module, array | Closure $auth): self
     {
@@ -31,7 +28,6 @@ class AuthsConfig {
 
         return $this;
     }
-
 
     public function getConfig($module, $name = null, $default = null): mixed
     {

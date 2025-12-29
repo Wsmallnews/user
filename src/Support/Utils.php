@@ -6,7 +6,6 @@ namespace Wsmallnews\User\Support;
 
 class Utils
 {
-
     public static function getConfig($name = null, $default = null)
     {
         $config = config('sn-user');
