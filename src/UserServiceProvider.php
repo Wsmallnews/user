@@ -181,7 +181,9 @@ class UserServiceProvider extends PackageServiceProvider
     protected function getMigrations(): array
     {
         return [
-            '2025_02_28_111049_create_sn_user_addresses_table',
+            '2025_01_20_113724_add_two_factor_columns_to_users_table',
+            '2025_01_20_113724_add_user_columns_to_users_table',
+            // '2025_02_28_111049_create_sn_user_addresses_table',
         ];
     }
 }

@@ -7,7 +7,6 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Auth\Events\Lockout;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -15,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Wsmallnews\User\Facades\AuthsConfig;
 
 class Login extends Component implements HasSchemas
 {
@@ -23,8 +23,6 @@ class Login extends Component implements HasSchemas
     public ?array $formData = [];
 
     public string $module;
-
-    public string $backRoute;
 
     public function form(Schema $schema): Schema
     {
@@ -47,7 +45,7 @@ class Login extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-    public function login(): RedirectResponse
+    public function login()
     {
         $this->ensureIsNotRateLimited();
 
@@ -55,14 +53,23 @@ class Login extends Component implements HasSchemas
 
         Session::regenerate();
 
-        return redirect()->route($this->backRoute);
+        // 退回上个url 
+        $this->redirectIntended(AuthsConfig::getConfig($this->module, 'urls.index'));
     }
+
 
     protected function authenticate(): void
     {
         $formData = $this->form->getState();
+        $credentials = Arr::only($formData, ['password']);
+        $credentials['account'] = function ($query) use ($formData) {
+            $query->where(function ($query) use ($formData) {
+                $query->where('email', $formData['account'])
+                    ->orWhere('mobile', $formData['account']);
+            });
+        };
 
-        if (! Auth::attempt(Arr::only($formData, ['account', 'password']), $formData['remember'] ?? false)) {
+        if (! Auth::guard(AuthsConfig::getConfig($this->module, 'guard'))->attempt($credentials, $formData['remember'] ?? false)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([

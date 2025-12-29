@@ -1,5 +1,5 @@
 @php
-    use Wsmallnews\User\Support\Utils;
+    use Wsmallnews\User\Facades\AuthsConfig;
 @endphp
 
 <div class="w-full" >
@@ -7,8 +7,7 @@
         {{ $this->form }}
         
         <div class="flex justify-end mt-4">
-            {{-- <x-filament::link type="button" href="{{ route(User::routeNames('register')) }}"> --}}
-            <x-filament::link type="button" href="{{ Utils::getRoute($module, 'register') }}">
+            <x-filament::link href="{{ AuthsConfig::getConfig($module, 'urls.register') }}">
                 还没有账号？立即注册
             </x-filament::link>
 
@@ -18,9 +17,3 @@
         </div>
     </form>
 </div>
-
-@assets
-<script>
-
-</script>
-@endassets
