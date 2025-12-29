@@ -6,7 +6,7 @@ use Filament\Forms\Components;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Illuminate\Auth\Events\Lockout;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
-class Login extends Component implements HasSchemas
+class Register extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
 
@@ -30,19 +30,29 @@ class Login extends Component implements HasSchemas
     {
         return $schema
             ->components([
-                Components\TextInput::make('account')
-                    ->label('账号')
-                    ->placeholder('请输入邮箱或手机号')
+                Components\TextInput::make('name')
+                    ->label('昵称')
+                    ->placeholder('请输入昵称')
+                    ->required(),
+                Components\TextInput::make('email')
+                    ->label('邮箱')
+                    ->placeholder('请输入邮箱')
                     ->required()
                     ->email(),
                 Components\TextInput::make('password')
                     ->label('密码')
                     ->placeholder('请输入密码')
                     ->required()
+                    ->same('passwordConfirmation')
                     ->password()
                     ->revealable(),
-
-                Components\Checkbox::make('remember')->label('记住我')->inline(),
+                Components\TextInput::make('password_confirmation')
+                    ->label('确认密码')
+                    ->placeholder('请确认密码')
+                    ->required()
+                    ->password()
+                    ->revealable()
+                    ->dehydrated(false),
             ])
             ->statePath('formData');
     }
@@ -106,6 +116,6 @@ class Login extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.auth.login', []);
+        return view('sn-user::livewire.auth.register', []);
     }
 }

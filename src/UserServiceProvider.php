@@ -21,7 +21,8 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Address;
-use Wsmallnews\User\Components\Auth\Login;
+use Wsmallnews\User\Livewire\Components\Auth\Login;
+use Wsmallnews\User\Livewire\Components\Auth\Register;
 use Wsmallnews\User\Components\ChooseAddress;
 
 class UserServiceProvider extends PackageServiceProvider
@@ -95,6 +96,7 @@ class UserServiceProvider extends PackageServiceProvider
         }
 
         Livewire::component('sn-user-components-auth-login', Login::class);
+        Livewire::component('sn-user-components-auth-register', Register::class);
         // // 管理收货地址
         // Livewire::component('sn-user-address', Address::class);
         // // 选择收货地址
