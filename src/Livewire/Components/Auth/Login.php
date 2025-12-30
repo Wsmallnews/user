@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -39,8 +40,15 @@ class Login extends Component implements HasSchemas
                     ->placeholder('请输入密码')
                     ->required()
                     ->password()
-                    ->revealable(),
-
+                    ->revealable()
+                    ->afterLabel(function () {
+                        $forgotPasswordUrl = AuthsConfig::getConfig($this->module, 'urls.forgot-password');
+                        return $forgotPasswordUrl ?
+                            \Filament\Actions\Action::make('forget-password')
+                                ->label('忘记密码？')
+                                ->url((string) $forgotPasswordUrl)
+                        : null;
+                    }),
                 Components\Checkbox::make('remember')->label('记住我')->inline(),
             ])
             ->statePath('formData');
@@ -73,7 +81,7 @@ class Login extends Component implements HasSchemas
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'form.account' => trans('auth.failed'),
+                'formData.account' => trans('auth.failed'),
             ]);
         }
 

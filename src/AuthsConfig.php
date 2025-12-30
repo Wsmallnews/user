@@ -12,7 +12,9 @@ class AuthsConfig
     //     'urls' => [
     //         'index' => '/index',
     //         'login' => '/login',
-    //         'logout' => '/logout',
+    //         'register' => '/register',
+    //         'user-index' => '/user',
+    //         'forgot-password' => '/forgot-password',
     //     ],
     // ];
     protected ?Collection $auths;
