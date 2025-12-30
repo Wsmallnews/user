@@ -12,7 +12,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -33,8 +32,7 @@ class Login extends Component implements HasSchemas
                 Components\TextInput::make('account')
                     ->label('账号')
                     ->placeholder('请输入邮箱或手机号')
-                    ->required()
-                    ->email(),
+                    ->required(),
                 Components\TextInput::make('password')
                     ->label('密码')
                     ->placeholder('请输入密码')
