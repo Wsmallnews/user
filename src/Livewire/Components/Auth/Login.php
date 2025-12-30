@@ -6,6 +6,7 @@ use Filament\Forms\Components;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -54,7 +55,7 @@ class Login extends Component implements HasSchemas
         Session::regenerate();
 
         // 退回上个url
-        $this->redirectIntended(AuthsConfig::getConfig($this->module, 'urls.index'));
+        $this->redirectIntended(AuthsConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
     protected function authenticate(): void

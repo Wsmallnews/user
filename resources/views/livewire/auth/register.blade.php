@@ -3,7 +3,7 @@
 @endphp
 
 <div class="w-full" >
-    <form wire:submit="login">
+    <form wire:submit="register">
         {{ $this->form }}
         
         <div class="flex justify-end mt-4">
@@ -13,7 +13,7 @@
             </x-filament::link>
 
             <x-filament::button type="submit" class="ml-4">
-                登录
+                注册
             </x-filament::button>
         </div>
     </form>

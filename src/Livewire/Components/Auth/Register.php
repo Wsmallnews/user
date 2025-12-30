@@ -2,18 +2,19 @@
 
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
+use App\Models\User;
 use Filament\Forms\Components;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Arr;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Wsmallnews\User\Facades\AuthsConfig;
 
 class Register extends Component implements HasSchemas
 {
@@ -22,8 +23,6 @@ class Register extends Component implements HasSchemas
     public ?array $formData = [];
 
     public string $module;
-
-    public string $backRoute;
 
     public function form(Schema $schema): Schema
     {
@@ -42,7 +41,8 @@ class Register extends Component implements HasSchemas
                     ->label('密码')
                     ->placeholder('请输入密码')
                     ->required()
-                    ->same('passwordConfirmation')
+                    ->rule(Password::default())
+                    ->same('password_confirmation')
                     ->password()
                     ->revealable(),
                 Components\TextInput::make('password_confirmation')
@@ -56,62 +56,28 @@ class Register extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-    public function login(): RedirectResponse
-    {
-        $this->ensureIsNotRateLimited();
 
-        $this->authenticate();
-
-        Session::regenerate();
-
-        return redirect()->route($this->backRoute);
-    }
-
-    protected function authenticate(): void
+    public function register(): void
     {
         $formData = $this->form->getState();
 
-        if (! Auth::attempt(Arr::only($formData, ['account', 'password']), $formData['remember'] ?? false)) {
-            RateLimiter::hit($this->throttleKey());
+        $formData['password'] = Hash::make($formData['password']);
 
+        try {
+            $user = User::create($formData);
+        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
             throw ValidationException::withMessages([
-                'form.account' => trans('auth.failed'),
+                'formData.email' => '该邮箱已注册, 请直接登录',
             ]);
         }
 
-        RateLimiter::clear($this->throttleKey());
+        event(new Registered($user));
+
+        Auth::guard(AuthsConfig::getConfig($this->module, 'guard'))->login($user);
+
+        $this->redirect(AuthsConfig::getConfig($this->module, 'urls.user-index'), FilamentView::hasSpaMode());
     }
 
-    /**
-     * Ensure the authentication request is not rate limited.
-     */
-    protected function ensureIsNotRateLimited(): void
-    {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-            return;
-        }
-
-        event(new Lockout(request()));
-
-        $seconds = RateLimiter::availableIn($this->throttleKey());
-
-        throw ValidationException::withMessages([
-            'formData.account' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
-        ]);
-    }
-
-    /**
-     * Get the authentication rate limiting throttle key.
-     */
-    protected function throttleKey(): string
-    {
-        $formData = $this->form->getState();
-
-        return Str::transliterate(Str::lower($formData['account']) . '|' . request()->ip());
-    }
 
     public function render()
     {
