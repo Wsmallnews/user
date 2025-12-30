@@ -56,7 +56,6 @@ class Register extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-
     public function register(): void
     {
         $formData = $this->form->getState();
@@ -77,7 +76,6 @@ class Register extends Component implements HasSchemas
 
         $this->redirect(AuthsConfig::getConfig($this->module, 'urls.user-index'), FilamentView::hasSpaMode());
     }
-
 
     public function render()
     {
