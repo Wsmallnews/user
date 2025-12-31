@@ -29,10 +29,9 @@ class ResetPassword extends Component implements HasSchemas
     {
         $this->form->fill([
             'token' => request()->route('token'),
-            'email' => request()->query('email')
+            'email' => request()->query('email'),
         ]);
     }
-
 
     public function form(Schema $schema): Schema
     {
@@ -63,7 +62,6 @@ class ResetPassword extends Component implements HasSchemas
             ])
             ->statePath('formData');
     }
-
 
     /**
      * Reset the password for the given user.
@@ -101,7 +99,6 @@ class ResetPassword extends Component implements HasSchemas
 
         $this->redirect(AuthsConfig::getConfig($this->module, 'urls.login'), FilamentView::hasSpaMode());
     }
-
 
     public function render()
     {

@@ -7,8 +7,8 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Password;
 use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 

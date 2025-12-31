@@ -31,16 +31,14 @@ class AuthsConfig
         return $this;
     }
 
-
     /**
      * 获取设置
      *
-     * @param string $module    所属模块
-     * @param string $name      设置项名称
-     * @param mixed $default    默认值
-     * @param array $params     配置动态参数
-     * @param array $fieldParams 字段参数
-     * @return mixed
+     * @param  string  $module  所属模块
+     * @param  string  $name  设置项名称
+     * @param  mixed  $default  默认值
+     * @param  array  $params  配置动态参数
+     * @param  array  $fieldParams  字段参数
      */
     public function getConfig($module, $name = null, $default = null, $params = [], $fieldParams = []): mixed
     {
