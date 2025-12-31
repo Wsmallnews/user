@@ -22,9 +22,9 @@ use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Address;
 use Wsmallnews\User\Components\ChooseAddress;
+use Wsmallnews\User\Livewire\Components\Auth\ForgotPassword;
 use Wsmallnews\User\Livewire\Components\Auth\Login;
 use Wsmallnews\User\Livewire\Components\Auth\Register;
-use Wsmallnews\User\Livewire\Components\Auth\ForgotPassword;
 use Wsmallnews\User\Livewire\Components\Auth\ResetPassword;
 
 class UserServiceProvider extends PackageServiceProvider

@@ -29,11 +29,10 @@ class ForgotPassword extends Component implements HasSchemas
                     ->aboveLabel('忘记密码了？没关系。只需告诉我们您注册时使用的电子邮箱地址，我们将向您发送一个密码重置链接，通过该链接您即可设置一个新密码')
                     ->placeholder('请输入邮箱')
                     ->required()
-                    ->email()
+                    ->email(),
             ])
             ->statePath('formData');
     }
-
 
     public function sendPasswordResetLink(): void
     {
@@ -63,7 +62,6 @@ class ForgotPassword extends Component implements HasSchemas
 
         session()->flash('status', __($status));
     }
-
 
     public function render()
     {

@@ -40,6 +40,7 @@ class Login extends Component implements HasSchemas
                     ->revealable()
                     ->afterLabel(function () {
                         $forgotPasswordUrl = AuthsConfig::getConfig($this->module, 'urls.forgot-password');
+
                         return $forgotPasswordUrl ?
                             \Filament\Actions\Action::make('forget-password')
                                 ->label('忘记密码？')
