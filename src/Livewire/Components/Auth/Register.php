@@ -12,7 +12,6 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 
@@ -65,9 +64,7 @@ class Register extends Component implements HasSchemas
         try {
             $user = User::create($formData);
         } catch (\Illuminate\Database\UniqueConstraintViolationException) {
-            throw ValidationException::withMessages([
-                'formData.email' => '该邮箱已注册, 请直接登录',
-            ]);
+            $this->addError('formData.email', '该邮箱已注册, 请直接登录');
         }
 
         event(new Registered($user));

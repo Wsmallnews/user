@@ -31,12 +31,32 @@ class AuthsConfig
         return $this;
     }
 
-    public function getConfig($module, $name = null, $default = null): mixed
+
+    /**
+     * 获取设置
+     *
+     * @param string $module    所属模块
+     * @param string $name      设置项名称
+     * @param mixed $default    默认值
+     * @param array $params     配置动态参数
+     * @param array $fieldParams 字段参数
+     * @return mixed
+     */
+    public function getConfig($module, $name = null, $default = null, $params = [], $fieldParams = []): mixed
     {
         $module = $this->auths->get($module);
 
-        $config = $module instanceof Closure ? $module() : $module;
+        $config = $module instanceof Closure ? $module($params) : $module;
 
-        return $name ? (data_get($config, $name) ?? $default) : $config;
+        if ($name) {
+            $nameValue = data_get($config, $name) ?? $default;
+            if ($nameValue instanceof Closure) {
+                $nameValue = $nameValue($fieldParams);
+            }
+
+            return $nameValue;
+        }
+
+        return $config;
     }
 }

@@ -2,18 +2,13 @@
 
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
-use App\Models\User;
 use Filament\Forms\Components;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
-use Filament\Support\Facades\FilamentView;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 
@@ -44,6 +39,14 @@ class ForgotPassword extends Component implements HasSchemas
     {
         $formData = $this->form->getState();
 
+        // 自定义密码重置链接
+        ResetPassword::createUrlUsing(function ($notifiable, string $token) {
+            return AuthsConfig::getConfig($this->module, 'urls.reset-password', fieldParams: [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ]);
+        });
+
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we
         // need to show to the user. Finally, we'll send out a proper response.
@@ -52,9 +55,7 @@ class ForgotPassword extends Component implements HasSchemas
         );
 
         if ($status != Password::RESET_LINK_SENT) {
-            throw ValidationException::withMessages([
-                'formData.email' => __($status),
-            ]);
+            $this->addError('formData.email', __($status));
         }
 
         // 清空表单

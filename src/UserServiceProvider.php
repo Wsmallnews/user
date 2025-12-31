@@ -25,6 +25,7 @@ use Wsmallnews\User\Components\ChooseAddress;
 use Wsmallnews\User\Livewire\Components\Auth\Login;
 use Wsmallnews\User\Livewire\Components\Auth\Register;
 use Wsmallnews\User\Livewire\Components\Auth\ForgotPassword;
+use Wsmallnews\User\Livewire\Components\Auth\ResetPassword;
 
 class UserServiceProvider extends PackageServiceProvider
 {
@@ -99,6 +100,7 @@ class UserServiceProvider extends PackageServiceProvider
         Livewire::component('sn-user-components-auth-login', Login::class);
         Livewire::component('sn-user-components-auth-register', Register::class);
         Livewire::component('sn-user-components-auth-forgot-password', ForgotPassword::class);
+        Livewire::component('sn-user-components-auth-reset-password', ResetPassword::class);
         // // 管理收货地址
         // Livewire::component('sn-user-address', Address::class);
         // // 选择收货地址

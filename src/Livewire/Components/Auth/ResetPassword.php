@@ -1,0 +1,110 @@
+<?php
+
+namespace Wsmallnews\User\Livewire\Components\Auth;
+
+use Filament\Forms\Components;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules;
+use Livewire\Component;
+use Wsmallnews\User\Facades\AuthsConfig;
+
+class ResetPassword extends Component implements HasSchemas
+{
+    use InteractsWithSchemas;
+
+    public ?array $formData = [];
+
+    public string $module;
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'token' => request()->route('token'),
+            'email' => request()->query('email')
+        ]);
+    }
+
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Components\Hidden::make('token')
+                    ->required(),
+                Components\TextInput::make('email')
+                    ->label('邮箱')
+                    ->placeholder('请输入邮箱')
+                    ->required()
+                    ->email(),
+                Components\TextInput::make('password')
+                    ->label('新密码')
+                    ->placeholder('请输入新密码')
+                    ->required()
+                    ->rule(Rules\Password::default())
+                    ->same('password_confirmation')
+                    ->password()
+                    ->revealable(),
+                Components\TextInput::make('password_confirmation')
+                    ->label('确认新密码')
+                    ->placeholder('请确认新密码')
+                    ->required()
+                    ->password()
+                    ->revealable()
+                    ->dehydrated(false),
+            ])
+            ->statePath('formData');
+    }
+
+
+    /**
+     * Reset the password for the given user.
+     */
+    public function resetPassword(): void
+    {
+        $formData = $this->form->getState();
+
+        // Here we will attempt to reset the user's password. If it is successful we
+        // will update the password on an actual user model and persist it to the
+        // database. Otherwise we will parse the error and return the response.
+        // Password::reset() is Illuminate\Auth\Passwords\PasswordBroker::reset()
+        $status = Password::reset(
+            Arr::only($formData, ['email', 'password', 'token']),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        // If the password was successfully reset, we will redirect the user back to
+        // the application's home authenticated view. If there is an error we can
+        // redirect them back to where they came from with their error message.
+        if ($status != Password::PASSWORD_RESET) {
+            $this->addError('formData.email', __($status));
+
+            return;
+        }
+
+        Session::flash('status', __($status));
+
+        $this->redirect(AuthsConfig::getConfig($this->module, 'urls.login'), FilamentView::hasSpaMode());
+    }
+
+
+    public function render()
+    {
+        return view('sn-user::livewire.auth.reset-password', []);
+    }
+}
