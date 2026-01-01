@@ -13,8 +13,11 @@ class AuthsConfig
     //         'index' => '/index',
     //         'login' => '/login',
     //         'register' => '/register',
-    //         'user-index' => '/user',
+    //         'profile' => '/profile',
     //         'forgot-password' => '/forgot-password',
+    //         'reset-password' => '/reset-password/{token}',
+    //         'verify-email' => '/verify-email',
+    //         'verify-email-verification' => '/verify-email/{id}/{hash}',
     //     ],
     // ];
     protected ?Collection $auths;

@@ -71,7 +71,7 @@ class Register extends Component implements HasSchemas
 
         Auth::guard(AuthsConfig::getConfig($this->module, 'guard'))->login($user);
 
-        $this->redirect(AuthsConfig::getConfig($this->module, 'urls.user-index'), FilamentView::hasSpaMode());
+        $this->redirect(AuthsConfig::getConfig($this->module, 'urls.profile'), FilamentView::hasSpaMode());
     }
 
     public function render()
