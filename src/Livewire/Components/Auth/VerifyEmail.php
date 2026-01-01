@@ -14,7 +14,6 @@ use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 use Wsmallnews\User\Livewire\Actions\Logout;
 
-
 class VerifyEmail extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
@@ -27,11 +26,10 @@ class VerifyEmail extends Component implements HasSchemas
     {
         return $schema
             ->components([
-                Text::make('感谢您的注册！在开始之前，您能否点击我们刚刚发送给您的电子邮件中的链接，以验证您的电子邮件地址？如果您没有收到该电子邮件，我们很乐意为您重新发送一封。')
+                Text::make('感谢您的注册！在开始之前，您能否点击我们刚刚发送给您的电子邮件中的链接，以验证您的电子邮件地址？如果您没有收到该电子邮件，我们很乐意为您重新发送一封。'),
             ])
             ->statePath('formData');
     }
-
 
     public function sendVerification(): void
     {
@@ -55,7 +53,6 @@ class VerifyEmail extends Component implements HasSchemas
         Session::flash('status', 'verification-link-sent');
     }
 
-
     /**
      * Log the current user out of the application.
      */
@@ -66,7 +63,6 @@ class VerifyEmail extends Component implements HasSchemas
 
         $this->redirect(AuthsConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
-
 
     public function render()
     {
