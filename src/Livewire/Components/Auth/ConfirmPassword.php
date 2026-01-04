@@ -34,7 +34,6 @@ class ConfirmPassword extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-
     /**
      * Confirm the current user's password.
      */
@@ -50,6 +49,7 @@ class ConfirmPassword extends Component implements HasSchemas
             'password' => $formData['password'],
         ])) {
             $this->addError('formData.password', __('auth.password'));
+
             return;
         }
 
@@ -57,7 +57,6 @@ class ConfirmPassword extends Component implements HasSchemas
 
         $this->redirectIntended(default: AuthsConfig::getConfig($this->module, 'urls.index'), navigate: FilamentView::hasSpaMode());
     }
-
 
     public function render()
     {

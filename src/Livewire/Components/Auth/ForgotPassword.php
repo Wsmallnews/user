@@ -55,6 +55,7 @@ class ForgotPassword extends Component implements HasSchemas
 
         if ($status != Password::RESET_LINK_SENT) {
             $this->addError('formData.email', __($status));
+
             return;
         }
 
