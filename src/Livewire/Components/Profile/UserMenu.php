@@ -24,7 +24,6 @@ class UserMenu extends Component
         $this->redirect(AuthsConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
-
     public function render()
     {
         return view('sn-user::livewire.profile.user-menu', []);
