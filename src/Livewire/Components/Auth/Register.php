@@ -65,6 +65,7 @@ class Register extends Component implements HasSchemas
             $user = User::create($formData);
         } catch (\Illuminate\Database\UniqueConstraintViolationException) {
             $this->addError('formData.email', '该邮箱已注册, 请直接登录');
+            return;
         }
 
         event(new Registered($user));

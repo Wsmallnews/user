@@ -79,6 +79,7 @@ class Login extends Component implements HasSchemas
             RateLimiter::hit($this->throttleKey());
 
             $this->addError('formData.account', trans('auth.failed'));
+            return;
         }
 
         RateLimiter::clear($this->throttleKey());
@@ -101,6 +102,7 @@ class Login extends Component implements HasSchemas
             'seconds' => $seconds,
             'minutes' => ceil($seconds / 60),
         ]));
+        return;
     }
 
     /**
