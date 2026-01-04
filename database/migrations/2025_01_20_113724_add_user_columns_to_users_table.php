@@ -12,21 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::whenTableDoesntHaveColumn(
-            'users', 
+            'users',
             'username',
             function (Blueprint $table) {
                 $table->string('username')->nullable()->unique()->after('name')->comment('用户名');
             }
         );
         Schema::whenTableDoesntHaveColumn(
-            'users', 
+            'users',
             'mobile',
             function (Blueprint $table) {
                 $table->string('mobile', 20)->nullable()->unique()->after('username')->comment('手机号');
             }
         );
         Schema::whenTableDoesntHaveColumn(
-            'users', 
+            'users',
             'avatar_url',
             function (Blueprint $table) {
                 $table->string('avatar_url')->nullable()->after('mobile')->comment('头像');
