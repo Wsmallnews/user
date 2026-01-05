@@ -21,8 +21,9 @@
     ],
     "require": {
         "php": "^8.2",
+        "bacon/bacon-qr-code": "^3.0",
         "filament/filament": "^4.0",
-        "laravel/fortify": "^1.25",
+        "pragmarx/google2fa": "^9.0",
         "spatie/laravel-package-tools": "^1.15.0"
     },
     "require-dev": {

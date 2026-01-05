@@ -4,11 +4,26 @@ namespace Wsmallnews\User;
 
 use Closure;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 
 class AuthsConfig
 {
+
+    /**
+     * The encrypter instance that is used to encrypt attributes.
+     *
+     * @var \Illuminate\Contracts\Encryption\Encrypter|null
+     */
+    public $encrypter;
+
+
     // $auth = [
     //     'guard' => 'web',
+    //     'two-factor' => [
+    //         'enabled' => true,
+    //         'confirm' => true,
+    //     ],
     //     'urls' => [
     //         'index' => '/index',
     //         'login' => '/login',
@@ -60,5 +75,40 @@ class AuthsConfig
         }
 
         return $config;
+    }
+
+    /**
+     * 确认是否开启了双因素认证
+     *
+     * @param  string  $module  所属模块
+     * @return bool
+     */
+    public function confirmsTwoFactorAuthentication($module): bool
+    {
+        return $this->getConfig($module, 'two-factor.enabled', false) && $this->getConfig($module, 'two-factor.confirm', false);
+    }
+
+
+    /**
+     * Set the encrypter instance that will be used to encrypt attributes.
+     *
+     * @param  \Illuminate\Contracts\Encryption\Encrypter|null  $encrypter
+     * @return static
+     */
+    public function encryptUsing($encrypter)
+    {
+        $this->encrypter = $encrypter;
+
+        return $this;
+    }
+
+    /**
+     * Get the current encrypter being used by the model.
+     *
+     * @return \Illuminate\Contracts\Encryption\Encrypter
+     */
+    public function currentEncrypter()
+    {
+        return $this->encrypter ?? Model::$encrypter ?? Crypt::getFacadeRoot();
     }
 }

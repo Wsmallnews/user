@@ -1,6 +1,6 @@
 <?php
 
-namespace Wsmallnews\User\Livewire\Components\Profile;
+namespace Wsmallnews\User\Livewire\Components\User;
 
 use Filament\Support\Facades\FilamentView;
 use Livewire\Component;

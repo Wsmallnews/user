@@ -9,6 +9,7 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
@@ -16,19 +17,24 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Livewire\Livewire;
+use PragmaRX\Google2FA\Google2FA;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Address;
 use Wsmallnews\User\Components\ChooseAddress;
+use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
 use Wsmallnews\User\Livewire\Components\Auth\ConfirmPassword;
 use Wsmallnews\User\Livewire\Components\Auth\ForgotPassword;
 use Wsmallnews\User\Livewire\Components\Auth\Login;
 use Wsmallnews\User\Livewire\Components\Auth\Register;
 use Wsmallnews\User\Livewire\Components\Auth\ResetPassword;
 use Wsmallnews\User\Livewire\Components\Auth\VerifyEmail;
-use Wsmallnews\User\Livewire\Components\Profile\UserMenu;
+use Wsmallnews\User\Livewire\Components\User\UserMenu;
+use Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
+use Wsmallnews\User\Livewire\Components\Settings\TwoFactor\RecoveryCodes;
+use Wsmallnews\User\TwoFactorAuthenticationProvider;
 
 class UserServiceProvider extends PackageServiceProvider
 {
@@ -68,7 +74,15 @@ class UserServiceProvider extends PackageServiceProvider
         }
     }
 
-    public function packageRegistered(): void {}
+    public function packageRegistered(): void 
+    {
+        $this->app->singleton(TwoFactorAuthenticationProviderContract::class, function ($app) {
+            return new TwoFactorAuthenticationProvider(
+                $app->make(Google2FA::class),
+                $app->make(Repository::class)
+            );
+        });
+    }
 
     public function packageBooted(): void
     {
@@ -107,7 +121,11 @@ class UserServiceProvider extends PackageServiceProvider
         Livewire::component('sn-user-components-auth-verify-email', VerifyEmail::class);
         Livewire::component('sn-user-components-auth-confirm-password', ConfirmPassword::class);
 
-        Livewire::component('sn-user-components-profile-user-menu', UserMenu::class);
+        Livewire::component('sn-user-components-user-user-menu', UserMenu::class);
+
+        // 用户设置
+        Livewire::component('sn-user-components-settings-two-factor', TwoFactor::class);
+        Livewire::component('sn-user-components-settings-two-factor-recovery-codes', RecoveryCodes::class);
         // // 管理收货地址
         // Livewire::component('sn-user-address', Address::class);
         // // 选择收货地址
