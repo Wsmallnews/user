@@ -2,8 +2,8 @@
     <form wire:submit="resetPassword">
         {{ $this->form }}
         
-        <div class="flex justify-end mt-4">
-            <x-filament::button type="submit" class="ml-4">
+        <div class="flex flex-col mt-6 gap-4">
+            <x-filament::button type="submit" class="text-white">
                 重置密码
             </x-filament::button>
         </div>
