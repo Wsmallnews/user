@@ -20,7 +20,7 @@ trait TwoFactorAuthenticatable
      *
      * @return bool
      */
-    public function hasEnabledTwoFactorAuthentication(string $module = null)
+    public function hasEnabledTwoFactorAuthentication(?string $module = null)
     {
         if (AuthsConfig::confirmsTwoFactorAuthentication($module)) {
             return ! is_null($this->two_factor_secret) &&

@@ -3,10 +3,10 @@
 namespace Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
 
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
 use Livewire\Attributes\Locked;
-use Wsmallnews\User\Livewire\Actions\GenerateNewRecoveryCodes;
+use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Livewire\Actions\GenerateNewRecoveryCodes;
 
 class RecoveryCodes extends Component
 {

@@ -3,10 +3,10 @@
 namespace Wsmallnews\User\Livewire\Actions;
 
 use Illuminate\Support\Collection;
-use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
-use Wsmallnews\User\RecoveryCode;
-use Wsmallnews\User\Events\TwoFactorAuthenticationEnabled;
 use Wsmallnews\User\AuthsConfig;
+use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
+use Wsmallnews\User\Events\TwoFactorAuthenticationEnabled;
+use Wsmallnews\User\RecoveryCode;
 
 class EnableTwoFactorAuthentication
 {
@@ -20,7 +20,6 @@ class EnableTwoFactorAuthentication
     /**
      * Create a new action instance.
      *
-     * @param  TwoFactorAuthenticationProvider  $provider
      * @return void
      */
     public function __construct(TwoFactorAuthenticationProvider $provider)

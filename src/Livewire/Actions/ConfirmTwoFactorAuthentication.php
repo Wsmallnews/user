@@ -19,7 +19,6 @@ class ConfirmTwoFactorAuthentication
     /**
      * Create a new action instance.
      *
-     * @param  TwoFactorAuthenticationProvider  $provider
      * @return void
      */
     public function __construct(TwoFactorAuthenticationProvider $provider)

@@ -7,7 +7,8 @@ use Illuminate\Queue\SerializesModels;
 
 class RecoveryCodeReplaced
 {
-    use Dispatchable, SerializesModels;
+    use Dispatchable;
+    use SerializesModels;
 
     /**
      * The authenticated user.
