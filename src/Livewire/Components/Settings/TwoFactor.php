@@ -50,8 +50,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
     public bool $showVerificationStep = false;
 
-    #[Validate('required|string|size:6', onUpdate: false)]
-    public string $code = '';
 
     protected ?string $guard = null;
 
@@ -91,8 +89,46 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                 $this->loadSetupData();
 
                 return [
-                    Text::make(new HtmlString('<div class="w-full mx-auto">' . $this->qrCodeSvg . '</div>')),
-                    Text::make('or, enter the code manually'),
+                    Text::make(new HtmlString('<div class="p-4 border border-gray-300 dark:border-gray-700 rounded-md">' . $this->qrCodeSvg . '</div>'))
+                        ->extraAttributes([
+                            'class' => 'w-full flex justify-center items-center',
+                        ]),
+                    Action::make('continue')
+                        ->label(__('Continue'))
+                        ->schema(function () {
+                            return [
+                                Components\TextInput::make('code')
+                                    ->label(__('Code'))
+                                    ->hiddenLabel()
+                                    ->placeholder(__('Enter the 6-digit code from your authenticator app.'))
+                                    ->required()
+                                    ->numeric()
+                                    ->integer()
+                                    ->length(6),
+                            ];
+                        })
+                        ->modalIcon(Heroicon::QrCode)
+                        ->modalHeading('Verify Authentication Code')
+                        ->modalDescription('Enter the 6-digit code from your authenticator app.')
+                        ->modalAlignment(Alignment::Center)
+                        ->modalWidth(Width::Medium)
+                        ->modalCancelActionLabel(__('Back'))
+                        ->modalSubmitActionLabel(__('Confirm'))
+                        ->modalFooterActionsAlignment(Alignment::Center)
+                        ->extraAttributes([
+                            'class' => 'w-full',
+                        ])
+                        ->action(function (ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication, array $data) {
+                            $user = Auth::guard($this->guard)->user();
+
+                            $confirmTwoFactorAuthentication($user, (string)$data['code'] ?? '');
+
+                            // $this->closeModal();
+
+                            $this->twoFactorEnabled = true;
+                        }),
+                    Text::make('or, enter the code manually')
+                        ->view('sn-user::livewire.components.divide'),
                     Components\TextInput::make('setup_key')
                         ->hiddenLabel()
                         ->readOnly()
@@ -105,27 +141,29 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             ->modalDescription('To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app.')
             ->modalAlignment(Alignment::Center)
             ->modalWidth(Width::Medium)
+            ->modalAutofocus(false)
             ->rateLimit(5)
-            ->action(fn () => $this->showModal = true);
+            ->modalSubmitAction(false)
+            ->modalCancelAction(false);
     }
 
     /**
      * Enable two-factor authentication for the user.
      */
-    public function enable(EnableTwoFactorAuthentication $enableTwoFactorAuthentication): void
-    {
-        $user = Auth::guard($this->guard)->user();
+    // public function enable(EnableTwoFactorAuthentication $enableTwoFactorAuthentication): void
+    // {
+    //     $user = Auth::guard($this->guard)->user();
 
-        $enableTwoFactorAuthentication($user);
+    //     $enableTwoFactorAuthentication($user);
 
-        if (! $this->requiresConfirmation) {
-            $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication($this->module);
-        }
+    //     if (! $this->requiresConfirmation) {
+    //         $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication($this->module);
+    //     }
 
-        $this->loadSetupData();
+    //     $this->loadSetupData();
 
-        $this->showModal = true;
-    }
+    //     $this->showModal = true;
+    // }
 
     /**
      * Load the two-factor authentication setup data for the user.
@@ -163,18 +201,18 @@ class TwoFactor extends Component implements HasActions, HasSchemas
     /**
      * Confirm two-factor authentication for the user.
      */
-    public function confirmTwoFactor(ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication): void
-    {
-        $user = Auth::guard($this->guard)->user();
+    // public function confirmTwoFactor(ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication): void
+    // {
+    //     $user = Auth::guard($this->guard)->user();
 
-        $this->validate();
+    //     $this->validate();
 
-        $confirmTwoFactorAuthentication($user, $this->code);
+    //     $confirmTwoFactorAuthentication($user, $this->code);
 
-        $this->closeModal();
+    //     $this->closeModal();
 
-        $this->twoFactorEnabled = true;
-    }
+    //     $this->twoFactorEnabled = true;
+    // }
 
     /**
      * Reset two-factor verification state.
