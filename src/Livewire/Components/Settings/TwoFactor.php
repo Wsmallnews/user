@@ -50,7 +50,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
     public bool $showVerificationStep = false;
 
-
     protected ?string $guard = null;
 
     /**
@@ -121,7 +120,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                         ->action(function (ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication, array $data) {
                             $user = Auth::guard($this->guard)->user();
 
-                            $confirmTwoFactorAuthentication($user, (string)$data['code'] ?? '');
+                            $confirmTwoFactorAuthentication($user, (string) $data['code'] ?? '');
 
                             // $this->closeModal();
 
