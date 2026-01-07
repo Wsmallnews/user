@@ -3,7 +3,7 @@
 namespace Wsmallnews\User\Livewire\Actions;
 
 use Wsmallnews\User\Events\TwoFactorAuthenticationDisabled;
-use Wsmallnews\User\AuthsConfig;
+use Wsmallnews\User\Facades\AuthsConfig;
 
 class DisableTwoFactorAuthentication
 {

@@ -32,13 +32,17 @@
                 {{ __('When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.') }}
             </div>
 
-            <x-filament::button type="button" 
+            {{ $this->enableAction }}
+
+            {{-- <x-filament::button type="button" 
                 class="text-white"
                 icon="heroicon-m-shield-check"
                 wire:click="enable"
             >
                 {{ __('Enable 2FA') }}
-            </x-filament::button>
+            </x-filament::button> --}}
         </div>
     @endif
+
+    <x-filament-actions::modals />
 </div>

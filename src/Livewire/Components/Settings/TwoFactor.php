@@ -2,12 +2,21 @@
 
 namespace Wsmallnews\User\Livewire\Components\Settings;
 
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components;
+use Filament\Schemas\Components\Image;
+use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
@@ -17,8 +26,9 @@ use Wsmallnews\User\Livewire\Actions\DisableTwoFactorAuthentication;
 use Wsmallnews\User\Livewire\Actions\EnableTwoFactorAuthentication;
 use Wsmallnews\User\Facades\AuthsConfig;
 
-class TwoFactor extends Component implements HasSchemas
+class TwoFactor extends Component implements HasActions, HasSchemas
 {
+    use InteractsWithActions;
     use InteractsWithSchemas;
 
     public ?array $formData = [];
@@ -63,6 +73,47 @@ class TwoFactor extends Component implements HasSchemas
         $this->twoFactorEnabled = Auth::guard($this->guard)->user()->hasEnabledTwoFactorAuthentication($this->module);
         $this->requiresConfirmation = AuthsConfig::confirmsTwoFactorAuthentication($this->module);
     }
+
+
+    public function enableAction(): Action
+    {
+        return Action::make('enable')
+            ->label(__('Enable 2FA'))
+            ->icon(Heroicon::ShieldCheck)
+            // ->fillForm(fn(): array => [
+            //     'setup_key' => $this->manualSetupKey,
+            // ])
+            ->schema(function (EnableTwoFactorAuthentication $enableTwoFactorAuthentication) {
+                $user = Auth::guard($this->guard)->user();
+
+                $enableTwoFactorAuthentication($user);
+
+                if (! $this->requiresConfirmation) {
+                    $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication($this->module);
+                }
+
+                $this->loadSetupData();
+
+                return [
+                    Text::make(new HtmlString('<div class="w-full mx-auto">'.$this->qrCodeSvg.'</div>')),
+                    Text::make('or, enter the code manually'),
+                    Components\TextInput::make('setup_key')
+                        ->hiddenLabel()
+                        ->readOnly()
+                        ->default($this->manualSetupKey)
+                        ->copyable(copyMessage: 'Copied!', copyMessageDuration: 1500)
+                ];
+            })
+            ->modalIcon(Heroicon::QrCode)
+            ->modalHeading('Enable Two-Factor Authentication')
+            ->modalDescription('To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app.')
+            ->modalAlignment(Alignment::Center)
+            ->modalWidth(Width::Medium)
+            ->rateLimit(5)
+            ->action(fn() => $this->showModal = true);
+    }
+
+
 
     /**
      * Enable two-factor authentication for the user.

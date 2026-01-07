@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\RecoveryCode;
 use Wsmallnews\User\Events\TwoFactorAuthenticationEnabled;
-use Wsmallnews\User\AuthsConfig;
+use Wsmallnews\User\Facades\AuthsConfig;
 
 class EnableTwoFactorAuthentication
 {
