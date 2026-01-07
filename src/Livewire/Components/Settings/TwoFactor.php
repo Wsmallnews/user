@@ -6,7 +6,6 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components;
-use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -72,7 +71,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
         $this->requiresConfirmation = AuthsConfig::confirmsTwoFactorAuthentication($this->module);
     }
 
-
     public function enableAction(): Action
     {
         return Action::make('enable')
@@ -93,13 +91,13 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                 $this->loadSetupData();
 
                 return [
-                    Text::make(new HtmlString('<div class="w-full mx-auto">'.$this->qrCodeSvg.'</div>')),
+                    Text::make(new HtmlString('<div class="w-full mx-auto">' . $this->qrCodeSvg . '</div>')),
                     Text::make('or, enter the code manually'),
                     Components\TextInput::make('setup_key')
                         ->hiddenLabel()
                         ->readOnly()
                         ->default($this->manualSetupKey)
-                        ->copyable(copyMessage: 'Copied!', copyMessageDuration: 1500)
+                        ->copyable(copyMessage: 'Copied!', copyMessageDuration: 1500),
                 ];
             })
             ->modalIcon(Heroicon::QrCode)
@@ -108,10 +106,8 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             ->modalAlignment(Alignment::Center)
             ->modalWidth(Width::Medium)
             ->rateLimit(5)
-            ->action(fn() => $this->showModal = true);
+            ->action(fn () => $this->showModal = true);
     }
-
-
 
     /**
      * Enable two-factor authentication for the user.
