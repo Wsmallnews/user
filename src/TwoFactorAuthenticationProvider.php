@@ -3,8 +3,8 @@
 namespace Wsmallnews\User;
 
 use Illuminate\Contracts\Cache\Repository;
-use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
 use PragmaRX\Google2FA\Google2FA;
+use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
 
 class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProviderContract
 {
@@ -25,8 +25,6 @@ class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProvider
     /**
      * Create a new two factor authentication provider instance.
      *
-     * @param  \PragmaRX\Google2FA\Google2FA  $engine
-     * @param  \Illuminate\Contracts\Cache\Repository|null  $cache
      * @return void
      */
     public function __construct(Google2FA $engine, ?Repository $cache = null)
@@ -38,7 +36,6 @@ class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProvider
     /**
      * Generate a new secret key.
      *
-     * @param  int  $secretLength
      * @return string
      */
     public function generateSecretKey(int $secretLength = 16)
@@ -73,7 +70,9 @@ class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProvider
         }
 
         $timestamp = $this->engine->verifyKeyNewer(
-            $secret, $code, optional($this->cache)->get($key = 'fortify.2fa_codes.'.md5($code))
+            $secret,
+            $code,
+            optional($this->cache)->get($key = 'fortify.2fa_codes.' . md5($code))
         );
 
         if ($timestamp !== false) {

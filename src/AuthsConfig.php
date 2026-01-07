@@ -3,20 +3,18 @@
 namespace Wsmallnews\User;
 
 use Closure;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 
 class AuthsConfig
 {
-
     /**
      * The encrypter instance that is used to encrypt attributes.
      *
      * @var \Illuminate\Contracts\Encryption\Encrypter|null
      */
     public $encrypter;
-
 
     // $auth = [
     //     'guard' => 'web',
@@ -81,13 +79,11 @@ class AuthsConfig
      * 确认是否开启了双因素认证
      *
      * @param  string  $module  所属模块
-     * @return bool
      */
     public function confirmsTwoFactorAuthentication($module): bool
     {
         return $this->getConfig($module, 'two-factor.enabled', false) && $this->getConfig($module, 'two-factor.confirm', false);
     }
-
 
     /**
      * Set the encrypter instance that will be used to encrypt attributes.

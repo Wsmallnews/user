@@ -17,14 +17,14 @@ use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
-use Livewire\Component;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
+use Wsmallnews\User\Facades\AuthsConfig;
 use Wsmallnews\User\Livewire\Actions\ConfirmTwoFactorAuthentication;
 use Wsmallnews\User\Livewire\Actions\DisableTwoFactorAuthentication;
 use Wsmallnews\User\Livewire\Actions\EnableTwoFactorAuthentication;
-use Wsmallnews\User\Facades\AuthsConfig;
 
 class TwoFactor extends Component implements HasActions, HasSchemas
 {
@@ -34,7 +34,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
     public ?array $formData = [];
 
     public string $module;
-
 
     #[Locked]
     public bool $twoFactorEnabled;
@@ -56,7 +55,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
     public string $code = '';
 
     protected ?string $guard = null;
-
 
     /**
      * Mount the component.
@@ -198,7 +196,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
     public function disable(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
     {
         $user = Auth::guard($this->guard)->user();
-        
+
         $disableTwoFactorAuthentication($user);
 
         $this->twoFactorEnabled = false;
@@ -251,9 +249,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             'buttonText' => __('Continue'),
         ];
     }
-
-
-
 
     public function form(Schema $schema): Schema
     {
