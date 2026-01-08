@@ -9,10 +9,8 @@ use Filament\Forms\Components;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
-use Filament\Support\Facades\FilamentView;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
@@ -88,15 +86,13 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                         ->extraAttributes([
                             'class' => 'w-full flex justify-center items-center',
                         ]),
-                    
+
                     Action::make('close')       // 不需要确认，关闭当前modal
                         ->label(__('Close'))
                         ->extraAttributes([
                             'class' => 'w-full',
                         ])
-                        ->action(function () {
-                            
-                        })
+                        ->action(function () {})
                         ->visible(! $this->requiresConfirmation),
                     Action::make('continue')
                         ->label(__('Continue'))
@@ -153,7 +149,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             ->modalCancelAction(false);
     }
 
-
     public function disableAction(): Action
     {
         return Action::make('disable')
@@ -172,7 +167,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             });
     }
 
-
     /**
      * Load the two-factor authentication setup data for the user.
      */
@@ -189,7 +183,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             $this->reset('qrCodeSvg', 'manualSetupKey');
         }
     }
-
 
     public function render()
     {
