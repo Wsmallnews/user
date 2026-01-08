@@ -59,7 +59,6 @@ class RecoveryCodes extends Component implements HasActions, HasSchemas
             });
     }
 
-
     /**
      * Load the recovery codes for the user.
      */
