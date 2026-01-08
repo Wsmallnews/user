@@ -8,6 +8,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 
@@ -17,6 +18,7 @@ class ConfirmPassword extends Component implements HasSchemas
 
     public ?array $formData = [];
 
+    #[Locked]
     public string $module;
 
     public function form(Schema $schema): Schema

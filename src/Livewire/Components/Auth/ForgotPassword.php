@@ -9,6 +9,7 @@ use Filament\Schemas\Schema;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Password;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 
@@ -18,6 +19,7 @@ class ForgotPassword extends Component implements HasSchemas
 
     public ?array $formData = [];
 
+    #[Locked]
     public string $module;
 
     public function form(Schema $schema): Schema

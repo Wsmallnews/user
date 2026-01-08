@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 
@@ -23,6 +24,7 @@ class ResetPassword extends Component implements HasSchemas
 
     public ?array $formData = [];
 
+    #[Locked]
     public string $module;
 
     public function mount(): void

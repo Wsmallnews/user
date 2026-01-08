@@ -13,6 +13,7 @@ class RecoveryCodes extends Component
     #[Locked]
     public array $recoveryCodes = [];
 
+    #[Locked]
     public string $module;
 
     protected ?string $guard = null;

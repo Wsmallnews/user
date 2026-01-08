@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 
@@ -22,6 +23,7 @@ class Login extends Component implements HasSchemas
 
     public ?array $formData = [];
 
+    #[Locked]
     public string $module;
 
     public function form(Schema $schema): Schema
