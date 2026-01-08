@@ -12,14 +12,7 @@
             <livewire:sn-user-components-settings-two-factor-recovery-codes :module="$module" :$requiresConfirmation />
 
             <div class="flex justify-start">
-                <x-filament::button type="button" 
-                    color="danger"
-                    class="text-white"
-                    icon="heroicon-m-shield-exclamation"
-                    wire:click="disable"
-                >
-                    {{ __('Disable 2FA') }}
-                </x-filament::button>
+                {{ $this->disableAction }}
             </div>
         </div>
     @else
@@ -33,14 +26,6 @@
             </div>
 
             {{ $this->enableAction }}
-
-            {{-- <x-filament::button type="button" 
-                class="text-white"
-                icon="heroicon-m-shield-check"
-                wire:click="enable"
-            >
-                {{ __('Enable 2FA') }}
-            </x-filament::button> --}}
         </div>
     @endif
 

@@ -17,7 +17,6 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
-use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
 use Wsmallnews\User\Facades\AuthsConfig;
@@ -32,23 +31,20 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
     public ?array $formData = [];
 
+    #[Locked]
     public string $module;
 
     #[Locked]
-    public bool $twoFactorEnabled;
+    public bool $twoFactorEnabled;      // 当前用户是否启用双因素
 
     #[Locked]
-    public bool $requiresConfirmation;
+    public bool $requiresConfirmation;  // 双因素启用，是否必须确认才可启用成功
 
     #[Locked]
     public string $qrCodeSvg = '';
 
     #[Locked]
     public string $manualSetupKey = '';
-
-    public bool $showModal = false;
-
-    public bool $showVerificationStep = false;
 
     protected ?string $guard = null;
 
@@ -61,6 +57,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
         $this->guard = AuthsConfig::getConfig($this->module, 'guard');
         if (AuthsConfig::confirmsTwoFactorAuthentication($this->module) && is_null(Auth::guard($this->guard)->user()->two_factor_confirmed_at)) {
+            // 如果用户未确认，双因素启用失败，清空 two_factor_secret， two_factor_recovery_codes 数据
             $disableTwoFactorAuthentication($this->module, Auth::guard($this->guard)->user());
         }
 
@@ -73,15 +70,14 @@ class TwoFactor extends Component implements HasActions, HasSchemas
         return Action::make('enable')
             ->label(__('Enable 2FA'))
             ->icon(Heroicon::ShieldCheck)
-            // ->fillForm(fn(): array => [
-            //     'setup_key' => $this->manualSetupKey,
-            // ])
             ->schema(function (EnableTwoFactorAuthentication $enableTwoFactorAuthentication) {
                 $user = Auth::guard($this->guard)->user();
 
+                // 填充双因素字段
                 $enableTwoFactorAuthentication($user);
 
                 if (! $this->requiresConfirmation) {
+                    // 如果不需要确认，直接启用双因素
                     $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication($this->module);
                 }
 
@@ -92,6 +88,16 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                         ->extraAttributes([
                             'class' => 'w-full flex justify-center items-center',
                         ]),
+                    
+                    Action::make('close')       // 不需要确认，关闭当前modal
+                        ->label(__('Close'))
+                        ->extraAttributes([
+                            'class' => 'w-full',
+                        ])
+                        ->action(function () {
+                            
+                        })
+                        ->visible(! $this->requiresConfirmation),
                     Action::make('continue')
                         ->label(__('Continue'))
                         ->schema(function () {
@@ -124,8 +130,9 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
                             // $this->closeModal();
 
-                            $this->twoFactorEnabled = true;
-                        }),
+                            $this->twoFactorEnabled = true;     // 用户双因素启用成功
+                        })
+                        ->visible($this->requiresConfirmation),
                     Text::make('or, enter the code manually')
                         ->view('sn-user::livewire.components.divide'),
                     Components\TextInput::make('setup_key')
@@ -146,23 +153,25 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             ->modalCancelAction(false);
     }
 
-    /**
-     * Enable two-factor authentication for the user.
-     */
-    // public function enable(EnableTwoFactorAuthentication $enableTwoFactorAuthentication): void
-    // {
-    //     $user = Auth::guard($this->guard)->user();
 
-    //     $enableTwoFactorAuthentication($user);
+    public function disableAction(): Action
+    {
+        return Action::make('disable')
+            ->label(__('Disable 2FA'))
+            ->icon(Heroicon::ShieldExclamation)
+            ->color('danger')
+            ->requiresConfirmation()
+            ->modalHeading('Disable 2FA')
+            ->modalDescription('Are you sure you\'d like to disable two-factor authentication? ')
+            ->action(function (DisableTwoFactorAuthentication $disableTwoFactorAuthentication) {
+                $user = Auth::guard($this->guard)->user();
 
-    //     if (! $this->requiresConfirmation) {
-    //         $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication($this->module);
-    //     }
+                $disableTwoFactorAuthentication($this->module, $user);
 
-    //     $this->loadSetupData();
+                $this->twoFactorEnabled = false;
+            });
+    }
 
-    //     $this->showModal = true;
-    // }
 
     /**
      * Load the two-factor authentication setup data for the user.
@@ -181,146 +190,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
         }
     }
 
-    /**
-     * Show the two-factor verification step if necessary.
-     */
-    public function showVerificationIfNecessary(): void
-    {
-        if ($this->requiresConfirmation) {
-            $this->showVerificationStep = true;
-
-            $this->resetErrorBag();
-
-            return;
-        }
-
-        $this->closeModal();
-    }
-
-    /**
-     * Confirm two-factor authentication for the user.
-     */
-    // public function confirmTwoFactor(ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication): void
-    // {
-    //     $user = Auth::guard($this->guard)->user();
-
-    //     $this->validate();
-
-    //     $confirmTwoFactorAuthentication($user, $this->code);
-
-    //     $this->closeModal();
-
-    //     $this->twoFactorEnabled = true;
-    // }
-
-    /**
-     * Reset two-factor verification state.
-     */
-    public function resetVerification(): void
-    {
-        $this->reset('code', 'showVerificationStep');
-
-        $this->resetErrorBag();
-    }
-
-    /**
-     * Disable two-factor authentication for the user.
-     */
-    public function disable(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
-    {
-        $user = Auth::guard($this->guard)->user();
-
-        $disableTwoFactorAuthentication($user);
-
-        $this->twoFactorEnabled = false;
-    }
-
-    /**
-     * Close the two-factor authentication modal.
-     */
-    public function closeModal(): void
-    {
-        $this->reset(
-            'code',
-            'manualSetupKey',
-            'qrCodeSvg',
-            'showModal',
-            'showVerificationStep',
-        );
-
-        $this->resetErrorBag();
-
-        if (! $this->requiresConfirmation) {
-            $this->twoFactorEnabled = Auth::guard($this->guard)->user()->hasEnabledTwoFactorAuthentication($this->module);
-        }
-    }
-
-    /**
-     * Get the current modal configuration state.
-     */
-    public function getModalConfigProperty(): array
-    {
-        if ($this->twoFactorEnabled) {
-            return [
-                'title' => __('Two-Factor Authentication Enabled'),
-                'description' => __('Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.'),
-                'buttonText' => __('Close'),
-            ];
-        }
-
-        if ($this->showVerificationStep) {
-            return [
-                'title' => __('Verify Authentication Code'),
-                'description' => __('Enter the 6-digit code from your authenticator app.'),
-                'buttonText' => __('Continue'),
-            ];
-        }
-
-        return [
-            'title' => __('Enable Two-Factor Authentication'),
-            'description' => __('To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app.'),
-            'buttonText' => __('Continue'),
-        ];
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                Components\TextInput::make('password')
-                    ->label('密码')
-                    ->aboveLabel('敏感操作，请在继续之前确认您的密码。')
-                    ->placeholder('请确认密码')
-                    ->required()
-                    ->password()
-                    ->revealable(),
-            ])
-            ->statePath('formData');
-    }
-
-    /**
-     * Confirm the current user's password.
-     */
-    public function confirmPassword(): void
-    {
-        $formData = $this->form->getState();
-
-        // 当前 guard
-        $guard = AuthsConfig::getConfig($this->module, 'guard');
-
-        if (! Auth::guard($guard)->validate([
-            'email' => Auth::guard($guard)->user()->email,
-            'password' => $formData['password'],
-        ])) {
-            $this->addError('formData.password', __('auth.password'));
-
-            return;
-        }
-
-        session(['auth.password_confirmed_at' => time()]);
-
-        $this->redirectIntended(default: AuthsConfig::getConfig($this->module, 'urls.index'), navigate: FilamentView::hasSpaMode());
-    }
 
     public function render()
     {
