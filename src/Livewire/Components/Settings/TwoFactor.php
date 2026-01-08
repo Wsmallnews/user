@@ -116,15 +116,15 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                         ->modalCancelActionLabel(__('Back'))
                         ->modalSubmitActionLabel(__('Confirm'))
                         ->modalFooterActionsAlignment(Alignment::Center)
+                        ->closeModalByClickingAway(false)
+                        ->cancelParentActions()     // 确认后将父级modal 也关闭
                         ->extraAttributes([
                             'class' => 'w-full',
                         ])
                         ->action(function (ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication, array $data) {
                             $user = Auth::guard($this->guard)->user();
 
-                            $confirmTwoFactorAuthentication($user, (string) $data['code'] ?? '');
-
-                            // $this->closeModal();
+                            $confirmTwoFactorAuthentication($user, (string) $data['code'] ?? '', 'mountedActions.1.data');
 
                             $this->twoFactorEnabled = true;     // 用户双因素启用成功
                         })
@@ -144,6 +144,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             ->modalAlignment(Alignment::Center)
             ->modalWidth(Width::Medium)
             ->modalAutofocus(false)
+            ->closeModalByClickingAway(false)
             ->rateLimit(5)
             ->modalSubmitAction(false)
             ->modalCancelAction(false);

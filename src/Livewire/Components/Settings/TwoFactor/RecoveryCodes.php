@@ -2,14 +2,23 @@
 
 namespace Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
 
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\AuthsConfig;
 use Wsmallnews\User\Livewire\Actions\GenerateNewRecoveryCodes;
 
-class RecoveryCodes extends Component
+class RecoveryCodes extends Component implements HasActions, HasSchemas
 {
+    use InteractsWithActions;
+    use InteractsWithSchemas;
+
     #[Locked]
     public array $recoveryCodes = [];
 
@@ -31,12 +40,25 @@ class RecoveryCodes extends Component
     /**
      * Generate new recovery codes for the user.
      */
-    public function regenerateRecoveryCodes(GenerateNewRecoveryCodes $generateNewRecoveryCodes): void
+    public function regenerateAction(): Action
     {
-        $generateNewRecoveryCodes(Auth::guard($this->guard)->user());
+        return Action::make('regenerate')
+            ->label(__('Regenerate Recovery Codes'))
+            ->icon(Heroicon::ArrowPath)
+            ->color('gray')
+            ->requiresConfirmation()
+            ->modalIconColor('danger')
+            ->modalHeading('Regenerate Recovery Codes')
+            ->modalDescription('Are you sure you\'d like to regenerate recovery codes? ')
+            ->action(function (GenerateNewRecoveryCodes $generateNewRecoveryCodes) {
+                $user = Auth::guard($this->guard)->user();
 
-        $this->loadRecoveryCodes();
+                $generateNewRecoveryCodes($user);
+
+                $this->loadRecoveryCodes();
+            });
     }
+
 
     /**
      * Load the recovery codes for the user.

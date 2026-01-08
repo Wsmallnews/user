@@ -33,13 +33,13 @@ class ConfirmTwoFactorAuthentication
      * @param  string  $code
      * @return void
      */
-    public function __invoke($user, $code)
+    public function __invoke($user, $code, $statePath = null)
     {
         if (empty($user->two_factor_secret) ||
             empty($code) ||
             ! $this->provider->verify(AuthsConfig::currentEncrypter()->decrypt($user->two_factor_secret), $code)) {
             throw ValidationException::withMessages([
-                'code' => [__('The provided two factor authentication code was invalid.')],
+                ($statePath ? $statePath . '.' : '') . 'code' => [__('The provided two factor authentication code was invalid.')],
             ])->errorBag('confirmTwoFactorAuthentication');
         }
 
