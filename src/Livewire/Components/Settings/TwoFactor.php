@@ -44,7 +44,11 @@ class TwoFactor extends Component implements HasActions, HasSchemas
     #[Locked]
     public string $manualSetupKey = '';
 
+    public array $flash = [];
+
     protected ?string $guard = null;
+
+
 
     /**
      * Mount the component.
@@ -62,6 +66,19 @@ class TwoFactor extends Component implements HasActions, HasSchemas
         $this->twoFactorEnabled = Auth::guard($this->guard)->user()->hasEnabledTwoFactorAuthentication($this->module);
         $this->requiresConfirmation = AuthsConfig::confirmsTwoFactorAuthentication($this->module);
     }
+
+
+    public function bbbbb()
+    {
+        $this->flash = [
+            'title' => __('2FA Enabled'),
+            'description' => __('Your two-factor authentication has been enabled.'),
+            'color' => 'success',
+            'border' => true,
+            'icon' => Heroicon::ShieldCheck,
+        ];
+    }
+
 
     public function enableAction(): Action
     {
