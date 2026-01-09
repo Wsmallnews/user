@@ -48,8 +48,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
     protected ?string $guard = null;
 
-
-
     /**
      * Mount the component.
      */
@@ -67,7 +65,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
         $this->requiresConfirmation = AuthsConfig::confirmsTwoFactorAuthentication($this->module);
     }
 
-
     public function bbbbb()
     {
         $this->flash = [
@@ -78,7 +75,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             'icon' => Heroicon::ShieldCheck,
         ];
     }
-
 
     public function enableAction(): Action
     {
