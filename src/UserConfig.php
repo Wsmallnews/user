@@ -87,7 +87,7 @@ class UserConfig
      *
      * @return \Illuminate\Contracts\Encryption\Encrypter
      */
-    public function currentEncrypter($module): \Illuminate\Contracts\Encryption\Encrypter
+    public function currentEncrypter(string $module): \Illuminate\Contracts\Encryption\Encrypter
     {
         return $this->getConfig($module, 'encrypter', null) ?? Model::$encrypter ?? Crypt::getFacadeRoot();
     }

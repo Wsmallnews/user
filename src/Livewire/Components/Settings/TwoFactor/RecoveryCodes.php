@@ -53,7 +53,7 @@ class RecoveryCodes extends Component implements HasActions, HasSchemas
             ->action(function (GenerateNewRecoveryCodes $generateNewRecoveryCodes) {
                 $user = Auth::guard($this->guard)->user();
 
-                $generateNewRecoveryCodes($user);
+                $generateNewRecoveryCodes($this->module, $user);
 
                 $this->loadRecoveryCodes();
             });

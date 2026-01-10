@@ -15,10 +15,10 @@ class GenerateNewRecoveryCodes
      * @param  mixed  $user
      * @return void
      */
-    public function __invoke($user)
+    public function __invoke(string $module, $user)
     {
         $user->forceFill([
-            'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(json_encode(Collection::times(8, function () {
+            'two_factor_recovery_codes' => UserConfig::currentEncrypter($module)->encrypt(json_encode(Collection::times(8, function () {
                 return RecoveryCode::generate();
             })->all())),
         ])->save();

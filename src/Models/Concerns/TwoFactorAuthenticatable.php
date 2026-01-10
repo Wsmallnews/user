@@ -35,9 +35,9 @@ trait TwoFactorAuthenticatable
      *
      * @return array
      */
-    public function recoveryCodes()
+    public function recoveryCodes(string $module)
     {
-        return json_decode(UserConfig::currentEncrypter()->decrypt($this->two_factor_recovery_codes), true);
+        return json_decode(UserConfig::currentEncrypter($module)->decrypt($this->two_factor_recovery_codes), true);
     }
 
     /**
@@ -46,13 +46,13 @@ trait TwoFactorAuthenticatable
      * @param  string  $code
      * @return void
      */
-    public function replaceRecoveryCode($code)
+    public function replaceRecoveryCode(string $module, $code)
     {
         $this->forceFill([
-            'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(str_replace(
+            'two_factor_recovery_codes' => UserConfig::currentEncrypter($module)->encrypt(str_replace(
                 $code,
                 RecoveryCode::generate(),
-                UserConfig::currentEncrypter()->decrypt($this->two_factor_recovery_codes)
+                UserConfig::currentEncrypter($module)->decrypt($this->two_factor_recovery_codes)
             )),
         ])->save();
 
@@ -64,14 +64,14 @@ trait TwoFactorAuthenticatable
      *
      * @return string
      */
-    public function twoFactorQrCodeSvg()
+    public function twoFactorQrCodeSvg(string $module)
     {
         $svg = (new Writer(
             new ImageRenderer(
                 new RendererStyle(192, 0, null, null, Fill::uniformColor(new Rgb(255, 255, 255), new Rgb(45, 55, 72))),
                 new SvgImageBackEnd
             )
-        ))->writeString($this->twoFactorQrCodeUrl());
+        ))->writeString($this->twoFactorQrCodeUrl($module));
 
         return trim(substr($svg, strpos($svg, "\n") + 1));
     }
@@ -81,12 +81,12 @@ trait TwoFactorAuthenticatable
      *
      * @return string
      */
-    public function twoFactorQrCodeUrl()
+    public function twoFactorQrCodeUrl(string $module)
     {
         return app(TwoFactorAuthenticationProvider::class)->qrCodeUrl(
             config('app.name'),
             $this->email,
-            UserConfig::currentEncrypter()->decrypt($this->two_factor_secret)
+            UserConfig::currentEncrypter($module)->decrypt($this->two_factor_secret)
         );
     }
 }

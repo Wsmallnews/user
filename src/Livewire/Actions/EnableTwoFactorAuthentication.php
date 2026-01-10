@@ -34,14 +34,14 @@ class EnableTwoFactorAuthentication
      * @param  bool  $force
      * @return void
      */
-    public function __invoke($user, $force = false)
+    public function __invoke(string $module, $user, $force = false)
     {
         if (empty($user->two_factor_secret) || $force === true) {
             $secretLength = 16;
 
             $user->forceFill([
-                'two_factor_secret' => UserConfig::currentEncrypter()->encrypt($this->provider->generateSecretKey($secretLength)),
-                'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(json_encode(Collection::times(8, function () {
+                'two_factor_secret' => UserConfig::currentEncrypter($module)->encrypt($this->provider->generateSecretKey($secretLength)),
+                'two_factor_recovery_codes' => UserConfig::currentEncrypter($module)->encrypt(json_encode(Collection::times(8, function () {
                     return RecoveryCode::generate();
                 })->all())),
             ])->save();

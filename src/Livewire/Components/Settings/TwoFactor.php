@@ -75,7 +75,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                 $user = Auth::guard($this->guard)->user();
 
                 // 填充双因素字段
-                $enableTwoFactorAuthentication($user);
+                $enableTwoFactorAuthentication($this->module, $user);
 
                 if (! $this->requiresConfirmation) {
                     // 如果不需要确认，直接启用双因素
@@ -127,7 +127,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                         ->action(function (ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication, array $data) {
                             $user = Auth::guard($this->guard)->user();
 
-                            $confirmTwoFactorAuthentication($user, (string) $data['code'] ?? '', 'mountedActions.1.data');
+                            $confirmTwoFactorAuthentication($this->module, $user, (string) $data['code'] ?? '', 'mountedActions.1.data');
 
                             $this->twoFactorEnabled = true;     // 用户双因素启用成功
                         })
@@ -179,7 +179,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
         $user = Auth::guard($this->guard)->user();
 
         try {
-            $this->qrCodeSvg = $user?->twoFactorQrCodeSvg();
+            $this->qrCodeSvg = $user?->twoFactorQrCodeSvg($this->module);
             $this->manualSetupKey = decrypt($user->two_factor_secret);
         } catch (\Exception) {
             $this->addError('setupData', 'Failed to fetch setup data.');
