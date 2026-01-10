@@ -21,6 +21,8 @@ class VerifyEmail extends Component implements HasSchemas
 
     public ?array $formData = [];
 
+    public bool $register = false;
+
     #[Locked]
     public string $module;
 
@@ -28,7 +30,8 @@ class VerifyEmail extends Component implements HasSchemas
     {
         return $schema
             ->components([
-                Text::make('感谢您的注册！在开始之前，您能否点击我们刚刚发送给您的电子邮件中的链接，以验证您的电子邮件地址？如果您没有收到该电子邮件，我们很乐意为您重新发送一封。'),
+                Text::make('感谢您的注册！在开始之前，您能否点击我们刚刚发送给您的电子邮件中的链接，以验证您的电子邮件地址？如果您没有收到该电子邮件，我们很乐意为您重新发送一封。')->visible($this->register),
+                Text::make('您的电子邮箱还未验证，在继续之前，请先验证您的电子邮件')->visible(!$this->register),
             ])
             ->statePath('formData');
     }
@@ -52,7 +55,7 @@ class VerifyEmail extends Component implements HasSchemas
 
         Auth::guard($guard)->user()->sendEmailVerificationNotification();
 
-        Session::flash('status', 'verification-link-sent');
+        Session::flash('status', '验证邮件已发送');
     }
 
     /**
@@ -62,6 +65,11 @@ class VerifyEmail extends Component implements HasSchemas
     {
         // 退出登录
         $logout(UserConfig::getConfig($this->module, 'guard'));
+
+        // 通知用户退出登录
+        \Filament\Notifications\Notification::make()
+            ->title('您已退出登录')
+            ->success()->send();
 
         $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }

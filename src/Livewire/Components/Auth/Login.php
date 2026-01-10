@@ -62,6 +62,10 @@ class Login extends Component implements HasSchemas
 
         Session::regenerate();
 
+        \Filament\Notifications\Notification::make()
+            ->title('登录成功')
+            ->success()->send();
+
         // 退回上个url
         $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
@@ -105,7 +109,6 @@ class Login extends Component implements HasSchemas
             'seconds' => $seconds,
             'minutes' => ceil($seconds / 60),
         ]));
-
     }
 
     /**

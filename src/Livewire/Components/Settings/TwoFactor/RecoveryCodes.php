@@ -50,6 +50,7 @@ class RecoveryCodes extends Component implements HasActions, HasSchemas
             ->modalIconColor('danger')
             ->modalHeading('Regenerate Recovery Codes')
             ->modalDescription('Are you sure you\'d like to regenerate recovery codes? ')
+            ->successNotificationTitle(__('Recovery codes regenerated successfully'))
             ->action(function (GenerateNewRecoveryCodes $generateNewRecoveryCodes) {
                 $user = Auth::guard($this->guard)->user();
 

@@ -91,6 +91,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
                     Action::make('close')       // 不需要确认，关闭当前modal
                         ->label(__('Close'))
+                        ->cancelParentActions()     // 确认后将父级modal 也关闭
                         ->extraAttributes([
                             'class' => 'w-full',
                         ])
@@ -123,6 +124,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                         ->extraAttributes([
                             'class' => 'w-full',
                         ])
+                        ->successNotificationTitle(__('2FA enabled successfully'))
                         ->action(function (ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication, array $data) {
                             $user = Auth::guard($this->guard)->user();
 
@@ -141,8 +143,17 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                 ];
             })
             ->modalIcon(Heroicon::QrCode)
-            ->modalHeading('Enable Two-Factor Authentication')
-            ->modalDescription('To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app.')
+            ->modalHeading(function () {
+                return $this->requiresConfirmation
+                    ? __('Enable Two-Factor Authentication')
+                    : __('Two-Factor Authentication Enabled');
+            })
+            ->modalDescription(function () {
+                match ($this->requiresConfirmation) {
+                    true => __("To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app."),
+                    false => __("Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app."),
+                };
+            })
             ->modalAlignment(Alignment::Center)
             ->modalWidth(Width::Medium)
             ->modalAutofocus(false)

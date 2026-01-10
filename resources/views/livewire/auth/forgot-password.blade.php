@@ -4,6 +4,10 @@
 
 <div class="w-full" >
     <form wire:submit="sendPasswordResetLink">
+        @if (session('status'))
+            <x-sn-support::alert class="mb-4" color="success" :title="session('status')" />
+        @endif
+
         {{ $this->form }}
         
         <div class="flex flex-col mt-6 gap-4">

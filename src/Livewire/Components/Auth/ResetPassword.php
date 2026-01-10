@@ -97,7 +97,9 @@ class ResetPassword extends Component implements HasSchemas
             return;
         }
 
-        Session::flash('status', __($status));
+        \Filament\Notifications\Notification::make()
+            ->title(__($status))
+            ->success()->send();
 
         $this->redirect(UserConfig::getConfig($this->module, 'urls.login'), FilamentView::hasSpaMode());
     }

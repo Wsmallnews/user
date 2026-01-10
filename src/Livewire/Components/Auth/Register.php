@@ -9,6 +9,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -71,11 +72,23 @@ class Register extends Component implements HasSchemas
             return;
         }
 
+        // 自定义邮箱验证链接
+        VerifyEmailNotification::createUrlUsing(function ($notifiable) {
+            return UserConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [
+                'id' => $notifiable->getKey(),
+                'hash' => sha1($notifiable->getEmailForVerification()),
+            ]);
+        });
         event(new Registered($user));
 
         Auth::guard(UserConfig::getConfig($this->module, 'guard'))->login($user);
 
-        $this->redirect(UserConfig::getConfig($this->module, 'urls.profile'), FilamentView::hasSpaMode());
+        \Filament\Notifications\Notification::make()
+            ->title('注册成功')
+            ->success()->send();
+
+        // 跳转到邮箱验证
+        $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?register=1', FilamentView::hasSpaMode());
     }
 
     public function render()
