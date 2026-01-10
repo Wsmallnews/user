@@ -81,11 +81,8 @@ class UserConfig
         return $this->getConfig($module, 'two-factor.enabled', false) && $this->getConfig($module, 'two-factor.confirm', false);
     }
 
-
     /**
      * Get the current encrypter being used by the model.
-     *
-     * @return \Illuminate\Contracts\Encryption\Encrypter
      */
     public function currentEncrypter($module): \Illuminate\Contracts\Encryption\Encrypter
     {
