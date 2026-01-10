@@ -150,8 +150,8 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             })
             ->modalDescription(function () {
                 match ($this->requiresConfirmation) {
-                    true => __("To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app."),
-                    false => __("Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app."),
+                    true => __('To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app.'),
+                    false => __('Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.'),
                 };
             })
             ->modalAlignment(Alignment::Center)
