@@ -5,7 +5,7 @@ namespace Wsmallnews\User\Livewire\Actions;
 use Illuminate\Support\Collection;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\Events\TwoFactorAuthenticationEnabled;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\RecoveryCode;
 
 class EnableTwoFactorAuthentication
@@ -40,8 +40,8 @@ class EnableTwoFactorAuthentication
             $secretLength = 16;
 
             $user->forceFill([
-                'two_factor_secret' => AuthsConfig::currentEncrypter()->encrypt($this->provider->generateSecretKey($secretLength)),
-                'two_factor_recovery_codes' => AuthsConfig::currentEncrypter()->encrypt(json_encode(Collection::times(8, function () {
+                'two_factor_secret' => UserConfig::currentEncrypter()->encrypt($this->provider->generateSecretKey($secretLength)),
+                'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(json_encode(Collection::times(8, function () {
                     return RecoveryCode::generate();
                 })->all())),
             ])->save();

@@ -17,7 +17,7 @@ use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Actions\ConfirmTwoFactorAuthentication;
 use Wsmallnews\User\Livewire\Actions\DisableTwoFactorAuthentication;
 use Wsmallnews\User\Livewire\Actions\EnableTwoFactorAuthentication;
@@ -53,28 +53,18 @@ class TwoFactor extends Component implements HasActions, HasSchemas
      */
     public function mount(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
     {
-        abort_unless(AuthsConfig::getConfig($this->module, 'two-factor.enabled', true), Response::HTTP_FORBIDDEN);
+        abort_unless(UserConfig::getConfig($this->module, 'two-factor.enabled', true), Response::HTTP_FORBIDDEN);
 
-        $this->guard = AuthsConfig::getConfig($this->module, 'guard');
-        if (AuthsConfig::confirmsTwoFactorAuthentication($this->module) && is_null(Auth::guard($this->guard)->user()->two_factor_confirmed_at)) {
+        $this->guard = UserConfig::getConfig($this->module, 'guard');
+        if (UserConfig::confirmsTwoFactorAuthentication($this->module) && is_null(Auth::guard($this->guard)->user()->two_factor_confirmed_at)) {
             // 如果用户未确认，双因素启用失败，清空 two_factor_secret， two_factor_recovery_codes 数据
             $disableTwoFactorAuthentication($this->module, Auth::guard($this->guard)->user());
         }
 
         $this->twoFactorEnabled = Auth::guard($this->guard)->user()->hasEnabledTwoFactorAuthentication($this->module);
-        $this->requiresConfirmation = AuthsConfig::confirmsTwoFactorAuthentication($this->module);
+        $this->requiresConfirmation = UserConfig::confirmsTwoFactorAuthentication($this->module);
     }
 
-    public function bbbbb()
-    {
-        $this->flash = [
-            'title' => __('2FA Enabled'),
-            'description' => __('Your two-factor authentication has been enabled.'),
-            'color' => 'success',
-            'border' => true,
-            'icon' => Heroicon::ShieldCheck,
-        ];
-    }
 
     public function enableAction(): Action
     {

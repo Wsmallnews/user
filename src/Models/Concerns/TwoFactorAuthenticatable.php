@@ -10,7 +10,7 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\Events\RecoveryCodeReplaced;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\RecoveryCode;
 
 trait TwoFactorAuthenticatable
@@ -22,7 +22,7 @@ trait TwoFactorAuthenticatable
      */
     public function hasEnabledTwoFactorAuthentication(?string $module = null)
     {
-        if (AuthsConfig::confirmsTwoFactorAuthentication($module)) {
+        if (UserConfig::confirmsTwoFactorAuthentication($module)) {
             return ! is_null($this->two_factor_secret) &&
                    ! is_null($this->two_factor_confirmed_at);
         }
@@ -37,7 +37,7 @@ trait TwoFactorAuthenticatable
      */
     public function recoveryCodes()
     {
-        return json_decode(AuthsConfig::currentEncrypter()->decrypt($this->two_factor_recovery_codes), true);
+        return json_decode(UserConfig::currentEncrypter()->decrypt($this->two_factor_recovery_codes), true);
     }
 
     /**
@@ -49,10 +49,10 @@ trait TwoFactorAuthenticatable
     public function replaceRecoveryCode($code)
     {
         $this->forceFill([
-            'two_factor_recovery_codes' => AuthsConfig::currentEncrypter()->encrypt(str_replace(
+            'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(str_replace(
                 $code,
                 RecoveryCode::generate(),
-                AuthsConfig::currentEncrypter()->decrypt($this->two_factor_recovery_codes)
+                UserConfig::currentEncrypter()->decrypt($this->two_factor_recovery_codes)
             )),
         ])->save();
 
@@ -86,7 +86,7 @@ trait TwoFactorAuthenticatable
         return app(TwoFactorAuthenticationProvider::class)->qrCodeUrl(
             config('app.name'),
             $this->email,
-            AuthsConfig::currentEncrypter()->decrypt($this->two_factor_secret)
+            UserConfig::currentEncrypter()->decrypt($this->two_factor_secret)
         );
     }
 }

@@ -1,5 +1,5 @@
 @php
-    use Wsmallnews\User\Facades\AuthsConfig;
+    use Wsmallnews\User\Facades\UserConfig;
 @endphp
 
 <div class="w-full" >
@@ -11,10 +11,10 @@
                 登录
             </x-filament::button>
 
-            @if (AuthsConfig::getConfig($module, 'urls.register'))
+            @if (UserConfig::getConfig($module, 'urls.register'))
                 <div class="flex text-sm items-center justify-center">
                     还没有账号？
-                    <x-filament::link href="{{ AuthsConfig::getConfig($module, 'urls.register') }}">
+                    <x-filament::link href="{{ UserConfig::getConfig($module, 'urls.register') }}">
                         去注册
                     </x-filament::link>
                 </div>

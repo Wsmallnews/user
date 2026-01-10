@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Actions\Logout;
 
 class VerifyEmail extends Component implements HasSchemas
@@ -35,16 +35,16 @@ class VerifyEmail extends Component implements HasSchemas
 
     public function sendVerification(): void
     {
-        $guard = AuthsConfig::getConfig($this->module, 'guard');
+        $guard = UserConfig::getConfig($this->module, 'guard');
         if (Auth::guard($guard)->user()->hasVerifiedEmail()) {
-            $this->redirectIntended(AuthsConfig::getConfig($this->module, 'urls.profile'), FilamentView::hasSpaMode());
+            $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.profile'), FilamentView::hasSpaMode());
 
             return;
         }
 
         // 自定义邮箱验证链接
         VerifyEmailNotification::createUrlUsing(function ($notifiable) {
-            return AuthsConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [
+            return UserConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [
                 'id' => $notifiable->getKey(),
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]);
@@ -61,9 +61,9 @@ class VerifyEmail extends Component implements HasSchemas
     public function logout(Logout $logout): void
     {
         // 退出登录
-        $logout(AuthsConfig::getConfig($this->module, 'guard'));
+        $logout(UserConfig::getConfig($this->module, 'guard'));
 
-        $this->redirect(AuthsConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
+        $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
     public function render()

@@ -1,5 +1,5 @@
 @php
-    use Wsmallnews\User\Facades\AuthsConfig;
+    use Wsmallnews\User\Facades\UserConfig;
 @endphp
 
 <div class="w-full" >
@@ -11,10 +11,10 @@
                 发送密码重置链接
             </x-filament::button>
 
-            @if (AuthsConfig::getConfig($module, 'urls.login'))
+            @if (UserConfig::getConfig($module, 'urls.login'))
                 <div class="flex text-sm items-center justify-center">
                     或者
-                    <x-filament::link href="{{ AuthsConfig::getConfig($module, 'urls.login') }}">
+                    <x-filament::link href="{{ UserConfig::getConfig($module, 'urls.login') }}">
                         去登录
                     </x-filament::link>
                 </div>

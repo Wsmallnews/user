@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 
 class ForgotPassword extends Component implements HasSchemas
 {
@@ -42,7 +42,7 @@ class ForgotPassword extends Component implements HasSchemas
 
         // 自定义密码重置链接
         ResetPassword::createUrlUsing(function ($notifiable, string $token) {
-            return AuthsConfig::getConfig($this->module, 'urls.reset-password', fieldParams: [
+            return UserConfig::getConfig($this->module, 'urls.reset-password', fieldParams: [
                 'token' => $token,
                 'email' => $notifiable->getEmailForPasswordReset(),
             ]);

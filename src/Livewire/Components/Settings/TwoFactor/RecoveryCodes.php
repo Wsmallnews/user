@@ -11,7 +11,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Actions\GenerateNewRecoveryCodes;
 
 class RecoveryCodes extends Component implements HasActions, HasSchemas
@@ -32,7 +32,7 @@ class RecoveryCodes extends Component implements HasActions, HasSchemas
      */
     public function mount(): void
     {
-        $this->guard = AuthsConfig::getConfig($this->module, 'guard');
+        $this->guard = UserConfig::getConfig($this->module, 'guard');
 
         $this->loadRecoveryCodes();
     }

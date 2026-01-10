@@ -10,7 +10,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 
 class TwoFactorAuthenticated extends Component implements HasSchemas
 {
@@ -44,7 +44,7 @@ class TwoFactorAuthenticated extends Component implements HasSchemas
         $formData = $this->form->getState();
 
         // 当前 guard
-        $guard = AuthsConfig::getConfig($this->module, 'guard');
+        $guard = UserConfig::getConfig($this->module, 'guard');
 
         if (! Auth::guard($guard)->validate([
             'email' => Auth::guard($guard)->user()->email,
@@ -57,7 +57,7 @@ class TwoFactorAuthenticated extends Component implements HasSchemas
 
         session(['auth.password_confirmed_at' => time()]);
 
-        $this->redirectIntended(default: AuthsConfig::getConfig($this->module, 'urls.index'), navigate: FilamentView::hasSpaMode());
+        $this->redirectIntended(default: UserConfig::getConfig($this->module, 'urls.index'), navigate: FilamentView::hasSpaMode());
     }
 
     public function render()

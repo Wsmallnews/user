@@ -4,7 +4,7 @@ namespace Wsmallnews\User\Livewire\Components\User;
 
 use Filament\Support\Facades\FilamentView;
 use Livewire\Component;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Actions\Logout;
 
 class UserMenu extends Component
@@ -19,9 +19,9 @@ class UserMenu extends Component
     public function logout(Logout $logout): void
     {
         // 退出登录
-        $logout(AuthsConfig::getConfig($this->module, 'guard'));
+        $logout(UserConfig::getConfig($this->module, 'guard'));
 
-        $this->redirect(AuthsConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
+        $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
     public function render()

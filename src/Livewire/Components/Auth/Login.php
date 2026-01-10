@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 
 class Login extends Component implements HasSchemas
 {
@@ -41,7 +41,7 @@ class Login extends Component implements HasSchemas
                     ->password()
                     ->revealable()
                     ->afterLabel(function () {
-                        $forgotPasswordUrl = AuthsConfig::getConfig($this->module, 'urls.forgot-password');
+                        $forgotPasswordUrl = UserConfig::getConfig($this->module, 'urls.forgot-password');
 
                         return $forgotPasswordUrl ?
                             \Filament\Actions\Action::make('forget-password')
@@ -63,7 +63,7 @@ class Login extends Component implements HasSchemas
         Session::regenerate();
 
         // 退回上个url
-        $this->redirectIntended(AuthsConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
+        $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
     protected function authenticate(): void
@@ -77,7 +77,7 @@ class Login extends Component implements HasSchemas
             });
         };
 
-        if (! Auth::guard(AuthsConfig::getConfig($this->module, 'guard'))->attempt($credentials, $formData['remember'] ?? false)) {
+        if (! Auth::guard(UserConfig::getConfig($this->module, 'guard'))->attempt($credentials, $formData['remember'] ?? false)) {
             RateLimiter::hit($this->throttleKey());
 
             $this->addError('formData.account', trans('auth.failed'));

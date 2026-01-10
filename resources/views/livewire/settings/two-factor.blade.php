@@ -1,9 +1,4 @@
 <div class="flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
-
-    @if ($flash) 
-        <x-sn-support::session-flash :$flash />
-    @endif
-
     @if ($twoFactorEnabled)
         <div class="space-y-4">
             <div class="flex items-center gap-3">
@@ -33,10 +28,5 @@
             {{ $this->enableAction }}
         </div>
     @endif
-
-        <x-filament::button type="button" wire:click="bbbbb">
-                登录
-            </x-filament::button>
-
     <x-filament-actions::modals />
 </div>

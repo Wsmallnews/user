@@ -4,7 +4,7 @@ namespace Wsmallnews\User\Livewire\Actions;
 
 use Illuminate\Support\Collection;
 use Wsmallnews\User\Events\RecoveryCodesGenerated;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\RecoveryCode;
 
 class GenerateNewRecoveryCodes
@@ -18,7 +18,7 @@ class GenerateNewRecoveryCodes
     public function __invoke($user)
     {
         $user->forceFill([
-            'two_factor_recovery_codes' => AuthsConfig::currentEncrypter()->encrypt(json_encode(Collection::times(8, function () {
+            'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(json_encode(Collection::times(8, function () {
                 return RecoveryCode::generate();
             })->all())),
         ])->save();

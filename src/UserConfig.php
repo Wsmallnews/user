@@ -7,21 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 
-class AuthsConfig
+class UserConfig
 {
-    /**
-     * The encrypter instance that is used to encrypt attributes.
-     *
-     * @var \Illuminate\Contracts\Encryption\Encrypter|null
-     */
-    public $encrypter;
-
     // $auth = [
     //     'guard' => 'web',
     //     'two-factor' => [
     //         'enabled' => true,
     //         'confirm' => true,
     //     ],
+    //     @var \Illuminate\Contracts\Encryption\Encrypter|null
+    //     encrypter => null,
     //     'urls' => [
     //         'index' => '/index',
     //         'login' => '/login',
@@ -32,6 +27,7 @@ class AuthsConfig
     //         'verify-email' => '/verify-email',
     //         'verify-email-verification' => '/verify-email/{id}/{hash}',
     //         'password-confirm' => '/password-confirm',
+    //         'two-factor' => '/two-factor',
     //     ],
     // ];
     protected ?Collection $auths;
@@ -85,26 +81,14 @@ class AuthsConfig
         return $this->getConfig($module, 'two-factor.enabled', false) && $this->getConfig($module, 'two-factor.confirm', false);
     }
 
-    /**
-     * Set the encrypter instance that will be used to encrypt attributes.
-     *
-     * @param  \Illuminate\Contracts\Encryption\Encrypter|null  $encrypter
-     * @return static
-     */
-    public function encryptUsing($encrypter)
-    {
-        $this->encrypter = $encrypter;
-
-        return $this;
-    }
 
     /**
      * Get the current encrypter being used by the model.
      *
      * @return \Illuminate\Contracts\Encryption\Encrypter
      */
-    public function currentEncrypter()
+    public function currentEncrypter($module): \Illuminate\Contracts\Encryption\Encrypter
     {
-        return $this->encrypter ?? Model::$encrypter ?? Crypt::getFacadeRoot();
+        return $this->getConfig($module, 'encrypter', null) ?? Model::$encrypter ?? Crypt::getFacadeRoot();
     }
 }

@@ -5,7 +5,7 @@ namespace Wsmallnews\User\Livewire\Actions;
 use Illuminate\Validation\ValidationException;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\Events\TwoFactorAuthenticationConfirmed;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 
 class ConfirmTwoFactorAuthentication
 {
@@ -37,7 +37,7 @@ class ConfirmTwoFactorAuthentication
     {
         if (empty($user->two_factor_secret) ||
             empty($code) ||
-            ! $this->provider->verify(AuthsConfig::currentEncrypter()->decrypt($user->two_factor_secret), $code)) {
+            ! $this->provider->verify(UserConfig::currentEncrypter()->decrypt($user->two_factor_secret), $code)) {
             throw ValidationException::withMessages([
                 ($statePath ? $statePath . '.' : '') . 'code' => [__('The provided two factor authentication code was invalid.')],
             ])->errorBag('confirmTwoFactorAuthentication');

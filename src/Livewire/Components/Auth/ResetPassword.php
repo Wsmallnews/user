@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 
 class ResetPassword extends Component implements HasSchemas
 {
@@ -99,7 +99,7 @@ class ResetPassword extends Component implements HasSchemas
 
         Session::flash('status', __($status));
 
-        $this->redirect(AuthsConfig::getConfig($this->module, 'urls.login'), FilamentView::hasSpaMode());
+        $this->redirect(UserConfig::getConfig($this->module, 'urls.login'), FilamentView::hasSpaMode());
     }
 
     public function render()

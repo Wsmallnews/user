@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\User\Facades\AuthsConfig;
+use Wsmallnews\User\Facades\UserConfig;
 
 class Register extends Component implements HasSchemas
 {
@@ -73,9 +73,9 @@ class Register extends Component implements HasSchemas
 
         event(new Registered($user));
 
-        Auth::guard(AuthsConfig::getConfig($this->module, 'guard'))->login($user);
+        Auth::guard(UserConfig::getConfig($this->module, 'guard'))->login($user);
 
-        $this->redirect(AuthsConfig::getConfig($this->module, 'urls.profile'), FilamentView::hasSpaMode());
+        $this->redirect(UserConfig::getConfig($this->module, 'urls.profile'), FilamentView::hasSpaMode());
     }
 
     public function render()
