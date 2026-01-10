@@ -65,7 +65,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
         $this->requiresConfirmation = UserConfig::confirmsTwoFactorAuthentication($this->module);
     }
 
-
     public function enableAction(): Action
     {
         return Action::make('enable')
