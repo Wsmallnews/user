@@ -31,10 +31,10 @@ use Wsmallnews\User\Livewire\Components\Auth\Login;
 use Wsmallnews\User\Livewire\Components\Auth\Register;
 use Wsmallnews\User\Livewire\Components\Auth\ResetPassword;
 use Wsmallnews\User\Livewire\Components\Auth\VerifyEmail;
+use Wsmallnews\User\Livewire\Components\Settings\Password;
+use Wsmallnews\User\Livewire\Components\Settings\Profile;
 use Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
 use Wsmallnews\User\Livewire\Components\Settings\TwoFactor\RecoveryCodes;
-use Wsmallnews\User\Livewire\Components\Settings\Profile;
-use Wsmallnews\User\Livewire\Components\Settings\Password;
 use Wsmallnews\User\Livewire\Components\User\UserMenu;
 
 class UserServiceProvider extends PackageServiceProvider
