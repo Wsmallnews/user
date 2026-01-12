@@ -23,6 +23,12 @@ class Profile extends Component implements HasSchemas
     #[Locked]
     public string $module;
 
+    public function mount()
+    {
+        $user = Auth::guard(UserConfig::getConfig($this->module, 'guard'))->user();
+        $this->form->fill($user->toArray());
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
