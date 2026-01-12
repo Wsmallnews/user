@@ -11,7 +11,7 @@
         {{ $this->form }}
         
         <div class="flex flex-col mt-6 gap-4">
-            <x-filament::button type="submit" class="text-white">
+            <x-filament::button type="submit">
                 发送密码重置链接
             </x-filament::button>
 

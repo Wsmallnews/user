@@ -3,7 +3,7 @@
         {{ $this->form }}
         
         <div class="flex flex-col mt-6 gap-4">
-            <x-filament::button type="submit" class="text-white">
+            <x-filament::button type="submit">
                 重置密码
             </x-filament::button>
         </div>

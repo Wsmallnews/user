@@ -8,7 +8,7 @@
         
 
         <div class="flex flex-col mt-6 gap-4">
-            <x-filament::button type="submit" class="text-white">
+            <x-filament::button type="submit">
                 注册
             </x-filament::button>
 
