@@ -7,6 +7,8 @@ use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -66,8 +68,10 @@ class Profile extends Component implements HasSchemas
 
         $user->fill($formData);
 
+        $shouldVerifyEmail = false;
         if ($user->isDirty('email')) {
             // 修改了邮箱，重置验证状态
+            $shouldVerifyEmail = true;
             $user->email_verified_at = null;
         }
 
@@ -76,6 +80,22 @@ class Profile extends Component implements HasSchemas
         \Filament\Notifications\Notification::make()
             ->title('个人信息更新成功')
             ->success()->send();
+
+        if ($shouldVerifyEmail) {
+            // 自定义邮箱验证链接
+            VerifyEmailNotification::createUrlUsing(function ($notifiable) {
+                return UserConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [
+                    'id' => $notifiable->getKey(),
+                    'hash' => sha1($notifiable->getEmailForVerification()),
+                ]);
+            });
+
+            // 发送邮箱验证通知
+            $user->sendEmailVerificationNotification();
+
+            // 跳转到邮箱验证
+            $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?type=update', FilamentView::hasSpaMode());
+        }
     }
 
     public function render()

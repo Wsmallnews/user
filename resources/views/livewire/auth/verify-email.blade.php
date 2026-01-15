@@ -12,10 +12,10 @@
 
         <div class="flex flex-col mt-6 gap-4">
             <x-filament::button type="submit">
-                {{ $register || session('status') ? '重新发送验证邮箱' : '发送验证邮箱' }}
+                {{ $type === 'register' || $type === 'update' || session('status') ? '重新发送验证邮箱' : '发送验证邮箱' }}
             </x-filament::button>
 
-            @if ($register)
+            @if ($type === 'register')
                 <x-filament::link tag="button" wire:click="logout">
                     注销登录
                 </x-filament::link>

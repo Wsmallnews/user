@@ -88,7 +88,7 @@ class Register extends Component implements HasSchemas
             ->success()->send();
 
         // 跳转到邮箱验证
-        $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?register=1', FilamentView::hasSpaMode());
+        $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?type=register', FilamentView::hasSpaMode());
     }
 
     public function render()
