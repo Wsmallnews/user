@@ -35,7 +35,8 @@ use Wsmallnews\User\Livewire\Components\Settings\Password;
 use Wsmallnews\User\Livewire\Components\Settings\Profile;
 use Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
 use Wsmallnews\User\Livewire\Components\Settings\TwoFactor\RecoveryCodes;
-use Wsmallnews\User\Livewire\Components\User\UserMenu;
+use Wsmallnews\User\Livewire\Components\User\Menu as UserMenu;
+use Wsmallnews\User\Livewire\Components\User\Profile as UserProfile;
 
 class UserServiceProvider extends PackageServiceProvider
 {
@@ -122,7 +123,8 @@ class UserServiceProvider extends PackageServiceProvider
         Livewire::component('sn-user-components-auth-verify-email', VerifyEmail::class);
         Livewire::component('sn-user-components-auth-confirm-password', ConfirmPassword::class);
 
-        Livewire::component('sn-user-components-user-user-menu', UserMenu::class);
+        Livewire::component('sn-user-components-user-menu', UserMenu::class);
+        Livewire::component('sn-user-components-user-profile', UserProfile::class);
 
         // 用户设置
         Livewire::component('sn-user-components-settings-two-factor', TwoFactor::class);

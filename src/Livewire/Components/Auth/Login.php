@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
@@ -84,9 +85,9 @@ class Login extends Component implements HasSchemas
         if (! Auth::guard(UserConfig::getConfig($this->module, 'guard'))->attempt($credentials, $formData['remember'] ?? false)) {
             RateLimiter::hit($this->throttleKey());
 
-            $this->addError('formData.account', trans('auth.failed'));
-
-            return;
+            throw ValidationException::withMessages([
+                'formData.account' => trans('auth.failed'),
+            ]);
         }
 
         RateLimiter::clear($this->throttleKey());
@@ -105,10 +106,12 @@ class Login extends Component implements HasSchemas
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
-        $this->addError('formData.account', trans('auth.throttle', [
-            'seconds' => $seconds,
-            'minutes' => ceil($seconds / 60),
-        ]));
+        throw ValidationException::withMessages([
+            'formData.account' => trans('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
+        ]);
     }
 
     /**

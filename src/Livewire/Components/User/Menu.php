@@ -7,11 +7,9 @@ use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Actions\Logout;
 
-class UserMenu extends Component
+class Menu extends Component
 {
     public string $module;
-
-    public bool $darkMode = false;
 
     /**
      * Log the current user out of the application.
@@ -26,6 +24,6 @@ class UserMenu extends Component
 
     public function render()
     {
-        return view('sn-user::livewire.profile.user-menu', []);
+        return view('sn-user::livewire.user.menu', []);
     }
 }
