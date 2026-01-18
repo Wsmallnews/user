@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\Support\Support\Utils as SupportUtils;
+use Wsmallnews\User\Enums\Gender;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Support\Utils;
 
@@ -56,6 +57,14 @@ class Profile extends Component implements HasSchemas
                     ->required()
                     ->email()
                     ->unique(ignoreRecord: true),
+                Components\Radio::make('gender')
+                    ->label('性别')
+                    ->default(Gender::Undisclosed)
+                    ->inline()
+                    ->options(Gender::class),
+                Components\DatePicker::make('birthday')
+                    ->label('生日')
+                    ->default(null),
             ])
             ->statePath('formData');
     }

@@ -11,6 +11,8 @@ class Menu extends Component
 {
     public string $module;
 
+    public bool $darkMode = false;
+
     /**
      * Log the current user out of the application.
      */

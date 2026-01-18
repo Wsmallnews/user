@@ -36,14 +36,14 @@ return new class extends Migration
             'users',
             'gender',
             function (Blueprint $table) {
-                $table->tinyInteger('gender')->default(0)->after('avatar_url')->comment('性别:1=男,2=女,0=未知');
+                $table->string('gender', 20)->nullable()->after('avatar_url')->comment('性别');
             }
         );
         Schema::whenTableDoesntHaveColumn(
             'users',
             'birthday',
             function (Blueprint $table) {
-                $table->string('birthday')->nullable()->after('gender')->comment('生日');
+                $table->string('birthday', 20)->nullable()->after('gender')->comment('生日');
             }
         );
         Schema::whenTableDoesntHaveColumn(
