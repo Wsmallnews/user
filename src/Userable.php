@@ -8,7 +8,6 @@ use Wsmallnews\User\Enums\Status;
 
 trait Userable
 {
-
     /**
      * gender cast
      */
@@ -19,7 +18,6 @@ trait Userable
             set: fn ($value) => $value,
         );
     }
-
 
     /**
      * status cast
