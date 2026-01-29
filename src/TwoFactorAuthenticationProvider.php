@@ -74,7 +74,7 @@ class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProvider
         $timestamp = $this->engine->verifyKeyNewer(
             $secret,
             $code,
-            optional($this->cache)->get($key = 'fortify.2fa_codes.' . md5($code))
+            optional($this->cache)->get($key = 'sn-user.2fa_codes.' . md5($code))
         );
 
         if ($timestamp !== false) {
