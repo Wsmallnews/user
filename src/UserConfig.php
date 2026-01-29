@@ -11,9 +11,10 @@ class UserConfig
 {
     // $auth = [
     //     'guard' => 'web',
-    //     'two-factor' => [
+    //     'two_factor' => [
     //         'enabled' => true,
     //         'confirm' => true,
+    //         'window' => 1,
     //     ],
     //     @var \Illuminate\Contracts\Encryption\Encrypter|null
     //     encrypter => null,
@@ -78,7 +79,7 @@ class UserConfig
      */
     public function confirmsTwoFactorAuthentication($module): bool
     {
-        return $this->getConfig($module, 'two-factor.enabled', false) && $this->getConfig($module, 'two-factor.confirm', false);
+        return $this->getConfig($module, 'two_factor.enabled', false) && $this->getConfig($module, 'two_factor.confirm', false);
     }
 
     /**

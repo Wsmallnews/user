@@ -53,7 +53,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
      */
     public function mount(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
     {
-        abort_unless(UserConfig::getConfig($this->module, 'two-factor.enabled', true), Response::HTTP_FORBIDDEN);
+        abort_unless(UserConfig::getConfig($this->module, 'two_factor.enabled', true), Response::HTTP_FORBIDDEN);
 
         $this->guard = UserConfig::getConfig($this->module, 'guard');
         if (UserConfig::confirmsTwoFactorAuthentication($this->module) && is_null(Auth::guard($this->guard)->user()->two_factor_confirmed_at)) {

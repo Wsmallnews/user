@@ -37,7 +37,7 @@ class ConfirmTwoFactorAuthentication
     {
         if (empty($user->two_factor_secret) ||
             empty($code) ||
-            ! $this->provider->verify(UserConfig::currentEncrypter($module)->decrypt($user->two_factor_secret), $code)) {
+            ! $this->provider->verify($module, UserConfig::currentEncrypter($module)->decrypt($user->two_factor_secret), $code)) {
             throw ValidationException::withMessages([
                 ($statePath ? $statePath . '.' : '') . 'code' => [__('The provided two factor authentication code was invalid.')],
             ])->errorBag('confirmTwoFactorAuthentication');

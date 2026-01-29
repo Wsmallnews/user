@@ -5,6 +5,7 @@ namespace Wsmallnews\User;
 use Illuminate\Contracts\Cache\Repository;
 use PragmaRX\Google2FA\Google2FA;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
+use Wsmallnews\User\Facades\UserConfig;
 
 class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProviderContract
 {
@@ -59,13 +60,14 @@ class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProvider
     /**
      * Verify the given code.
      *
+     * @param  string  $module
      * @param  string  $secret
      * @param  string  $code
      * @return bool
      */
-    public function verify($secret, $code)
+    public function verify($module, $secret, $code)
     {
-        if (is_int($customWindow = config('fortify-options.two-factor-authentication.window'))) {
+        if (is_int($customWindow = UserConfig::getConfig($module, 'two_factor.window'))) {
             $this->engine->setWindow($customWindow);
         }
 

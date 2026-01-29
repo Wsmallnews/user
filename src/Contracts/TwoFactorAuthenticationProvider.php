@@ -24,9 +24,10 @@ interface TwoFactorAuthenticationProvider
     /**
      * Verify the given token.
      *
+     * @param  string  $module
      * @param  string  $secret
      * @param  string  $code
      * @return bool
      */
-    public function verify($secret, $code);
+    public function verify($module, $secret, $code);
 }
