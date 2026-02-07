@@ -32,9 +32,9 @@
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
 
-    @if ($darkMode)
+    @if ($switchDarkMode)
         <x-filament::dropdown.list>
-            <x-filament-panels::theme-switcher />
+            <x-sn-support::theme-switcher />
         </x-filament::dropdown.list>
     @endif
 
