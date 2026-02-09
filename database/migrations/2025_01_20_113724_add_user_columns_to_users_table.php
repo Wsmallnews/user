@@ -36,7 +36,7 @@ return new class extends Migration
             'users',
             'gender',
             function (Blueprint $table) {
-                $table->string('gender', 20)->nullable()->after('avatar_url')->comment('性别');
+                $table->string('gender', 20)->default('undisclosed')->after('avatar_url')->comment('性别');
             }
         );
         Schema::whenTableDoesntHaveColumn(
