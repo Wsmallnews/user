@@ -24,6 +24,6 @@ class Profile extends Component
 
     public function render()
     {
-        return view('sn-user::livewire.components.user.profile', []); 
+        return view('sn-user::livewire.components.user.profile', []);
     }
 }

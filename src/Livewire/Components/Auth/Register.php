@@ -93,6 +93,6 @@ class Register extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.components.auth.register', []); 
+        return view('sn-user::livewire.components.auth.register', []);
     }
 }

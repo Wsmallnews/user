@@ -109,6 +109,6 @@ class Profile extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.components.settings.profile', []); 
+        return view('sn-user::livewire.components.settings.profile', []);
     }
 }

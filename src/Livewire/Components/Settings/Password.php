@@ -68,6 +68,6 @@ class Password extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.components.settings.password', []); 
+        return view('sn-user::livewire.components.settings.password', []);
     }
 }

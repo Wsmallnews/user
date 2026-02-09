@@ -26,6 +26,6 @@ class Menu extends Component
 
     public function render()
     {
-        return view('sn-user::livewire.components.user.menu', []); 
+        return view('sn-user::livewire.components.user.menu', []);
     }
 }

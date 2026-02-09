@@ -69,6 +69,6 @@ class ForgotPassword extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.components.auth.forgot-password', []); 
+        return view('sn-user::livewire.components.auth.forgot-password', []);
     }
 }
