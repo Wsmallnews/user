@@ -105,6 +105,6 @@ class ResetPassword extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.auth.reset-password', []);
+        return view('sn-user::livewire.components.auth.reset-password', []); 
     }
 }

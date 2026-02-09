@@ -126,6 +126,6 @@ class Login extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.auth.login', []);
+        return view('sn-user::livewire.components.auth.login', []);
     }
 }

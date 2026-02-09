@@ -134,7 +134,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                         })
                         ->visible($this->requiresConfirmation),
                     Text::make('or, enter the code manually')
-                        ->view('sn-user::livewire.components.divide'),
+                        ->view('sn-user::filament.schema.divide'),
                     Components\TextInput::make('setup_key')
                         ->hiddenLabel()
                         ->readOnly()
@@ -200,6 +200,6 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.settings.two-factor', []);
+        return view('sn-user::livewire.components.settings.two-factor', []);
     }
 }

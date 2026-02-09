@@ -1,5 +1,5 @@
 @php
-    $content = $getContent();;
+    $content = $getContent();
 @endphp
 
 <x-sn-support::divide text="{{ $content }}" />

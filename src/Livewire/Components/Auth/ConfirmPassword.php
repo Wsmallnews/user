@@ -62,6 +62,6 @@ class ConfirmPassword extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.auth.confirm-password', []);
+        return view('sn-user::livewire.components.auth.confirm-password', []); 
     }
 }

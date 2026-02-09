@@ -77,6 +77,6 @@ class VerifyEmail extends Component implements HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.auth.verify-email', []);
+        return view('sn-user::livewire.components.auth.verify-email', []); 
     }
 }

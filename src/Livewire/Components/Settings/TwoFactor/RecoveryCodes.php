@@ -80,6 +80,6 @@ class RecoveryCodes extends Component implements HasActions, HasSchemas
 
     public function render()
     {
-        return view('sn-user::livewire.settings.two-factor.recovery-codes', []);
+        return view('sn-user::livewire.components.settings.two-factor.recovery-codes', []);
     }
 }
