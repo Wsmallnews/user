@@ -1,21 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Wsmallnews\Support\Http\Middleware\IdentifyTenant;
+use Wsmallnews\Support\Support\Utils as SupportUtils;
+use Wsmallnews\User\Http\Controllers\Auth\VerifyEmailController;
 use Wsmallnews\User\Livewire\Auth\ConfirmPassword;
 use Wsmallnews\User\Livewire\Auth\ForgotPassword;
 use Wsmallnews\User\Livewire\Auth\Login;
 use Wsmallnews\User\Livewire\Auth\Register;
 use Wsmallnews\User\Livewire\Auth\ResetPassword;
 use Wsmallnews\User\Livewire\Auth\VerifyEmail;
-use Wsmallnews\User\Livewire\Index;
 use Wsmallnews\User\Livewire\Profile;
 use Wsmallnews\User\Livewire\Settings\Password as SettingsPassword;
 use Wsmallnews\User\Livewire\Settings\Profile as SettingsProfile;
 use Wsmallnews\User\Livewire\Settings\TwoFactor;
 use Wsmallnews\User\Support\Utils;
-use Wsmallnews\Support\Http\Middleware\IdentifyTenant;
-use Wsmallnews\Support\Support\Utils as SupportUtils;
-use Wsmallnews\User\Http\Controllers\Auth\VerifyEmailController;
 
 $middlewares = Utils::getConfig('routes.middleware') ?? [];
 SupportUtils::isTenancyEnabled() && array_unshift($middlewares, IdentifyTenant::class);

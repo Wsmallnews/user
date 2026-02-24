@@ -8,17 +8,12 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
-use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
-use Laravel\Fortify\Fortify;
 use Livewire\Livewire;
 use PragmaRX\Google2FA\Google2FA;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
@@ -29,6 +24,10 @@ use Wsmallnews\User\Components\Address;
 use Wsmallnews\User\Components\ChooseAddress;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
 use Wsmallnews\User\Facades\UserConfig as UserConfigFacade;
+use Wsmallnews\User\Http\Middleware\Authenticate;
+use Wsmallnews\User\Http\Middleware\EnsureEmailIsVerified;
+use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
+use Wsmallnews\User\Http\Middleware\RequirePassword;
 use Wsmallnews\User\Livewire\Components\Auth\ConfirmPassword;
 use Wsmallnews\User\Livewire\Components\Auth\ForgotPassword;
 use Wsmallnews\User\Livewire\Components\Auth\Login;
@@ -41,10 +40,6 @@ use Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
 use Wsmallnews\User\Livewire\Components\Settings\TwoFactor\RecoveryCodes;
 use Wsmallnews\User\Livewire\Components\User\Menu as UserMenu;
 use Wsmallnews\User\Livewire\Components\User\Profile as UserProfile;
-use Wsmallnews\User\Http\Middleware\Authenticate;
-use Wsmallnews\User\Http\Middleware\EnsureEmailIsVerified;
-use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
-use Wsmallnews\User\Http\Middleware\RequirePassword;
 use Wsmallnews\User\Support\Utils;
 
 class UserServiceProvider extends PackageServiceProvider
@@ -156,7 +151,7 @@ class UserServiceProvider extends PackageServiceProvider
                     'register' => Utils::route('register'),
                     'profile' => Utils::route('profile'),
                     'forgot-password' => Utils::route('forgot.password'),
-                    'reset-password' => fn($params) => Utils::route('reset.password', $params),
+                    'reset-password' => fn ($params) => Utils::route('reset.password', $params),
                     'verify-email' => Utils::route('verify.email'),
                     'verify-email-verification' => function ($parameters) {
                         // @sn todo ，这里先直接填入 租户参数

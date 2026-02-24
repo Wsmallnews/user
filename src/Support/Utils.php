@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Wsmallnews\User\Support;
 
 use Wsmallnews\User\Exceptions\UserException;
-use Wsmallnews\User\Models;
 
 class Utils
 {
