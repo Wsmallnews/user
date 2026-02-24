@@ -13,7 +13,10 @@ use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Livewire\Livewire;
@@ -25,6 +28,7 @@ use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Address;
 use Wsmallnews\User\Components\ChooseAddress;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
+use Wsmallnews\User\Facades\UserConfig as UserConfigFacade;
 use Wsmallnews\User\Livewire\Components\Auth\ConfirmPassword;
 use Wsmallnews\User\Livewire\Components\Auth\ForgotPassword;
 use Wsmallnews\User\Livewire\Components\Auth\Login;
@@ -37,6 +41,11 @@ use Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
 use Wsmallnews\User\Livewire\Components\Settings\TwoFactor\RecoveryCodes;
 use Wsmallnews\User\Livewire\Components\User\Menu as UserMenu;
 use Wsmallnews\User\Livewire\Components\User\Profile as UserProfile;
+use Wsmallnews\User\Http\Middleware\Authenticate;
+use Wsmallnews\User\Http\Middleware\EnsureEmailIsVerified;
+use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
+use Wsmallnews\User\Http\Middleware\RequirePassword;
+use Wsmallnews\User\Support\Utils;
 
 class UserServiceProvider extends PackageServiceProvider
 {
@@ -48,6 +57,9 @@ class UserServiceProvider extends PackageServiceProvider
     {
         $package->name(static::$name)
             ->hasCommands($this->getCommands())
+            ->hasConfigFile()
+            ->hasTranslations()
+            ->hasViews(static::$viewNamespace)
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->publishConfigFile()
@@ -56,29 +68,19 @@ class UserServiceProvider extends PackageServiceProvider
                     ->askToStarRepoOnGitHub('wsmallnews/user');
             });
 
-        $configFileName = $package->shortName();
-
-        if (file_exists($package->basePath("/../config/{$configFileName}.php"))) {
-            $package->hasConfigFile();
+        if (Utils::getConfig('routes.enabled') !== false) {     // 只要不等于 false 就注册路由
+            $package->hasRoutes($this->getRoutes());
         }
 
         if (file_exists($package->basePath('/../database/migrations'))) {
             $package->hasMigrations($this->getMigrations());
             $package->runsMigrations();
         }
-
-        if (file_exists($package->basePath('/../resources/lang'))) {
-            $package->hasTranslations();
-        }
-
-        if (file_exists($package->basePath('/../resources/views'))) {
-            $package->hasViews(static::$viewNamespace);
-        }
     }
 
     public function packageRegistered(): void
     {
-        $this->app->singleton(TwoFactorAuthenticationProviderContract::class, function ($app) {
+        $this->app->singleton(TwoFactorAuthenticationProviderContract::class, function ($app): TwoFactorAuthenticationProviderContract {
             return new TwoFactorAuthenticationProvider(
                 $app->make(Google2FA::class),
                 $app->make(Repository::class)
@@ -92,6 +94,12 @@ class UserServiceProvider extends PackageServiceProvider
         Relation::enforceMorphMap([
             'sn_user_address' => 'Wsmallnews\User\Models\Address',
         ]);
+
+        // 定义中间件别名
+        $this->app['router']->aliasMiddleware('user-auth', Authenticate::class);
+        $this->app['router']->aliasMiddleware('user-guest', RedirectIfAuthenticated::class);
+        $this->app['router']->aliasMiddleware('user-password.confirm', RequirePassword::class);
+        $this->app['router']->aliasMiddleware('user-email.verified', EnsureEmailIsVerified::class);
 
         // Asset Registration
         FilamentAsset::register(
@@ -137,26 +145,38 @@ class UserServiceProvider extends PackageServiceProvider
         // // 选择收货地址
         // Livewire::component('sn-user-choose-address', ChooseAddress::class);
 
-        // $actions = config('sn-user.actions');
-        // Fortify::createUsersUsing($actions['create_new_user']);
-        // Fortify::updateUserProfileInformationUsing($actions['update_user_profile_information']);
-        // Fortify::updateUserPasswordsUsing($actions['update_user_password']);
-        // Fortify::resetUserPasswordsUsing($actions['reset_user_password']);
-        // Fortify::redirectUserForTwoFactorAuthenticationUsing($actions['redirect_if_two_factor_authenticatable']);
+        // 注册用户认证信息
+        UserConfigFacade::config(app(\Wsmallnews\User\UserPlugin::class)->getId(), function () {
+            return [
+                'guard' => Utils::getConfig('guard', 'web'),
+                'two_factor' => Utils::getConfig('two_factor', []),
+                'urls' => [
+                    'index' => Utils::route('index'),           // @sn todo 用户默认页面的首页不应该是这个路由
+                    'login' => Utils::route('login'),
+                    'register' => Utils::route('register'),
+                    'profile' => Utils::route('profile'),
+                    'forgot-password' => Utils::route('forgot.password'),
+                    'reset-password' => fn($params) => Utils::route('reset.password', $params),
+                    'verify-email' => Utils::route('verify.email'),
+                    'verify-email-verification' => function ($parameters) {
+                        // @sn todo ，这里先直接填入 租户参数
+                        if (! isset($parameters['tenant'])) {        // 没有租户参数,则添加租户参数
+                            $tenant = current_tenant();
+                            $parameters['tenant'] = $tenant;        // 租户参数
+                        }
 
-        // RateLimiter::for('login', function (Request $request) {
-        //     $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())) . '|' . $request->ip());
+                        $parameters['module'] = app(\Wsmallnews\User\UserPlugin::class)->getId();             // 当前模块名
 
-        //     return Limit::perMinute(5)->by($throttleKey);
-        // });
-
-        // RateLimiter::for('two-factor', function (Request $request) {
-        //     return Limit::perMinute(5)->by($request->session()->get('login.id'));
-        // });
-
-        // // 注册所有认证页面
-        // Fortify::viewPrefix('sn-user::auth.');
-        // Fortify 逻辑注册完毕
+                        return URL::temporarySignedRoute(
+                            Utils::getConfig('routes.name', '') . 'verify.email.verification',
+                            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+                            $parameters
+                        );
+                    },
+                    'password-confirm' => Utils::route('password.confirm'),
+                ],
+            ];
+        });
     }
 
     protected function getAssetPackageName(): ?string
@@ -199,7 +219,7 @@ class UserServiceProvider extends PackageServiceProvider
      */
     protected function getRoutes(): array
     {
-        return [];
+        return ['web'];
     }
 
     /**
