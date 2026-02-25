@@ -24,8 +24,8 @@ use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Components\Address;
 use Wsmallnews\User\Components\ChooseAddress;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
-use Wsmallnews\User\Facades\UserConfig as UserConfigFacade;
 use Wsmallnews\User\Facades\SidebarMenuRegistry as SidebarMenuRegistryFacade;
+use Wsmallnews\User\Facades\UserConfig as UserConfigFacade;
 use Wsmallnews\User\Http\Middleware\Authenticate;
 use Wsmallnews\User\Http\Middleware\EnsureEmailIsVerified;
 use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
@@ -41,8 +41,8 @@ use Wsmallnews\User\Livewire\Components\Settings\Profile;
 use Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
 use Wsmallnews\User\Livewire\Components\Settings\TwoFactor\RecoveryCodes;
 use Wsmallnews\User\Livewire\Components\User\Menu as UserMenu;
-use Wsmallnews\User\Livewire\Components\User\SidebarMenu as SidebarMenu;
 use Wsmallnews\User\Livewire\Components\User\Profile as UserProfile;
+use Wsmallnews\User\Livewire\Components\User\SidebarMenu;
 use Wsmallnews\User\Support\Utils;
 
 class UserServiceProvider extends PackageServiceProvider
@@ -87,7 +87,7 @@ class UserServiceProvider extends PackageServiceProvider
 
         // 注册用户侧边栏菜单
         $this->app->singleton(SidebarMenuRegistry::class, function () {
-            return new SidebarMenuRegistry();
+            return new SidebarMenuRegistry;
         });
     }
 
@@ -184,35 +184,35 @@ class UserServiceProvider extends PackageServiceProvider
 
         // 注册用户侧边栏菜单
         SidebarMenuRegistryFacade::registers(app(\Wsmallnews\User\UserPlugin::class)->getId(), [
-            fn() => [
+            fn () => [
                 'key' => 'profile',
                 'label' => '个人中心',
                 'url' => Utils::route('profile'),
                 'icon' => Heroicon::OutlinedUser,
                 'active_icon' => Heroicon::User,
             ],
-            fn() => [
+            fn () => [
                 'key' => 'settings-profile',
                 'label' => '修改资料',
                 'url' => Utils::route('settings.profile'),
                 'icon' => Heroicon::OutlinedPencilSquare,
                 'active_icon' => Heroicon::PencilSquare,
             ],
-            fn() => [
+            fn () => [
                 'key' => 'settings-password',
                 'label' => '修改密码',
                 'url' => Utils::route('settings.password'),
                 'icon' => Heroicon::OutlinedLockClosed,
                 'active_icon' => Heroicon::LockClosed,
             ],
-            fn() => [
+            fn () => [
                 'key' => 'settings-two-factor',
                 'label' => '双因素认证',
-                'url' => fn() => Utils::route('settings.two-factor'),
+                'url' => fn () => Utils::route('settings.two-factor'),
                 'icon' => Heroicon::OutlinedKey,
                 'active_icon' => Heroicon::Key,
-                'hidden' => fn() => !Utils::getConfig('two_factor.enabled', false),
-            ]
+                'hidden' => fn () => ! Utils::getConfig('two_factor.enabled', false),
+            ],
         ]);
     }
 

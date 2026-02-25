@@ -69,7 +69,6 @@ class SidebarMenuRegistry
         return $this->menus;
     }
 
-
     /**
      * 获取指定模块的所有 sidebar 菜单 （原始值，里面会有 Closure）
      *
@@ -81,13 +80,9 @@ class SidebarMenuRegistry
         return $this->menus->get($module, collect());
     }
 
-
     /**
      * 注册排序顺序
      *
-     * @param string $module
-     * @param array $sortBy
-     * @param string $field
      * @return void
      */
     public function registerSortBy(string $module, array $sortBy = [], string $field = 'label'): static
@@ -100,12 +95,8 @@ class SidebarMenuRegistry
         return $this;
     }
 
-
     /**
      * 获取排序顺序 sort
-     *
-     * @param string $module
-     * @return array
      */
     public function getSort(string $module): array
     {
@@ -114,9 +105,6 @@ class SidebarMenuRegistry
 
     /**
      * 获取排序字段
-     *
-     * @param string $module
-     * @return string
      */
     public function getSortField(string $module): string
     {
@@ -143,6 +131,7 @@ class SidebarMenuRegistry
         $menus = $menus->filter(function ($menuInfo) {
             // 隐藏状态
             $menuInfo['hidden'] = $menuInfo['hidden'] ?? false;              // 是否隐藏
+
             return ! ($menuInfo['hidden'] instanceof Closure ? $menuInfo['hidden']() : $menuInfo['hidden']);              // 是否隐藏
         });
 
@@ -157,14 +146,13 @@ class SidebarMenuRegistry
         return $menus;
     }
 
-
     /**
      * 处理 sidebar 菜单
      *
      * @param  array | Closure  $menuInfo  sidebar 菜单信息数组
      * @return array 处理后的 sidebar 菜单信息数组
      */
-    protected function handleMenu(array | Closure $menuInfo): array 
+    protected function handleMenu(array | Closure $menuInfo): array
     {
         $fullUrl = request()->fullUrl();
 
@@ -172,14 +160,13 @@ class SidebarMenuRegistry
         $menuInfo['url'] = $menuInfo['url'] instanceof Closure ? $menuInfo['url']() : $menuInfo['url'];
 
         // 当前菜单活动状态
-        $menuInfo['is_active'] = (bool)($menuInfo['url'] == $fullUrl);       // 活动状态
+        $menuInfo['is_active'] = (bool) ($menuInfo['url'] == $fullUrl);       // 活动状态
 
         // 处理 label
         $menuInfo['label'] = $this->handleLabel($menuInfo);
 
         return $menuInfo;
     }
-
 
     /**
      * 处理 sidebar 菜单 label
@@ -213,18 +200,14 @@ class SidebarMenuRegistry
         return new HtmlString($recordLabel);
     }
 
-
     /**
      * 根据传入排序顺序字段，排序 sidebar 菜单
-     *
-     * @param string $module
-     * @param Collection $menus
-     * @return Collection
      */
     protected function sortMenus(string $module, Collection $menus): Collection
     {
         $sorts = $this->getSort($module);
         $sortField = $this->getSortField($module);
+
         return $menus->sortBy(function ($menu) use ($sorts, $sortField) {
             $position = array_search($menu[$sortField], $sorts);
 
