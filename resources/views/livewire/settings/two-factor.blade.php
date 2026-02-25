@@ -9,7 +9,7 @@
 
         <div class="w-full flex flex-col md:flex-row items-start gap-4">
             <div class="w-full md:w-72">
-                <livewire:sn-cms-components-user-profile-menu />
+                <livewire:sn-user-components-user-sidebar-menu :module="app(\Wsmallnews\User\UserPlugin::class)->getId()" />
             </div>
 
             <div class="sn-container w-full px-4 py-8">
