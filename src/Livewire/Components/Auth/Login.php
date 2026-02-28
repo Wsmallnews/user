@@ -8,6 +8,7 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -26,6 +27,9 @@ class Login extends Component implements HasSchemas
 
     #[Locked]
     public string $module;
+
+    #[Locked]
+    public ?string $userUndertakingMultiFactorAuthentication = null;
 
     public function form(Schema $schema): Schema
     {
@@ -82,7 +86,49 @@ class Login extends Component implements HasSchemas
             });
         };
 
-        if (! Auth::guard(UserConfig::getConfig($this->module, 'guard'))->attempt($credentials, $formData['remember'] ?? false)) {
+        /** @var SessionGuard $authGuard */
+        $authGuard = Auth::guard(UserConfig::getConfig($this->module, 'guard'));
+        $authProvider = $authGuard->getProvider();      /** @phpstan-ignore-line */
+
+        // 当前 user model 实例
+        $user = $authProvider->retrieveByCredentials($credentials);
+
+        if ((! $user) || (! $authProvider->validateCredentials($user, $credentials))) {
+            // 账号密码验证失败
+            $this->userUndertakingMultiFactorAuthentication = null;
+
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'formData.account' => trans('auth.failed'),
+            ]);
+        }
+
+        if (UserConfig::getConfig($this->module, 'two_factor.enabled', true)) {
+            // 启用了多因素认证
+            if (
+                filled($this->userUndertakingMultiFactorAuthentication) &&
+                (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
+            ) {
+                // 多因素认证 表单验证成功
+                $this->multiFactorChallengeForm->validate();
+            } else {
+                // 判断并且显示双因素验证界面
+                $this->userUndertakingMultiFactorAuthentication = encrypt($user->getAuthIdentifier());
+
+                if (filled($this->userUndertakingMultiFactorAuthentication)) {
+                    $this->multiFactorChallengeForm->fill();
+
+                    return;     // 这里返回，显示界面
+                }
+            }
+        }
+
+        // 账号密码验证成功， 多因素认证验证成功
+        if (! $authGuard->attemptWhen($credentials, function (Authenticatable $user): bool {
+            // 这里可以加入其他条件， 密码已经在上面验证过了
+            return true;
+        }, $formData['remember'] ?? false)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
