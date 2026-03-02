@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Wsmallnews\User\Enums\Gender as GenderEnum;
 use Wsmallnews\User\Facades\UserConfig;
 
 class Register extends Component implements HasSchemas
@@ -63,6 +64,7 @@ class Register extends Component implements HasSchemas
         $formData = $this->form->getState();
 
         $formData['password'] = Hash::make($formData['password']);
+        $formData['gender'] = $formData['gender'] ?? GenderEnum::Undisclosed;
 
         try {
             $user = User::create($formData);
