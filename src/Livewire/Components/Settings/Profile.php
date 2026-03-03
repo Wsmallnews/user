@@ -2,7 +2,12 @@
 
 namespace Wsmallnews\User\Livewire\Components\Settings;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component as SchemaComponent;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -69,6 +74,17 @@ class Profile extends Component implements HasSchemas
             ->statePath('formData');
     }
 
+
+    public function getFormActions(): array
+    {
+        return [
+            Action::make('updateProfileInformation')
+                ->label('更新个人信息')
+                ->submit('updateProfileInformation'),
+        ];
+    }
+
+
     public function updateProfileInformation(): void
     {
         $formData = $this->form->getState();
@@ -106,6 +122,35 @@ class Profile extends Component implements HasSchemas
             $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?type=update', FilamentView::hasSpaMode());
         }
     }
+
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+
+    public function getFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('updateProfileInformation')
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+
+    public function getFormActionsContentComponent(): SchemaComponent
+    {
+        return Actions::make($this->getFormActions())
+            ->fullWidth(true)
+            ->key('update-profile-information-form-actions');
+    }
+
 
     public function render()
     {

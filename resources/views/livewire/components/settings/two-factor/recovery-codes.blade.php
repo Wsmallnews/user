@@ -51,10 +51,6 @@
             x-bind:aria-hidden="!showRecoveryCodes"
         >
             <div class="mt-3 space-y-3">
-                {{-- @error('recoveryCodes')
-                    <flux:callout variant="danger" icon="x-circle" heading="{{$message}}"/>
-                @enderror --}}
-
                 @if (filled($recoveryCodes))
                     <div
                         class="grid gap-1 p-4 font-mono text-sm rounded-lg bg-zinc-100 dark:bg-white/5"

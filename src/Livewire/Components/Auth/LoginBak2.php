@@ -19,6 +19,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Events\Lockout;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -28,7 +29,6 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 
 class Login extends Component implements HasSchemas, HasActions
 {
@@ -42,6 +42,48 @@ class Login extends Component implements HasSchemas, HasActions
 
     #[Locked]
     public ?string $userUndertakingMultiFactorAuthentication = null;
+
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+                $this->getTwoFactorChallengeFormContentComponent(),
+            ]);
+    }
+
+
+    public function getFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('login')
+            ->footer([
+                Actions::make([
+                    Action::make('login')
+                        ->label(__('filament-panels::auth/pages/login.form.actions.authenticate.label'))
+                        ->submit('login')
+                ])
+                ->fullWidth(true)
+                ->key('form-actions'),
+            ])
+            ->visible(fn(): bool => blank($this->userUndertakingMultiFactorAuthentication));
+    }
+
+
+    public function getTwoFactorChallengeFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('twoFactorChallengeForm')])
+            ->id('twoFactorChallengeForm')
+            ->livewireSubmitHandler('login')
+            ->footer([
+                Action::make('login')
+                    ->label(__('filament-panels::auth/pages/login.multi_factor.form.actions.authenticate.label'))
+                    ->submit('login'),
+            ])
+            ->visible(fn(): bool => filled($this->userUndertakingMultiFactorAuthentication));
+    }
 
 
     public function form(Schema $schema): Schema
@@ -93,33 +135,12 @@ class Login extends Component implements HasSchemas, HasActions
                     ->revealable()
                     ->visible(fn(Get $get): bool => filled($get('useRecoveryCode'))),
             ])
-            ->statePath('formData.twoFactor');
-    }
-
-
-    public function getFormActions()
-    {
-        return [
-            Action::make('login')
-                ->label('登录')
-                ->submit('login'),
-        ];
-    }
-
-
-    public function getTwoFactorChallengeFormActions()
-    {
-        return [
-            Action::make('login')
-                ->label('验证登录')
-                ->submit('login'),
-        ];
+            ->statePath('formData');
     }
 
 
     public function login()
     {
-        // 登录限制
         $this->ensureIsNotRateLimited();
 
         // 验证用户
@@ -134,12 +155,7 @@ class Login extends Component implements HasSchemas, HasActions
                 (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
             ) {
                 // 验证多因素认证
-                if (!$this->authenticateTwoFactor($user)) {
-                    // 多因素认证失败
-                    throw ValidationException::withMessages([
-                        'formData.twoFactor.code' => '双因素认证失败',
-                    ]);
-                }
+                $this->authenticateTwoFactor($user);
             } else {
                 // 判断并且显示双因素验证界面
                 $this->userUndertakingMultiFactorAuthentication = encrypt($user->getAuthIdentifier());
@@ -149,36 +165,19 @@ class Login extends Component implements HasSchemas, HasActions
             }
         }
 
-        // 完成登录
         $this->finishLogin($user);
     }
 
-
-    /**
-     * Ensure the authentication request is not rate limited.
-     */
-    protected function ensureIsNotRateLimited(): void
-    {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-            return;
-        }
-
-        event(new Lockout(request()));
-
-        $seconds = RateLimiter::availableIn($this->throttleKey());
-
-        throw ValidationException::withMessages([
-            'formData.account' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
-        ]);
-    }
-
-
     protected function authenticate(): User 
     {
-        $credentials = $this->getCredentials();
+        $formData = $this->form->getState();
+        $credentials = Arr::only($formData, ['password']);
+        $credentials['account'] = function ($query) use ($formData) {
+            $query->where(function ($query) use ($formData) {
+                $query->where('email', $formData['account'])
+                    ->orWhere('mobile', $formData['account']);
+            });
+        };
 
         /** @var SessionGuard $authGuard */
         $authGuard = Auth::guard(UserConfig::getConfig($this->module, 'guard'));
@@ -204,35 +203,48 @@ class Login extends Component implements HasSchemas, HasActions
 
     protected function authenticateTwoFactor(User $user)
     {
-        $formData = $this->twoFactorChallengeForm->getState();
+        $user->
 
-        $code = $formData['code'] ?? null;
-        $recoveryCode = $formData['recoveryCode'] ?? null;
 
-        if ($recoveryCode) {
-            $currentRecoveryCode = collect($user->recoveryCodes($this->module))->first(function ($code) use ($recoveryCode) {
-                return hash_equals($code, $recoveryCode) ? $code : null;
-            });
+        if (
+            UserConfig::getConfig($this->module, 'two_factor.enabled', true)        // 启用了双因素
+            && $user->hasEnabledTwoFactorAuthentication($this->module)              // 用户已开启双因素
+        ) {
+            if (
+                filled($this->userUndertakingMultiFactorAuthentication) &&
+                (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
+            ) {
 
-            return $currentRecoveryCode ? true : false;
-        } else {
-            return $code && app(TwoFactorAuthenticationProvider::class)->verify(
-                $this->module,
-                UserConfig::currentEncrypter($this->module)->decrypt($user->two_factor_secret),
-                $code
-            );
+                dd('1111111111');
+
+                // 多因素认证 表单验证成功
+                $this->twoFactorChallengeForm->validate();
+            } else {
+                // 判断并且显示双因素验证界面
+                $this->userUndertakingMultiFactorAuthentication = encrypt($user->getAuthIdentifier());
+
+                $this->twoFactorChallengeForm->fill();
+                return;     // 这里返回，显示界面
+            }
         }
-
-        return false;
     }
 
 
     protected function finishLogin () 
     {
-        $credentials = $this->getCredentials();
+        $formData = $this->form->getState();
+        $credentials = Arr::only($formData, ['password']);
+        $credentials['account'] = function ($query) use ($formData) {
+            $query->where(function ($query) use ($formData) {
+                $query->where('email', $formData['account'])
+                    ->orWhere('mobile', $formData['account']);
+            });
+        };
 
         /** @var SessionGuard $authGuard */
         $authGuard = Auth::guard(UserConfig::getConfig($this->module, 'guard'));
+        $authProvider = $authGuard->getProvider();
+        /** @phpstan-ignore-line */
 
         // 账号密码验证成功， 多因素认证验证成功
         if (! $authGuard->attemptWhen($credentials, function (User $user): bool {
@@ -259,21 +271,26 @@ class Login extends Component implements HasSchemas, HasActions
         $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
-
-    protected function getCredentials()
+    /**
+     * Ensure the authentication request is not rate limited.
+     */
+    protected function ensureIsNotRateLimited(): void
     {
-        $formData = $this->form->getState();
-        $credentials = Arr::only($formData, ['password']);
-        $credentials['account'] = function ($query) use ($formData) {
-            $query->where(function ($query) use ($formData) {
-                $query->where('email', $formData['account'])
-                    ->orWhere('mobile', $formData['account']);
-            });
-        };
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+            return;
+        }
 
-        return $credentials;
+        event(new Lockout(request()));
+
+        $seconds = RateLimiter::availableIn($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'formData.account' => trans('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
+        ]);
     }
-
 
     /**
      * Get the authentication rate limiting throttle key.
@@ -284,58 +301,6 @@ class Login extends Component implements HasSchemas, HasActions
 
         return Str::transliterate(Str::lower($formData['account']) . '|' . request()->ip());
     }
-
-
-    public function content(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                $this->getFormContentComponent(),
-                $this->getTwoFactorChallengeFormContentComponent(),
-            ]);
-    }
-
-
-
-    public function getFormContentComponent(): SchemaComponent
-    {
-        return Form::make([EmbeddedSchema::make('form')])
-            ->id('form')
-            ->livewireSubmitHandler('login')
-            ->footer([
-                $this->getFormActionsContentComponent(),
-            ])
-            ->visible(fn(): bool => blank($this->userUndertakingMultiFactorAuthentication));
-    }
-
-
-    public function getFormActionsContentComponent(): SchemaComponent
-    {
-        return Actions::make($this->getFormActions())
-            ->fullWidth(true)
-            ->key('login-form-actions');
-    }
-
-
-    public function getTwoFactorChallengeFormContentComponent(): SchemaComponent
-    {
-        return Form::make([EmbeddedSchema::make('twoFactorChallengeForm')])
-            ->id('twoFactorChallengeForm')
-            ->livewireSubmitHandler('login')
-            ->footer([
-                $this->getTwoFactorChallengeFormActionsContentComponent(),
-            ])
-            ->visible(fn(): bool => filled($this->userUndertakingMultiFactorAuthentication));
-    }
-
-
-    public function getTwoFactorChallengeFormActionsContentComponent(): SchemaComponent
-    {
-        return Actions::make($this->getTwoFactorChallengeFormActions())
-            ->fullWidth(true)
-            ->key('two-factor-challenge-form-actions');
-    }
-
 
     public function render()
     {

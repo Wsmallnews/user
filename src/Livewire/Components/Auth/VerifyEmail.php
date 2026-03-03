@@ -2,6 +2,11 @@
 
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
+use Filament\Actions\Action;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component as SchemaComponent;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -37,6 +42,17 @@ class VerifyEmail extends Component implements HasSchemas
             ->statePath('formData');
     }
 
+
+    public function getFormActions(): array
+    {
+        return [
+            Action::make('sendVerification')
+                ->label($this->type === 'register' || $this->type === 'update' || session('status') ? '重新发送验证邮箱' : '发送验证邮箱')
+                ->submit('sendVerification'),
+        ];
+    }
+
+    
     public function sendVerification(): void
     {
         $guard = UserConfig::getConfig($this->module, 'guard');
@@ -73,6 +89,34 @@ class VerifyEmail extends Component implements HasSchemas
             ->success()->send();
 
         $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
+    }
+
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+
+    public function getFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('sendVerification')
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+
+    public function getFormActionsContentComponent(): SchemaComponent
+    {
+        return Actions::make($this->getFormActions())
+            ->fullWidth(true)
+            ->key('verify-email-form-actions');
     }
 
     public function render()

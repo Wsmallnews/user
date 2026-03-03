@@ -2,7 +2,12 @@
 
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component as SchemaComponent;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -64,6 +69,17 @@ class ResetPassword extends Component implements HasSchemas
             ->statePath('formData');
     }
 
+
+    public function getFormActions(): array
+    {
+        return [
+            Action::make('resetPassword')
+                ->label('重置密码')
+                ->submit('resetPassword'),
+        ];
+    }
+
+
     /**
      * Reset the password for the given user.
      */
@@ -102,6 +118,34 @@ class ResetPassword extends Component implements HasSchemas
 
         $this->redirect(UserConfig::getConfig($this->module, 'urls.login'), FilamentView::hasSpaMode());
     }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+
+    public function getFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('resetPassword')
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+
+    public function getFormActionsContentComponent(): SchemaComponent
+    {
+        return Actions::make($this->getFormActions())
+            ->fullWidth(true)
+            ->key('reset-password-form-actions');
+    }
+
 
     public function render()
     {

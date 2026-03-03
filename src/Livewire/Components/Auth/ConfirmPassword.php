@@ -2,7 +2,12 @@
 
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component as SchemaComponent;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -36,6 +41,17 @@ class ConfirmPassword extends Component implements HasSchemas
             ->statePath('formData');
     }
 
+
+    public function getFormActions(): array
+    {
+        return [
+            Action::make('confirmPassword')
+                ->label('确认密码')
+                ->submit('confirmPassword'),
+        ];
+    }
+
+
     /**
      * Confirm the current user's password.
      */
@@ -59,6 +75,34 @@ class ConfirmPassword extends Component implements HasSchemas
 
         $this->redirectIntended(default: UserConfig::getConfig($this->module, 'urls.index'), navigate: FilamentView::hasSpaMode());
     }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+
+    public function getFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('confirmPassword')
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+
+    public function getFormActionsContentComponent(): SchemaComponent
+    {
+        return Actions::make($this->getFormActions())
+            ->fullWidth(true)
+            ->key('confirm-password-form-actions');
+    }
+
 
     public function render()
     {

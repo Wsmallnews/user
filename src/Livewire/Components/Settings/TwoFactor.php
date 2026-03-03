@@ -101,14 +101,11 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                         ->label(__('Continue'))
                         ->schema(function () {
                             return [
-                                Components\TextInput::make('code')
+                                Components\OneTimeCodeInput::make('code')
                                     ->label(__('Code'))
                                     ->hiddenLabel()
-                                    ->placeholder(__('Enter the 6-digit code from your authenticator app.'))
                                     ->required()
-                                    ->numeric()
-                                    ->integer()
-                                    ->length(6),
+                                    ->extraAttributes(['class' => 'mx-auto'], true)
                             ];
                         })
                         ->modalIcon(Heroicon::QrCode)

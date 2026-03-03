@@ -3,7 +3,12 @@
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component as SchemaComponent;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -59,6 +64,16 @@ class Register extends Component implements HasSchemas
             ->statePath('formData');
     }
 
+    public function getFormActions(): array
+    {
+        return [
+            Action::make('register')
+                ->label(__('filament-panels::auth/pages/register.form.actions.register.label'))
+                ->submit('register'),
+        ];
+    }
+
+
     public function register(): void
     {
         $formData = $this->form->getState();
@@ -92,6 +107,35 @@ class Register extends Component implements HasSchemas
         // 跳转到邮箱验证
         $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?type=register', FilamentView::hasSpaMode());
     }
+
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+
+    public function getFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('register')
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+
+    public function getFormActionsContentComponent(): SchemaComponent
+    {
+        return Actions::make($this->getFormActions())
+            ->fullWidth(true)
+            ->key('register-form-actions');
+    }
+
 
     public function render()
     {

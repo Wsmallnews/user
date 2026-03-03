@@ -2,7 +2,12 @@
 
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component as SchemaComponent;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
@@ -36,6 +41,16 @@ class ForgotPassword extends Component implements HasSchemas
             ->statePath('formData');
     }
 
+    public function getFormActions(): array
+    {
+        return [
+            Action::make('sendPasswordResetLink')
+                ->label('发送密码重置链接')
+                ->submit('sendPasswordResetLink'),
+        ];
+    }
+
+
     public function sendPasswordResetLink(): void
     {
         $formData = $this->form->getState();
@@ -66,6 +81,34 @@ class ForgotPassword extends Component implements HasSchemas
 
         session()->flash('status', __($status));
     }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+
+    public function getFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('sendPasswordResetLink')
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+
+    public function getFormActionsContentComponent(): SchemaComponent
+    {
+        return Actions::make($this->getFormActions())
+            ->fullWidth(true)
+            ->key('forgot-password-form-actions');
+    }
+
 
     public function render()
     {

@@ -2,7 +2,12 @@
 
 namespace Wsmallnews\User\Livewire\Components\Settings;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Component as SchemaComponent;
+use Filament\Schemas\Components\EmbeddedSchema;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Text;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
@@ -53,6 +58,17 @@ class Password extends Component implements HasSchemas
             ->statePath('formData');
     }
 
+
+    public function getFormActions(): array
+    {
+        return [
+            Action::make('updatePassword')
+                ->label('更新密码')
+                ->submit('updatePassword'),
+        ];
+    }
+
+
     public function updatePassword(): void
     {
         $formData = $this->form->getState();
@@ -65,6 +81,35 @@ class Password extends Component implements HasSchemas
             ->title('密码更新成功')
             ->success()->send();
     }
+
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getFormContentComponent(),
+            ]);
+    }
+
+
+    public function getFormContentComponent(): SchemaComponent
+    {
+        return Form::make([EmbeddedSchema::make('form')])
+            ->id('form')
+            ->livewireSubmitHandler('updatePassword')
+            ->footer([
+                $this->getFormActionsContentComponent(),
+            ]);
+    }
+
+
+    public function getFormActionsContentComponent(): SchemaComponent
+    {
+        return Actions::make($this->getFormActions())
+            ->fullWidth(true)
+            ->key('update-password-form-actions');
+    }
+
 
     public function render()
     {
