@@ -68,7 +68,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
         $this->guard = UserConfig::getConfig($this->module, 'guard');
         $user = Auth::guard($this->guard)->user();
-        
+
         if (UserConfig::confirmsTwoFactorAuthentication($this->module) && is_null($user->two_factor_confirmed_at)) {
             $this->disableTwoFactorAuthentication($user);
         }
