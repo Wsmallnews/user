@@ -8,11 +8,13 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Wsmallnews\User\Events\RecoveryCodesGenerated;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Livewire\Actions\GenerateNewRecoveryCodes;
+use Wsmallnews\User\RecoveryCode;
 
 class RecoveryCodes extends Component implements HasActions, HasSchemas
 {
@@ -51,13 +53,24 @@ class RecoveryCodes extends Component implements HasActions, HasSchemas
             ->modalHeading('Regenerate Recovery Codes')
             ->modalDescription('Are you sure you\'d like to regenerate recovery codes? ')
             ->successNotificationTitle(__('Recovery codes regenerated successfully'))
-            ->action(function (GenerateNewRecoveryCodes $generateNewRecoveryCodes) {
+            ->action(function () {
                 $user = Auth::guard($this->guard)->user();
 
-                $generateNewRecoveryCodes($this->module, $user);
+                $this->generateNewRecoveryCodes($user);
 
                 $this->loadRecoveryCodes();
             });
+    }
+
+    protected function generateNewRecoveryCodes($user): void
+    {
+        $user->forceFill([
+            'two_factor_recovery_codes' => UserConfig::currentEncrypter($this->module)->encrypt(json_encode(Collection::times(8, function () {
+                return RecoveryCode::generate();
+            })->all())),
+        ])->save();
+
+        RecoveryCodesGenerated::dispatch($user);
     }
 
     /**

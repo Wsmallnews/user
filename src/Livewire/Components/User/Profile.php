@@ -3,9 +3,10 @@
 namespace Wsmallnews\User\Livewire\Components\User;
 
 use Filament\Support\Facades\FilamentView;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Livewire\Actions\Logout;
 
 class Profile extends Component
 {
@@ -14,10 +15,12 @@ class Profile extends Component
     /**
      * Log the current user out of the application.
      */
-    public function logout(Logout $logout): void
+    public function logout(): void
     {
-        // 退出登录
-        $logout(UserConfig::getConfig($this->module, 'guard'));
+        Auth::guard(UserConfig::getConfig($this->module, 'guard'))->logout();
+
+        Session::invalidate();
+        Session::regenerateToken();
 
         $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }

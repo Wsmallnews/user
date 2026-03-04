@@ -12,15 +12,19 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
+use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
+use Wsmallnews\User\Events\TwoFactorAuthenticationConfirmed;
+use Wsmallnews\User\Events\TwoFactorAuthenticationDisabled;
+use Wsmallnews\User\Events\TwoFactorAuthenticationEnabled;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Livewire\Actions\ConfirmTwoFactorAuthentication;
-use Wsmallnews\User\Livewire\Actions\DisableTwoFactorAuthentication;
-use Wsmallnews\User\Livewire\Actions\EnableTwoFactorAuthentication;
+use Wsmallnews\User\RecoveryCode;
 
 class TwoFactor extends Component implements HasActions, HasSchemas
 {
@@ -48,20 +52,28 @@ class TwoFactor extends Component implements HasActions, HasSchemas
 
     protected ?string $guard = null;
 
+    protected TwoFactorAuthenticationProvider $provider;
+
+    public function __construct()
+    {
+        $this->provider = app(TwoFactorAuthenticationProvider::class);
+    }
+
     /**
      * Mount the component.
      */
-    public function mount(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
+    public function mount(): void
     {
         abort_unless(UserConfig::getConfig($this->module, 'two_factor.enabled', true), Response::HTTP_FORBIDDEN);
 
         $this->guard = UserConfig::getConfig($this->module, 'guard');
-        if (UserConfig::confirmsTwoFactorAuthentication($this->module) && is_null(Auth::guard($this->guard)->user()->two_factor_confirmed_at)) {
-            // 如果用户未确认，双因素启用失败，清空 two_factor_secret， two_factor_recovery_codes 数据
-            $disableTwoFactorAuthentication($this->module, Auth::guard($this->guard)->user());
+        $user = Auth::guard($this->guard)->user();
+        
+        if (UserConfig::confirmsTwoFactorAuthentication($this->module) && is_null($user->two_factor_confirmed_at)) {
+            $this->disableTwoFactorAuthentication($user);
         }
 
-        $this->twoFactorEnabled = Auth::guard($this->guard)->user()->hasEnabledTwoFactorAuthentication($this->module);
+        $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication($this->module);
         $this->requiresConfirmation = UserConfig::confirmsTwoFactorAuthentication($this->module);
     }
 
@@ -70,11 +82,11 @@ class TwoFactor extends Component implements HasActions, HasSchemas
         return Action::make('enable')
             ->label(__('Enable 2FA'))
             ->icon(Heroicon::ShieldCheck)
-            ->schema(function (EnableTwoFactorAuthentication $enableTwoFactorAuthentication) {
+            ->schema(function () {
                 $user = Auth::guard($this->guard)->user();
 
                 // 填充双因素字段
-                $enableTwoFactorAuthentication($this->module, $user);
+                $this->enableTwoFactorAuthentication($user);
 
                 if (! $this->requiresConfirmation) {
                     // 如果不需要确认，直接启用双因素
@@ -122,12 +134,12 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                             'class' => 'w-full',
                         ])
                         ->successNotificationTitle(__('2FA enabled successfully'))
-                        ->action(function (ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication, array $data) {
+                        ->action(function (array $data) {
                             $user = Auth::guard($this->guard)->user();
 
-                            $confirmTwoFactorAuthentication($this->module, $user, (string) $data['code'] ?? '', 'mountedActions.1.data');
+                            $this->confirmTwoFactorAuthentication($user, (string) $data['code'] ?? '', 'mountedActions.1.data');
 
-                            $this->twoFactorEnabled = true;     // 用户双因素启用成功
+                            $this->twoFactorEnabled = true;
                         })
                         ->visible($this->requiresConfirmation),
                     Text::make('or, enter the code manually')
@@ -169,13 +181,62 @@ class TwoFactor extends Component implements HasActions, HasSchemas
             ->requiresConfirmation()
             ->modalHeading('Disable 2FA')
             ->modalDescription('Are you sure you\'d like to disable two-factor authentication? ')
-            ->action(function (DisableTwoFactorAuthentication $disableTwoFactorAuthentication) {
+            ->action(function () {
                 $user = Auth::guard($this->guard)->user();
 
-                $disableTwoFactorAuthentication($this->module, $user);
+                $this->disableTwoFactorAuthentication($user);
 
                 $this->twoFactorEnabled = false;
             });
+    }
+
+    protected function enableTwoFactorAuthentication($user, $force = false): void
+    {
+        if (empty($user->two_factor_secret) || $force === true) {
+            $secretLength = 16;
+
+            $user->forceFill([
+                'two_factor_secret' => UserConfig::currentEncrypter($this->module)->encrypt($this->provider->generateSecretKey($secretLength)),
+                'two_factor_recovery_codes' => UserConfig::currentEncrypter($this->module)->encrypt(json_encode(Collection::times(8, function () {
+                    return RecoveryCode::generate();
+                })->all())),
+            ])->save();
+
+            TwoFactorAuthenticationEnabled::dispatch($user);
+        }
+    }
+
+    protected function confirmTwoFactorAuthentication($user, $code, $statePath = null): void
+    {
+        if (empty($user->two_factor_secret) ||
+            empty($code) ||
+            ! $this->provider->verify($this->module, UserConfig::currentEncrypter($this->module)->decrypt($user->two_factor_secret), $code)) {
+            throw ValidationException::withMessages([
+                ($statePath ? $statePath . '.' : '') . 'code' => [__('The provided two factor authentication code was invalid.')],
+            ])->errorBag('confirmTwoFactorAuthentication');
+        }
+
+        $user->forceFill([
+            'two_factor_confirmed_at' => now(),
+        ])->save();
+
+        TwoFactorAuthenticationConfirmed::dispatch($user);
+    }
+
+    protected function disableTwoFactorAuthentication($user): void
+    {
+        if (! is_null($user->two_factor_secret) ||
+            ! is_null($user->two_factor_recovery_codes) ||
+            ! is_null($user->two_factor_confirmed_at)) {
+            $user->forceFill([
+                'two_factor_secret' => null,
+                'two_factor_recovery_codes' => null,
+            ] + (UserConfig::confirmsTwoFactorAuthentication($this->module) || ! is_null($user->two_factor_confirmed_at) ? [
+                'two_factor_confirmed_at' => null,
+            ] : []))->save();
+
+            TwoFactorAuthenticationDisabled::dispatch($user);
+        }
     }
 
     /**

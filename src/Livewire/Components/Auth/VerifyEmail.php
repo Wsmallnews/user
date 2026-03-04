@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Livewire\Actions\Logout;
 
 class VerifyEmail extends Component implements HasSchemas
 {
@@ -76,10 +75,12 @@ class VerifyEmail extends Component implements HasSchemas
     /**
      * Log the current user out of the application.
      */
-    public function logout(Logout $logout): void
+    public function logout(): void
     {
-        // 退出登录
-        $logout(UserConfig::getConfig($this->module, 'guard'));
+        Auth::guard(UserConfig::getConfig($this->module, 'guard'))->logout();
+
+        Session::invalidate();
+        Session::regenerateToken();
 
         // 通知用户退出登录
         \Filament\Notifications\Notification::make()
