@@ -3,19 +3,18 @@
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
 use App\Models\User;
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components;
-use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component as SchemaComponent;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Events\Lockout;
@@ -27,13 +26,13 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
+use Wsmallnews\User\Facades\UserConfig;
 
-class Login extends Component implements HasSchemas, HasActions
+class Login extends Component implements HasActions, HasSchemas
 {
-    use InteractsWithSchemas;
     use InteractsWithActions;
+    use InteractsWithSchemas;
 
     public ?array $formData = [];
 
@@ -42,7 +41,6 @@ class Login extends Component implements HasSchemas, HasActions
 
     #[Locked]
     public ?string $userUndertakingMultiFactorAuthentication = null;
-
 
     public function form(Schema $schema): Schema
     {
@@ -72,7 +70,6 @@ class Login extends Component implements HasSchemas, HasActions
             ->statePath('formData');
     }
 
-
     public function twoFactorChallengeForm(Schema $schema): Schema
     {
         return $schema
@@ -82,33 +79,34 @@ class Login extends Component implements HasSchemas, HasActions
 
                 Components\OneTimeCodeInput::make('code')
                     ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.label'))
-                    ->belowContent(fn(Get $get): Action => Action::make('useRecoveryCode')
-                        ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.actions.use_recovery_code.label'))
-                        ->link()
-                        ->action(fn(Set $set) => $set('useRecoveryCode', true))
+                    ->belowContent(
+                        fn (Get $get): Action => Action::make('useRecoveryCode')
+                            ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.actions.use_recovery_code.label'))
+                            ->link()
+                            ->action(fn (Set $set) => $set('useRecoveryCode', true))
                         // ->visible(fn(): bool => ! $get('useRecoveryCode'))
                     )
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
-                    ->required(fn(Get $get): bool => ! (bool)$get('useRecoveryCode'))
-                    ->visible(fn(Get $get): bool => ! (bool)$get('useRecoveryCode')),
+                    ->required(fn (Get $get): bool => ! (bool) $get('useRecoveryCode'))
+                    ->visible(fn (Get $get): bool => ! (bool) $get('useRecoveryCode')),
 
                 Components\TextInput::make('recoveryCode')
                     ->label('使用恢复码')
-                    ->belowContent(fn(Get $get): Action => Action::make('useCode')
-                        ->label('使用 Authenticator App 密码')
-                        ->link()
-                        ->action(fn(Set $set) => $set('useRecoveryCode', false))
+                    ->belowContent(
+                        fn (Get $get): Action => Action::make('useCode')
+                            ->label('使用 Authenticator App 密码')
+                            ->link()
+                            ->action(fn (Set $set) => $set('useRecoveryCode', false))
                         // ->visible(fn(): bool => ! $get('useRecoveryCode'))
                     )
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.validation_attribute'))
                     ->password()
                     ->revealable()
-                    ->required(fn(Get $get): bool => (bool)$get('useRecoveryCode'))
-                    ->visible(fn(Get $get): bool => (bool)$get('useRecoveryCode')),
+                    ->required(fn (Get $get): bool => (bool) $get('useRecoveryCode'))
+                    ->visible(fn (Get $get): bool => (bool) $get('useRecoveryCode')),
             ])
             ->statePath('formData.twoFactor');
     }
-
 
     public function getFormActions()
     {
@@ -119,7 +117,6 @@ class Login extends Component implements HasSchemas, HasActions
         ];
     }
 
-
     public function getTwoFactorChallengeFormActions()
     {
         return [
@@ -128,7 +125,6 @@ class Login extends Component implements HasSchemas, HasActions
                 ->submit('login'),
         ];
     }
-
 
     public function login()
     {
@@ -147,7 +143,7 @@ class Login extends Component implements HasSchemas, HasActions
                 (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
             ) {
                 // 验证多因素认证
-                if (!$this->authenticateTwoFactor($user)) {
+                if (! $this->authenticateTwoFactor($user)) {
                     $formData = $this->twoFactorChallengeForm->getState();
                     $recoveryCode = $formData['recoveryCode'] ?? null;
                     if ($recoveryCode) {
@@ -155,6 +151,7 @@ class Login extends Component implements HasSchemas, HasActions
                     } else {
                         $message = ['formData.twoFactor.code' => '双因素认证失败'];
                     }
+
                     // 多因素认证失败
                     throw ValidationException::withMessages($message);
                 }
@@ -163,6 +160,7 @@ class Login extends Component implements HasSchemas, HasActions
                 $this->userUndertakingMultiFactorAuthentication = encrypt($user->getAuthIdentifier());
 
                 $this->twoFactorChallengeForm->fill();
+
                 return;     // 这里返回，显示界面
             }
         }
@@ -170,7 +168,6 @@ class Login extends Component implements HasSchemas, HasActions
         // 完成登录
         $this->finishLogin($user);
     }
-
 
     /**
      * Ensure the authentication request is not rate limited.
@@ -193,8 +190,7 @@ class Login extends Component implements HasSchemas, HasActions
         ]);
     }
 
-
-    protected function authenticate(): User 
+    protected function authenticate(): User
     {
         $credentials = $this->getCredentials();
 
@@ -219,7 +215,6 @@ class Login extends Component implements HasSchemas, HasActions
         return $user;
     }
 
-
     protected function authenticateTwoFactor(User $user)
     {
         $formData = $this->twoFactorChallengeForm->getState();
@@ -235,8 +230,10 @@ class Login extends Component implements HasSchemas, HasActions
             if ($currentRecoveryCode) {
                 // 恢复码验证成功， 替换为新的恢复码
                 $user->replaceRecoveryCode($this->module, $currentRecoveryCode);
+
                 return true;
             }
+
             // 恢复码验证失败
             return false;
         } else {
@@ -250,8 +247,7 @@ class Login extends Component implements HasSchemas, HasActions
         return false;
     }
 
-
-    protected function finishLogin () 
+    protected function finishLogin()
     {
         $credentials = $this->getCredentials();
 
@@ -283,7 +279,6 @@ class Login extends Component implements HasSchemas, HasActions
         $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
-
     protected function getCredentials()
     {
         $formData = $this->form->getState();
@@ -298,7 +293,6 @@ class Login extends Component implements HasSchemas, HasActions
         return $credentials;
     }
 
-
     /**
      * Get the authentication rate limiting throttle key.
      */
@@ -309,7 +303,6 @@ class Login extends Component implements HasSchemas, HasActions
         return Str::transliterate(Str::lower($formData['account']) . '|' . request()->ip());
     }
 
-
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -319,8 +312,6 @@ class Login extends Component implements HasSchemas, HasActions
             ]);
     }
 
-
-
     public function getFormContentComponent(): SchemaComponent
     {
         return Form::make([EmbeddedSchema::make('form')])
@@ -329,9 +320,8 @@ class Login extends Component implements HasSchemas, HasActions
             ->footer([
                 $this->getFormActionsContentComponent(),
             ])
-            ->visible(fn(): bool => blank($this->userUndertakingMultiFactorAuthentication));
+            ->visible(fn (): bool => blank($this->userUndertakingMultiFactorAuthentication));
     }
-
 
     public function getFormActionsContentComponent(): SchemaComponent
     {
@@ -339,7 +329,6 @@ class Login extends Component implements HasSchemas, HasActions
             ->fullWidth(true)
             ->key('login-form-actions');
     }
-
 
     public function getTwoFactorChallengeFormContentComponent(): SchemaComponent
     {
@@ -349,9 +338,8 @@ class Login extends Component implements HasSchemas, HasActions
             ->footer([
                 $this->getTwoFactorChallengeFormActionsContentComponent(),
             ])
-            ->visible(fn(): bool => filled($this->userUndertakingMultiFactorAuthentication));
+            ->visible(fn (): bool => filled($this->userUndertakingMultiFactorAuthentication));
     }
-
 
     public function getTwoFactorChallengeFormActionsContentComponent(): SchemaComponent
     {
@@ -359,7 +347,6 @@ class Login extends Component implements HasSchemas, HasActions
             ->fullWidth(true)
             ->key('two-factor-challenge-form-actions');
     }
-
 
     public function render()
     {

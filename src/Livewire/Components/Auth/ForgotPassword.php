@@ -50,7 +50,6 @@ class ForgotPassword extends Component implements HasSchemas
         ];
     }
 
-
     public function sendPasswordResetLink(): void
     {
         $formData = $this->form->getState();
@@ -90,7 +89,6 @@ class ForgotPassword extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormContentComponent(): SchemaComponent
     {
         return Form::make([EmbeddedSchema::make('form')])
@@ -101,14 +99,12 @@ class ForgotPassword extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormActionsContentComponent(): SchemaComponent
     {
         return Actions::make($this->getFormActions())
             ->fullWidth(true)
             ->key('forgot-password-form-actions');
     }
-
 
     public function render()
     {

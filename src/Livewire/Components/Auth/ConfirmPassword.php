@@ -41,7 +41,6 @@ class ConfirmPassword extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-
     public function getFormActions(): array
     {
         return [
@@ -50,7 +49,6 @@ class ConfirmPassword extends Component implements HasSchemas
                 ->submit('confirmPassword'),
         ];
     }
-
 
     /**
      * Confirm the current user's password.
@@ -84,7 +82,6 @@ class ConfirmPassword extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormContentComponent(): SchemaComponent
     {
         return Form::make([EmbeddedSchema::make('form')])
@@ -95,14 +92,12 @@ class ConfirmPassword extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormActionsContentComponent(): SchemaComponent
     {
         return Actions::make($this->getFormActions())
             ->fullWidth(true)
             ->key('confirm-password-form-actions');
     }
-
 
     public function render()
     {

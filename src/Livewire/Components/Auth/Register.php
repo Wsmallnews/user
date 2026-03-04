@@ -73,7 +73,6 @@ class Register extends Component implements HasSchemas
         ];
     }
 
-
     public function register(): void
     {
         $formData = $this->form->getState();
@@ -108,7 +107,6 @@ class Register extends Component implements HasSchemas
         $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?type=register', FilamentView::hasSpaMode());
     }
 
-
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -116,7 +114,6 @@ class Register extends Component implements HasSchemas
                 $this->getFormContentComponent(),
             ]);
     }
-
 
     public function getFormContentComponent(): SchemaComponent
     {
@@ -128,14 +125,12 @@ class Register extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormActionsContentComponent(): SchemaComponent
     {
         return Actions::make($this->getFormActions())
             ->fullWidth(true)
             ->key('register-form-actions');
     }
-
 
     public function render()
     {

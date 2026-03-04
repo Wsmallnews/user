@@ -74,7 +74,6 @@ class Profile extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-
     public function getFormActions(): array
     {
         return [
@@ -83,7 +82,6 @@ class Profile extends Component implements HasSchemas
                 ->submit('updateProfileInformation'),
         ];
     }
-
 
     public function updateProfileInformation(): void
     {
@@ -123,7 +121,6 @@ class Profile extends Component implements HasSchemas
         }
     }
 
-
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -131,7 +128,6 @@ class Profile extends Component implements HasSchemas
                 $this->getFormContentComponent(),
             ]);
     }
-
 
     public function getFormContentComponent(): SchemaComponent
     {
@@ -143,14 +139,12 @@ class Profile extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormActionsContentComponent(): SchemaComponent
     {
         return Actions::make($this->getFormActions())
             ->fullWidth(true)
             ->key('update-profile-information-form-actions');
     }
-
 
     public function render()
     {

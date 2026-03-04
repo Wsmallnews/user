@@ -58,7 +58,6 @@ class Password extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-
     public function getFormActions(): array
     {
         return [
@@ -67,7 +66,6 @@ class Password extends Component implements HasSchemas
                 ->submit('updatePassword'),
         ];
     }
-
 
     public function updatePassword(): void
     {
@@ -82,7 +80,6 @@ class Password extends Component implements HasSchemas
             ->success()->send();
     }
 
-
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -90,7 +87,6 @@ class Password extends Component implements HasSchemas
                 $this->getFormContentComponent(),
             ]);
     }
-
 
     public function getFormContentComponent(): SchemaComponent
     {
@@ -102,14 +98,12 @@ class Password extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormActionsContentComponent(): SchemaComponent
     {
         return Actions::make($this->getFormActions())
             ->fullWidth(true)
             ->key('update-password-form-actions');
     }
-
 
     public function render()
     {

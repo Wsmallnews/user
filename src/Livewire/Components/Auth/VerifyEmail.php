@@ -42,7 +42,6 @@ class VerifyEmail extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-
     public function getFormActions(): array
     {
         return [
@@ -52,7 +51,6 @@ class VerifyEmail extends Component implements HasSchemas
         ];
     }
 
-    
     public function sendVerification(): void
     {
         $guard = UserConfig::getConfig($this->module, 'guard');
@@ -91,7 +89,6 @@ class VerifyEmail extends Component implements HasSchemas
         $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
-
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -99,7 +96,6 @@ class VerifyEmail extends Component implements HasSchemas
                 $this->getFormContentComponent(),
             ]);
     }
-
 
     public function getFormContentComponent(): SchemaComponent
     {
@@ -110,7 +106,6 @@ class VerifyEmail extends Component implements HasSchemas
                 $this->getFormActionsContentComponent(),
             ]);
     }
-
 
     public function getFormActionsContentComponent(): SchemaComponent
     {

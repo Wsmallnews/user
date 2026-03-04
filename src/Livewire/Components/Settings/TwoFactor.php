@@ -105,7 +105,7 @@ class TwoFactor extends Component implements HasActions, HasSchemas
                                     ->label(__('Code'))
                                     ->hiddenLabel()
                                     ->required()
-                                    ->extraAttributes(['class' => 'mx-auto'], true)
+                                    ->extraAttributes(['class' => 'mx-auto'], true),
                             ];
                         })
                         ->modalIcon(Heroicon::QrCode)

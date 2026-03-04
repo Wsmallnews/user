@@ -69,7 +69,6 @@ class ResetPassword extends Component implements HasSchemas
             ->statePath('formData');
     }
 
-
     public function getFormActions(): array
     {
         return [
@@ -78,7 +77,6 @@ class ResetPassword extends Component implements HasSchemas
                 ->submit('resetPassword'),
         ];
     }
-
 
     /**
      * Reset the password for the given user.
@@ -127,7 +125,6 @@ class ResetPassword extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormContentComponent(): SchemaComponent
     {
         return Form::make([EmbeddedSchema::make('form')])
@@ -138,14 +135,12 @@ class ResetPassword extends Component implements HasSchemas
             ]);
     }
 
-
     public function getFormActionsContentComponent(): SchemaComponent
     {
         return Actions::make($this->getFormActions())
             ->fullWidth(true)
             ->key('reset-password-form-actions');
     }
-
 
     public function render()
     {
