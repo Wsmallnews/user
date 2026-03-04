@@ -77,21 +77,34 @@ class Login extends Component implements HasSchemas, HasActions
     {
         return $schema
             ->components([
+                Components\Hidden::make('useRecoveryCode')
+                    ->default(false),
+
                 Components\OneTimeCodeInput::make('code')
                     ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.label'))
                     ->belowContent(fn(Get $get): Action => Action::make('useRecoveryCode')
                         ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.actions.use_recovery_code.label'))
                         ->link()
                         ->action(fn(Set $set) => $set('useRecoveryCode', true))
-                        ->visible(fn(): bool => ! $get('useRecoveryCode')))
+                        // ->visible(fn(): bool => ! $get('useRecoveryCode'))
+                    )
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
-                    ->required(fn(Get $get): bool => blank($get('recoveryCode'))),
+                    ->required(fn(Get $get): bool => ! (bool)$get('useRecoveryCode'))
+                    ->visible(fn(Get $get): bool => ! (bool)$get('useRecoveryCode')),
+
                 Components\TextInput::make('recoveryCode')
-                    ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.label'))
+                    ->label('使用恢复码')
+                    ->belowContent(fn(Get $get): Action => Action::make('useCode')
+                        ->label('使用 Authenticator App 密码')
+                        ->link()
+                        ->action(fn(Set $set) => $set('useRecoveryCode', false))
+                        // ->visible(fn(): bool => ! $get('useRecoveryCode'))
+                    )
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.validation_attribute'))
                     ->password()
                     ->revealable()
-                    ->visible(fn(Get $get): bool => filled($get('useRecoveryCode'))),
+                    ->required(fn(Get $get): bool => (bool)$get('useRecoveryCode'))
+                    ->visible(fn(Get $get): bool => (bool)$get('useRecoveryCode')),
             ])
             ->statePath('formData.twoFactor');
     }
@@ -135,10 +148,15 @@ class Login extends Component implements HasSchemas, HasActions
             ) {
                 // 验证多因素认证
                 if (!$this->authenticateTwoFactor($user)) {
+                    $formData = $this->twoFactorChallengeForm->getState();
+                    $recoveryCode = $formData['recoveryCode'] ?? null;
+                    if ($recoveryCode) {
+                        $message = ['formData.twoFactor.recoveryCode' => '恢复码不正确或已失效'];
+                    } else {
+                        $message = ['formData.twoFactor.code' => '双因素认证失败'];
+                    }
                     // 多因素认证失败
-                    throw ValidationException::withMessages([
-                        'formData.twoFactor.code' => '双因素认证失败',
-                    ]);
+                    throw ValidationException::withMessages($message);
                 }
             } else {
                 // 判断并且显示双因素验证界面
@@ -214,7 +232,13 @@ class Login extends Component implements HasSchemas, HasActions
                 return hash_equals($code, $recoveryCode) ? $code : null;
             });
 
-            return $currentRecoveryCode ? true : false;
+            if ($currentRecoveryCode) {
+                // 恢复码验证成功， 替换为新的恢复码
+                $user->replaceRecoveryCode($this->module, $currentRecoveryCode);
+                return true;
+            }
+            // 恢复码验证失败
+            return false;
         } else {
             return $code && app(TwoFactorAuthenticationProvider::class)->verify(
                 $this->module,
