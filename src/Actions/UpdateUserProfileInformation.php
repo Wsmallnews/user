@@ -2,9 +2,6 @@
 
 namespace Wsmallnews\User\Actions;
 
-use Illuminate\Support\Facades\Validator;
-use Wsmallnews\User\User;
-
 class UpdateUserProfileInformation
 {
     /**

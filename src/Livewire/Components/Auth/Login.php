@@ -2,7 +2,6 @@
 
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
@@ -17,17 +16,11 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
-use Illuminate\Auth\Events\Lockout;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Actions\AttemptToAuthenticate;
-use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
+use Wsmallnews\User\Actions\AttemptTwoFactorAuthenticate;
 use Wsmallnews\User\Facades\UserConfig;
 
 class Login extends Component implements HasActions, HasSchemas
@@ -127,17 +120,26 @@ class Login extends Component implements HasActions, HasSchemas
 
     public function login()
     {
-        // 登录限制
-        $this->ensureIsNotRateLimited();
-
         $formData = $this->form->getState();
-        $attemptToAuthenticate = new AttemptToAuthenticate($formData, $this->module);
+        $attemptToAuthenticate = new AttemptToAuthenticate($this->module, $formData);
 
-        if (! $user = $attemptToAuthenticate->retrieveUser() || ! $attemptToAuthenticate->validateCredentials($user)) {
+        // 登录限制
+        if (! $attemptToAuthenticate->ensureIsNotRateLimited()) {
+            $seconds = $attemptToAuthenticate->lockSecond();
+            throw ValidationException::withMessages([
+                'formData.account' => trans('auth.throttle', [
+                    'seconds' => $seconds,
+                    'minutes' => ceil($seconds / 60),
+                ]),
+            ]);
+        }
+
+        // 检索用户
+        $user = $attemptToAuthenticate->retrieveUser();
+        
+        if (! $user || ! $attemptToAuthenticate->validateCredentials($user)) {
             // 账号密码验证失败
             $this->userUndertakingMultiFactorAuthentication = null;
-
-            RateLimiter::hit($this->throttleKey());
 
             $this->addError('formData.account', trans('auth.failed'));
             return;
@@ -151,18 +153,18 @@ class Login extends Component implements HasActions, HasSchemas
                 filled($this->userUndertakingMultiFactorAuthentication) &&
                 (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
             ) {
-                // 验证多因素认证
-                if (! $this->authenticateTwoFactor($user)) {
-                    $formData = $this->twoFactorChallengeForm->getState();
-                    $recoveryCode = $formData['recoveryCode'] ?? null;
-                    if ($recoveryCode) {
-                        $message = ['formData.twoFactor.recoveryCode' => '恢复码不正确或已失效'];
-                    } else {
-                        $message = ['formData.twoFactor.code' => '双因素认证失败'];
-                    }
+                $twoFactorChallengeForm = $this->twoFactorChallengeForm->getState();
+                $attemptTwoFactorAuthenticate = new AttemptTwoFactorAuthenticate($this->module, $twoFactorChallengeForm);
 
-                    // 多因素认证失败
-                    throw ValidationException::withMessages($message);
+                // 验证多因素认证
+                if (! $attemptTwoFactorAuthenticate($user)) {
+                    $recoveryCode = $twoFactorChallengeForm['recoveryCode'] ?? null;
+                    if ($recoveryCode) {
+                        $this->addError('formData.twoFactor.recoveryCode', '恢复码不正确或已失效');
+                    } else {
+                        $this->addError('formData.twoFactor.code', '双因素认证失败');
+                    }
+                    return;
                 }
             } else {
                 // 判断并且显示双因素验证界面
@@ -177,8 +179,6 @@ class Login extends Component implements HasActions, HasSchemas
         // 完成登录
         $attemptToAuthenticate->finishLogin($user);
 
-        RateLimiter::clear($this->throttleKey());
-
         \Filament\Notifications\Notification::make()
             ->title('登录成功')
             ->success()->send();
@@ -187,68 +187,6 @@ class Login extends Component implements HasActions, HasSchemas
         $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
-    /**
-     * Ensure the authentication request is not rate limited.
-     */
-    protected function ensureIsNotRateLimited(): void
-    {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
-            return;
-        }
-
-        event(new Lockout(request()));
-
-        $seconds = RateLimiter::availableIn($this->throttleKey());
-
-        throw ValidationException::withMessages([
-            'formData.account' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
-        ]);
-    }
-
-    protected function authenticateTwoFactor(User $user)
-    {
-        $formData = $this->twoFactorChallengeForm->getState();
-
-        $code = $formData['code'] ?? null;
-        $recoveryCode = $formData['recoveryCode'] ?? null;
-
-        if ($recoveryCode) {
-            $currentRecoveryCode = collect($user->recoveryCodes($this->module))->first(function ($code) use ($recoveryCode) {
-                return hash_equals($code, $recoveryCode) ? $code : null;
-            });
-
-            if ($currentRecoveryCode) {
-                // 恢复码验证成功， 替换为新的恢复码
-                $user->replaceRecoveryCode($this->module, $currentRecoveryCode);
-
-                return true;
-            }
-
-            // 恢复码验证失败
-            return false;
-        } else {
-            return $code && app(TwoFactorAuthenticationProvider::class)->verify(
-                $this->module,
-                UserConfig::currentEncrypter($this->module)->decrypt($user->two_factor_secret),
-                $code
-            );
-        }
-    }
-
-
-
-    /**
-     * Get the authentication rate limiting throttle key.
-     */
-    protected function throttleKey(): string
-    {
-        $formData = $this->form->getState();
-
-        return Str::transliterate(Str::lower($formData['account']) . '|' . request()->ip());
-    }
 
     public function content(Schema $schema): Schema
     {

@@ -30,6 +30,7 @@ class EnableTwoFactorAuthentication
     /**
      * Enable two factor authentication for the user.
      *
+     * @param  string  $module
      * @param  mixed  $user
      * @param  bool  $force
      * @return void

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Livewire\Actions\Logout;
+use Wsmallnews\User\Actions\Logout;
 
 class VerifyEmail extends Component implements HasSchemas
 {
