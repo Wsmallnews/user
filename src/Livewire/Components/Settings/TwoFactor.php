@@ -17,10 +17,10 @@ use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
-use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Actions\ConfirmTwoFactorAuthentication;
 use Wsmallnews\User\Actions\DisableTwoFactorAuthentication;
 use Wsmallnews\User\Actions\EnableTwoFactorAuthentication;
+use Wsmallnews\User\Facades\UserConfig;
 
 class TwoFactor extends Component implements HasActions, HasSchemas
 {

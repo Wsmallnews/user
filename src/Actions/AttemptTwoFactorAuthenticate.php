@@ -14,9 +14,6 @@ class AttemptTwoFactorAuthenticate
 
     /**
      * AttemptTwoFactorAuthenticate constructor.
-     *
-     * @param  string  $module
-     * @param  array  $formData
      */
     public function __construct(string $module, array $formData)
     {
@@ -24,11 +21,6 @@ class AttemptTwoFactorAuthenticate
         $this->formData = $formData;
     }
 
-
-    /**
-     * @param  User  $user
-     * @return bool
-     */
     public function __invoke(User $user): bool
     {
         $code = $this->formData['code'] ?? null;

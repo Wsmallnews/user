@@ -11,9 +11,6 @@ class CreateNewUser
 {
     /**
      * Create a new user instance.
-     *
-     * @param  array  $formData
-     * @return UserModel
      */
     public function __invoke(array $formData): UserModel
     {
@@ -25,7 +22,7 @@ class CreateNewUser
             'password' => Hash::make($formData['password']),
             'gender' => $formData['gender'] ?? Gender::Undisclosed,
         ];
-        
+
         return $userModel::create($data);
     }
 }

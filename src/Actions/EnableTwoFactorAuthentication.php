@@ -31,10 +31,7 @@ class EnableTwoFactorAuthentication
     /**
      * Enable two factor authentication for the user.
      *
-     * @param  string  $module
      * @param  mixed  $user
-     * @param  bool  $force
-     * @return void
      */
     public function __invoke(string $module, User $user, bool $force = false): void
     {

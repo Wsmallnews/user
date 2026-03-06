@@ -10,8 +10,6 @@ class UpdateUserPassword
      * Update the user's password.
      *
      * @param  mixed  $user
-     * @param  array  $formData
-     * @return void
      */
     public function __invoke(User $user, array $formData): void
     {

@@ -126,6 +126,7 @@ class Login extends Component implements HasActions, HasSchemas
         // 登录限制
         if (! $attemptToAuthenticate->ensureIsNotRateLimited()) {
             $seconds = $attemptToAuthenticate->lockSecond();
+
             throw ValidationException::withMessages([
                 'formData.account' => trans('auth.throttle', [
                     'seconds' => $seconds,
@@ -136,12 +137,13 @@ class Login extends Component implements HasActions, HasSchemas
 
         // 检索用户
         $user = $attemptToAuthenticate->retrieveUser();
-        
+
         if (! $user || ! $attemptToAuthenticate->validateCredentials($user)) {
             // 账号密码验证失败
             $this->userUndertakingMultiFactorAuthentication = null;
 
             $this->addError('formData.account', trans('auth.failed'));
+
             return;
         }
 
@@ -164,6 +166,7 @@ class Login extends Component implements HasActions, HasSchemas
                     } else {
                         $this->addError('formData.twoFactor.code', '双因素认证失败');
                     }
+
                     return;
                 }
             } else {
@@ -186,7 +189,6 @@ class Login extends Component implements HasActions, HasSchemas
         // 退回上个url
         $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
-
 
     public function content(Schema $schema): Schema
     {

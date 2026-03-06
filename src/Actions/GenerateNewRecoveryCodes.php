@@ -13,9 +13,7 @@ class GenerateNewRecoveryCodes
     /**
      * Generate new recovery codes for the user.
      *
-     * @param  string  $module
      * @param  mixed  $user
-     * @return void
      */
     public function __invoke(string $module, User $user): void
     {

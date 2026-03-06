@@ -11,9 +11,7 @@ class DisableTwoFactorAuthentication
     /**
      * Disable two factor authentication for the user.
      *
-     * @param  string  $module
      * @param  mixed  $user
-     * @return void
      */
     public function __invoke(string $module, User $user): void
     {

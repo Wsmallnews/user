@@ -10,9 +10,8 @@ class Logout
 {
     /**
      * Log the current user out of the application.
-     * 
+     *
      * @param  string  $guard
-     * @return void
      */
     public function __invoke(string $module): void
     {

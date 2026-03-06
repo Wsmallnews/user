@@ -30,7 +30,6 @@ class ConfirmTwoFactorAuthentication
     /**
      * Confirm the two factor authentication configuration for the user.
      *
-     * @param  string  $module
      * @param  mixed  $user
      * @param  string  $code
      * @return void

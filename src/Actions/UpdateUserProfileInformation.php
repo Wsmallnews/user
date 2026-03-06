@@ -10,8 +10,6 @@ class UpdateUserProfileInformation
      * Update the user's profile information.
      *
      * @param  mixed  $user
-     * @param  array  $formData
-     * @return 
      */
     public function __invoke(User $user, array $formData): void
     {
