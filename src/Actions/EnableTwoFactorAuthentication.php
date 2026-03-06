@@ -1,6 +1,6 @@
 <?php
 
-namespace Wsmallnews\User\Livewire\Actions;
+namespace Wsmallnews\User\Actions;
 
 use Illuminate\Support\Collection;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;

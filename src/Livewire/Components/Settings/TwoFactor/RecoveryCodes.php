@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Livewire\Actions\GenerateNewRecoveryCodes;
+use Wsmallnews\User\Actions\GenerateNewRecoveryCodes;
 
 class RecoveryCodes extends Component implements HasActions, HasSchemas
 {

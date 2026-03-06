@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Wsmallnews\User\Actions\AttemptToAuthenticate;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\Facades\UserConfig;
 
@@ -84,7 +85,6 @@ class Login extends Component implements HasActions, HasSchemas
                             ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.actions.use_recovery_code.label'))
                             ->link()
                             ->action(fn (Set $set) => $set('useRecoveryCode', true))
-                        // ->visible(fn(): bool => ! $get('useRecoveryCode'))
                     )
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
                     ->required(fn (Get $get): bool => ! (bool) $get('useRecoveryCode'))
@@ -97,7 +97,6 @@ class Login extends Component implements HasActions, HasSchemas
                             ->label('使用 Authenticator App 密码')
                             ->link()
                             ->action(fn (Set $set) => $set('useRecoveryCode', false))
-                        // ->visible(fn(): bool => ! $get('useRecoveryCode'))
                     )
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.validation_attribute'))
                     ->password()
@@ -131,8 +130,18 @@ class Login extends Component implements HasActions, HasSchemas
         // 登录限制
         $this->ensureIsNotRateLimited();
 
-        // 验证用户
-        $user = $this->authenticate();
+        $formData = $this->form->getState();
+        $attemptToAuthenticate = new AttemptToAuthenticate($formData, $this->module);
+
+        if (! $user = $attemptToAuthenticate->retrieveUser() || ! $attemptToAuthenticate->validateCredentials($user)) {
+            // 账号密码验证失败
+            $this->userUndertakingMultiFactorAuthentication = null;
+
+            RateLimiter::hit($this->throttleKey());
+
+            $this->addError('formData.account', trans('auth.failed'));
+            return;
+        }
 
         if (
             UserConfig::getConfig($this->module, 'two_factor.enabled', true)        // 启用了双因素
@@ -166,7 +175,16 @@ class Login extends Component implements HasActions, HasSchemas
         }
 
         // 完成登录
-        $this->finishLogin($user);
+        $attemptToAuthenticate->finishLogin($user);
+
+        RateLimiter::clear($this->throttleKey());
+
+        \Filament\Notifications\Notification::make()
+            ->title('登录成功')
+            ->success()->send();
+
+        // 退回上个url
+        $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }
 
     /**
@@ -188,31 +206,6 @@ class Login extends Component implements HasActions, HasSchemas
                 'minutes' => ceil($seconds / 60),
             ]),
         ]);
-    }
-
-    protected function authenticate(): User
-    {
-        $credentials = $this->getCredentials();
-
-        /** @var SessionGuard $authGuard */
-        $authGuard = Auth::guard(UserConfig::getConfig($this->module, 'guard'));
-        $authProvider = $authGuard->getProvider();      /** @phpstan-ignore-line */
-
-        // 当前 user model 实例
-        $user = $authProvider->retrieveByCredentials($credentials);
-
-        if ((! $user) || (! $authProvider->validateCredentials($user, $credentials))) {
-            // 账号密码验证失败
-            $this->userUndertakingMultiFactorAuthentication = null;
-
-            RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'formData.account' => trans('auth.failed'),
-            ]);
-        }
-
-        return $user;
     }
 
     protected function authenticateTwoFactor(User $user)
@@ -243,55 +236,9 @@ class Login extends Component implements HasActions, HasSchemas
                 $code
             );
         }
-
-        return false;
     }
 
-    protected function finishLogin()
-    {
-        $credentials = $this->getCredentials();
 
-        /** @var SessionGuard $authGuard */
-        $authGuard = Auth::guard(UserConfig::getConfig($this->module, 'guard'));
-
-        // 账号密码验证成功， 多因素认证验证成功
-        if (! $authGuard->attemptWhen($credentials, function (User $user): bool {
-            // 这里可以加入其他条件， 密码已经在上面验证过了
-            return true;
-        }, $formData['remember'] ?? false)) {
-            RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'formData.account' => trans('auth.failed'),
-            ]);
-        }
-
-        RateLimiter::clear($this->throttleKey());
-
-        // 登录成功，重新生成 session id
-        Session::regenerate();
-
-        \Filament\Notifications\Notification::make()
-            ->title('登录成功')
-            ->success()->send();
-
-        // 退回上个url
-        $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
-    }
-
-    protected function getCredentials()
-    {
-        $formData = $this->form->getState();
-        $credentials = Arr::only($formData, ['password']);
-        $credentials['account'] = function ($query) use ($formData) {
-            $query->where(function ($query) use ($formData) {
-                $query->where('email', $formData['account'])
-                    ->orWhere('mobile', $formData['account']);
-            });
-        };
-
-        return $credentials;
-    }
 
     /**
      * Get the authentication rate limiting throttle key.

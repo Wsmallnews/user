@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Wsmallnews\User\Actions\UpdateUserPassword;
 use Wsmallnews\User\Facades\UserConfig;
 
 class Password extends Component implements HasSchemas
@@ -67,13 +68,12 @@ class Password extends Component implements HasSchemas
         ];
     }
 
-    public function updatePassword(): void
+    public function updatePassword(UpdateUserPassword $updateUserPassword): void
     {
         $formData = $this->form->getState();
+        $user = Auth::guard(UserConfig::getConfig($this->module, 'guard'))->user();
 
-        Auth::guard(UserConfig::getConfig($this->module, 'guard'))->user()->update([
-            'password' => $formData['password'],
-        ]);
+        $updateUserPassword($user, $formData);
 
         \Filament\Notifications\Notification::make()
             ->title('密码更新成功')

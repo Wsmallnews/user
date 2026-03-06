@@ -18,9 +18,9 @@ use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\Response;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Livewire\Actions\ConfirmTwoFactorAuthentication;
-use Wsmallnews\User\Livewire\Actions\DisableTwoFactorAuthentication;
-use Wsmallnews\User\Livewire\Actions\EnableTwoFactorAuthentication;
+use Wsmallnews\User\Actions\ConfirmTwoFactorAuthentication;
+use Wsmallnews\User\Actions\DisableTwoFactorAuthentication;
+use Wsmallnews\User\Actions\EnableTwoFactorAuthentication;
 
 class TwoFactor extends Component implements HasActions, HasSchemas
 {

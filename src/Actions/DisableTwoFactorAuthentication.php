@@ -1,6 +1,6 @@
 <?php
 
-namespace Wsmallnews\User\Livewire\Actions;
+namespace Wsmallnews\User\Actions;
 
 use Wsmallnews\User\Events\TwoFactorAuthenticationDisabled;
 use Wsmallnews\User\Facades\UserConfig;

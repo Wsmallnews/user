@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\Support\Support\Utils as SupportUtils;
+use Wsmallnews\User\Actions\UpdateUserProfileInformation;
 use Wsmallnews\User\Enums\Gender;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Support\Utils;
@@ -83,28 +84,19 @@ class Profile extends Component implements HasSchemas
         ];
     }
 
-    public function updateProfileInformation(): void
+    public function updateProfileInformation(UpdateUserProfileInformation $updateUserProfileInformation): void
     {
         $formData = $this->form->getState();
-
         $user = Auth::guard(UserConfig::getConfig($this->module, 'guard'))->user();
 
-        $user->fill($formData);
-
-        $shouldVerifyEmail = false;
-        if ($user->isDirty('email')) {
-            // 修改了邮箱，重置验证状态
-            $shouldVerifyEmail = true;
-            $user->email_verified_at = null;
-        }
-
-        $user->save();
+        $originalEmail = $user->email;
+        $updateUserProfileInformation($user, $formData);
 
         \Filament\Notifications\Notification::make()
             ->title('个人信息更新成功')
             ->success()->send();
 
-        if ($shouldVerifyEmail) {
+        if ($user->email !== $originalEmail) {
             // 自定义邮箱验证链接
             VerifyEmailNotification::createUrlUsing(function ($notifiable) {
                 return UserConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [

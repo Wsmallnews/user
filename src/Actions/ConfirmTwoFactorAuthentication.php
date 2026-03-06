@@ -1,6 +1,6 @@
 <?php
 
-namespace Wsmallnews\User\Livewire\Actions;
+namespace Wsmallnews\User\Actions;
 
 use Illuminate\Validation\ValidationException;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
