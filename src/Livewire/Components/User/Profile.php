@@ -3,12 +3,14 @@
 namespace Wsmallnews\User\Livewire\Components\User;
 
 use Filament\Support\Facades\FilamentView;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
-use Wsmallnews\User\Livewire\Actions\Logout;
+use Wsmallnews\User\Actions\Logout;
 
 class Profile extends Component
 {
+    #[Locked]
     public string $module;
 
     /**
@@ -17,7 +19,7 @@ class Profile extends Component
     public function logout(Logout $logout): void
     {
         // 退出登录
-        $logout(UserConfig::getConfig($this->module, 'guard'));
+        $logout($this->module);
 
         $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
     }

@@ -2,6 +2,7 @@
 
 namespace Wsmallnews\User\Actions;
 
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\Events\TwoFactorAuthenticationEnabled;
@@ -35,7 +36,7 @@ class EnableTwoFactorAuthentication
      * @param  bool  $force
      * @return void
      */
-    public function __invoke(string $module, $user, $force = false)
+    public function __invoke(string $module, User $user, bool $force = false): void
     {
         if (empty($user->two_factor_secret) || $force === true) {
             $secretLength = 16;

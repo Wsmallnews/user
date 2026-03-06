@@ -15,7 +15,7 @@ class CreateNewUser
      * @param  array  $formData
      * @return UserModel
      */
-    public function __invoke(array $formData)
+    public function __invoke(array $formData): UserModel
     {
         $userModel = Utils::getUserModel();
 

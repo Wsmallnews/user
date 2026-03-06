@@ -2,6 +2,7 @@
 
 namespace Wsmallnews\User\Actions;
 
+use App\Models\User;
 use Illuminate\Validation\ValidationException;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\Events\TwoFactorAuthenticationConfirmed;
@@ -34,7 +35,7 @@ class ConfirmTwoFactorAuthentication
      * @param  string  $code
      * @return void
      */
-    public function __invoke(string $module, $user, $code, $statePath = null)
+    public function __invoke(string $module, User $user, $code, $statePath = null)
     {
         if (empty($user->two_factor_secret) ||
             empty($code) ||

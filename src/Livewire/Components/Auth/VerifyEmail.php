@@ -79,7 +79,7 @@ class VerifyEmail extends Component implements HasSchemas
     public function logout(Logout $logout): void
     {
         // 退出登录
-        $logout(UserConfig::getConfig($this->module, 'guard'));
+        $logout($this->module);
 
         // 通知用户退出登录
         \Filament\Notifications\Notification::make()

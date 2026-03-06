@@ -2,6 +2,8 @@
 
 namespace Wsmallnews\User\Actions;
 
+use App\Models\User;
+
 class UpdateUserPassword
 {
     /**
@@ -11,7 +13,7 @@ class UpdateUserPassword
      * @param  array  $formData
      * @return void
      */
-    public function __invoke($user, array $formData)
+    public function __invoke(User $user, array $formData): void
     {
         $user->update([
             'password' => $formData['password'],

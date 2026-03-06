@@ -2,6 +2,7 @@
 
 namespace Wsmallnews\User\Actions;
 
+use App\Models\User;
 use Wsmallnews\User\Events\TwoFactorAuthenticationDisabled;
 use Wsmallnews\User\Facades\UserConfig;
 
@@ -14,7 +15,7 @@ class DisableTwoFactorAuthentication
      * @param  mixed  $user
      * @return void
      */
-    public function __invoke($module, $user)
+    public function __invoke(string $module, User $user): void
     {
         if (! is_null($user->two_factor_secret) ||
             ! is_null($user->two_factor_recovery_codes) ||

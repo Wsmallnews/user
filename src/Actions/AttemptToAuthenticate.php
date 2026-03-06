@@ -2,6 +2,7 @@
 
 namespace Wsmallnews\User\Actions;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -90,7 +91,7 @@ class AttemptToAuthenticate
      * @param  mixed  $user
      * @return bool
      */
-    public function validateCredentials($user): bool
+    public function validateCredentials(User $user): bool
     {
         $credentials = $this->getCredentials();
 
@@ -114,7 +115,7 @@ class AttemptToAuthenticate
      * @param  mixed  $user
      * @return void
      */
-    public function finishLogin($user): void
+    public function finishLogin(User $user): void
     {
         Auth::guard($this->guard)->login($user, $this->formData['remember'] ?? false);
 

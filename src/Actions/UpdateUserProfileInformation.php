@@ -2,6 +2,8 @@
 
 namespace Wsmallnews\User\Actions;
 
+use App\Models\User;
+
 class UpdateUserProfileInformation
 {
     /**
@@ -11,7 +13,7 @@ class UpdateUserProfileInformation
      * @param  array  $formData
      * @return 
      */
-    public function __invoke($user, array $formData)
+    public function __invoke(User $user, array $formData): void
     {
         $user->fill($formData);
 
