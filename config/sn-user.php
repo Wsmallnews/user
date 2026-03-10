@@ -91,20 +91,20 @@ return [
 
     'themes' => [
         // 是否启用暗黑模式
-        'dark-mode' => true,
+        'dark_mode' => true,
 
         // 默认主题模式
-        'default-dark-mode' => 'system',
+        'default_dark_mode' => 'system',
 
         // 强制暗黑主题
-        'dark-mode-forced' => false,
+        'dark_mode_forced' => false,
 
         'layout' => 'sn-user::components.layouts.app',
 
         // 页面容器
-        'page-container' => 'sn-user::container.page',
+        'page_container' => 'sn-user::container.page',
 
         // 视图命名空间
-        'view-namespace' => 'sn-user::livewire.',
+        'view_namespace' => 'sn-user::livewire.',
     ],
 ];
