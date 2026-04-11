@@ -7,7 +7,7 @@
 
 <div class="w-full flex flex-col items-start gap-4" >
     <div class="w-full flex gap-4">
-        <img src="{{ $user->getFilamentAvatarUrl() }}" alt="{{ $user->getFilamentName() }}" class="w-32 h-32 rounded-full" />
+        <img src="{{ files_url($user->getFilamentAvatarUrl()) }}" alt="{{ $user->getFilamentName() }}" class="w-32 h-32 rounded-full" />
 
         <div class="flex flex-col gap-2">
             <span class="flex items-center text-lg font-bold gap-2">
