@@ -3,6 +3,7 @@
 namespace Wsmallnews\User;
 
 use Closure;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
@@ -85,7 +86,7 @@ class UserConfig
     /**
      * Get the current encrypter being used by the model.
      */
-    public function currentEncrypter(string $module): \Illuminate\Contracts\Encryption\Encrypter
+    public function currentEncrypter(string $module): Encrypter
     {
         return $this->getConfig($module, 'encrypter', null) ?? Model::$encrypter ?? Crypt::getFacadeRoot();
     }

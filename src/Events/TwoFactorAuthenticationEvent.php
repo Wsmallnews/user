@@ -2,6 +2,7 @@
 
 namespace Wsmallnews\User\Events;
 
+use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 
 abstract class TwoFactorAuthenticationEvent
@@ -11,14 +12,14 @@ abstract class TwoFactorAuthenticationEvent
     /**
      * The user instance.
      *
-     * @var \App\Models\User
+     * @var User
      */
     public $user;
 
     /**
      * Create a new event instance.
      *
-     * @param  \App\Models\User  $user
+     * @param  User  $user
      * @return void
      */
     public function __construct($user)

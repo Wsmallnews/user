@@ -4,6 +4,7 @@ namespace Wsmallnews\User\Http\Middleware;
 
 use Closure;
 use Illuminate\Auth\Middleware\RequirePassword as BaseRequirePassword;
+use Illuminate\Http\Request;
 use Wsmallnews\User\Support\Utils;
 
 class RequirePassword extends BaseRequirePassword
@@ -11,7 +12,7 @@ class RequirePassword extends BaseRequirePassword
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  string|null  $redirectToRoute
      * @param  string|int|null  $passwordTimeoutSeconds
      * @return mixed

@@ -12,14 +12,14 @@ class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProvider
     /**
      * The underlying library providing two factor authentication helper services.
      *
-     * @var \PragmaRX\Google2FA\Google2FA
+     * @var Google2FA
      */
     protected $engine;
 
     /**
      * The cache repository implementation.
      *
-     * @var \Illuminate\Contracts\Cache\Repository|null
+     * @var Repository|null
      */
     protected $cache;
 

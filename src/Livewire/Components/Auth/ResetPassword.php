@@ -4,6 +4,7 @@ namespace Wsmallnews\User\Livewire\Components\Auth;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component as SchemaComponent;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -110,7 +111,7 @@ class ResetPassword extends Component implements HasSchemas
             return;
         }
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title(__($status))
             ->success()->send();
 

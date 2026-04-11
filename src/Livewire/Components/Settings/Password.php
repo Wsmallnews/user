@@ -4,6 +4,7 @@ namespace Wsmallnews\User\Livewire\Components\Settings;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component as SchemaComponent;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -75,7 +76,7 @@ class Password extends Component implements HasSchemas
 
         $updateUserPassword($user, $formData);
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('密码更新成功')
             ->success()->send();
     }

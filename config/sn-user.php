@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Wsmallnews\User\Models;
 
 return [
@@ -7,7 +8,7 @@ return [
      * Custom models
      */
     'models' => [
-        'user' => \App\Models\User::class,
+        'user' => User::class,
     ],
 
     /**

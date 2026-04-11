@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component as SchemaComponent;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -54,7 +55,7 @@ class Login extends Component implements HasActions, HasSchemas
                         $forgotPasswordUrl = UserConfig::getConfig($this->module, 'urls.forgot-password');
 
                         return $forgotPasswordUrl ?
-                            \Filament\Actions\Action::make('forget-password')
+                            Action::make('forget-password')
                                 ->label('忘记密码？')
                                 ->url((string) $forgotPasswordUrl)
                         : null;
@@ -182,7 +183,7 @@ class Login extends Component implements HasActions, HasSchemas
         // 完成登录
         $attemptToAuthenticate->finishLogin($user);
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('登录成功')
             ->success()->send();
 

@@ -4,6 +4,7 @@ namespace Wsmallnews\User\Livewire\Components\Auth;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component as SchemaComponent;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -14,6 +15,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Locked;
@@ -77,7 +79,7 @@ class Register extends Component implements HasSchemas
 
         try {
             $user = $createNewUser($formData);
-        } catch (\Illuminate\Database\UniqueConstraintViolationException) {
+        } catch (UniqueConstraintViolationException) {
             $this->addError('formData.email', '该邮箱已注册, 请直接登录');
 
             return;
@@ -86,7 +88,7 @@ class Register extends Component implements HasSchemas
         // 用户注册事件
         event(new Registered($user));
 
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('注册成功')
             ->success()->send();
 

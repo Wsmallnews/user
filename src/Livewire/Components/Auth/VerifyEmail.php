@@ -3,6 +3,7 @@
 namespace Wsmallnews\User\Livewire\Components\Auth;
 
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component as SchemaComponent;
 use Filament\Schemas\Components\EmbeddedSchema;
@@ -82,7 +83,7 @@ class VerifyEmail extends Component implements HasSchemas
         $logout($this->module);
 
         // 通知用户退出登录
-        \Filament\Notifications\Notification::make()
+        Notification::make()
             ->title('您已退出登录')
             ->success()->send();
 

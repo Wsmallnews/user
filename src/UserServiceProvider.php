@@ -150,7 +150,7 @@ class UserServiceProvider extends PackageServiceProvider
         // Livewire::component('sn-user-choose-address', ChooseAddress::class);
 
         // 注册用户认证信息
-        UserConfigFacade::config(app(\Wsmallnews\User\UserPlugin::class)->getId(), function () {
+        UserConfigFacade::config(app(UserPlugin::class)->getId(), function () {
             return [
                 'guard' => Utils::getConfig('guard', 'web'),
                 'two_factor' => Utils::getConfig('two_factor', []),
@@ -169,7 +169,7 @@ class UserServiceProvider extends PackageServiceProvider
                             $parameters['tenant'] = $tenant;        // 租户参数
                         }
 
-                        $parameters['module'] = app(\Wsmallnews\User\UserPlugin::class)->getId();             // 当前模块名
+                        $parameters['module'] = app(UserPlugin::class)->getId();             // 当前模块名
 
                         return URL::temporarySignedRoute(
                             Utils::getConfig('routes.name', '') . 'verify.email.verification',
@@ -183,7 +183,7 @@ class UserServiceProvider extends PackageServiceProvider
         });
 
         // 注册用户侧边栏菜单
-        SidebarMenuRegistryFacade::registers(app(\Wsmallnews\User\UserPlugin::class)->getId(), [
+        SidebarMenuRegistryFacade::registers(app(UserPlugin::class)->getId(), [
             fn () => [
                 'key' => 'profile',
                 'label' => '个人中心',

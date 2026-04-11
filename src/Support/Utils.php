@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wsmallnews\User\Support;
 
+use App\Models\User;
 use Wsmallnews\User\Exceptions\UserException;
 
 class Utils
@@ -32,7 +33,7 @@ class Utils
     /**
      * 获取用户模型
      *
-     * @return \App\Models\User
+     * @return User
      */
     public static function getUserModel(): string
     {

@@ -2,6 +2,7 @@
 
 namespace Wsmallnews\User\Events;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -13,7 +14,7 @@ class RecoveryCodeReplaced
     /**
      * The authenticated user.
      *
-     * @var \Illuminate\Contracts\Auth\Authenticatable
+     * @var Authenticatable
      */
     public $user;
 
@@ -27,7 +28,7 @@ class RecoveryCodeReplaced
     /**
      * Create a new event instance.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
+     * @param  Authenticatable  $user
      * @param  string  $code
      * @return void
      */
