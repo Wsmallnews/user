@@ -18,7 +18,7 @@ use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
-use Wsmallnews\Support\Support\Utils as SupportUtils;
+use Wsmallnews\Support\Filament\Forms\FormComponents;
 use Wsmallnews\User\Actions\UpdateUserProfileInformation;
 use Wsmallnews\User\Enums\Gender;
 use Wsmallnews\User\Facades\UserConfig;
@@ -44,16 +44,11 @@ class Profile extends Component implements HasSchemas
         return $schema
             ->components([
                 Text::make(__('Update your profile information')),
-                Components\FileUpload::make('avatar_url')
+                FormComponents::localImageUpload('avatar_url')
                     ->label(__('Avatar'))
                     ->avatar()
-                    ->disk(SupportUtils::getFilesystemDisk())
                     ->directory(Utils::getFileDirectory('avatars'))
-                    ->visibility('public')
-                    ->openable()
-                    ->downloadable()
-                    ->uploadingMessage('头像上传中...')
-                    ->imagePreviewHeight('100'),
+                    ->uploadingMessage('头像上传中...'),
                 Components\TextInput::make('name')
                     ->label(__('Name'))
                     ->placeholder('请输入你的名称')
