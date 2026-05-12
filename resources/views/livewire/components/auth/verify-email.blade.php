@@ -12,11 +12,11 @@
     <div class="flex flex-col mt-6 gap-4">
         @if ($type === 'register')
             <x-filament::link tag="button" wire:click="logout">
-                注销登录
+                {{ __('sn-user::user.settings.verify.sign_out') }}
             </x-filament::link>
         @elseif (session('status'))
             <x-filament::button tag="a" color="gray" href="{{ session('verify-previous-url') ?? UserConfig::getConfig($module, 'urls.index') }}">
-                我已验证，继续操作
+                {{ __('sn-user::user.settings.verify.continue') }}
             </x-filament::button>
         @endif
     </div>

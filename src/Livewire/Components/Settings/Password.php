@@ -33,25 +33,25 @@ class Password extends Base implements HasSchemas
     {
         return $schema
             ->components([
-                Text::make(__('Ensure your account is using a long, random password to stay secure')),
+                Text::make(__('sn-user::user.settings.password.title')),
                 Components\TextInput::make('current_password')
-                    ->label('当前密码')
-                    ->placeholder('请输入当前密码')
+                    ->label(__('sn-user::user.settings.password.current_password'))
+                    ->placeholder(__('sn-user::user.settings.password.current_password_placeholder'))
                     ->required()
                     ->rule(['current_password:' . UserConfig::getConfig($this->module, 'guard')])
                     ->password()
                     ->revealable(),
                 Components\TextInput::make('password')
-                    ->label('新密码')
-                    ->placeholder('请输入新密码')
+                    ->label(__('sn-user::user.settings.password.password'))
+                    ->placeholder(__('sn-user::user.settings.password.password_placeholder'))
                     ->required()
                     ->rule(PasswordRule::default())
                     ->confirmed()
                     ->password()
                     ->revealable(),
                 Components\TextInput::make('password_confirmation')
-                    ->label('确认新密码')
-                    ->placeholder('请确认新密码')
+                    ->label(__('sn-user::user.settings.password.password_confirmation'))
+                    ->placeholder(__('sn-user::user.settings.password.password_confirmation_placeholder'))
                     ->required()
                     ->password()
                     ->revealable()
@@ -64,7 +64,7 @@ class Password extends Base implements HasSchemas
     {
         return [
             Action::make('updatePassword')
-                ->label('更新密码')
+                ->label(__('sn-user::user.settings.password.submit'))
                 ->submit('updatePassword'),
         ];
     }
@@ -77,7 +77,7 @@ class Password extends Base implements HasSchemas
         $updateUserPassword($user, $formData);
 
         Notification::make()
-            ->title('密码更新成功')
+            ->title(__('sn-user::user.settings.password.success'))
             ->success()->send();
     }
 

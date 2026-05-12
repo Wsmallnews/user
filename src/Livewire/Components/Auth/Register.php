@@ -37,25 +37,25 @@ class Register extends Base implements HasSchemas
         return $schema
             ->components([
                 Components\TextInput::make('name')
-                    ->label('昵称')
-                    ->placeholder('请输入昵称')
+                    ->label(__('sn-user::user.auth.register.name'))
+                    ->placeholder(__('sn-user::user.auth.register.name_placeholder'))
                     ->required(),
                 Components\TextInput::make('email')
-                    ->label('邮箱')
-                    ->placeholder('请输入邮箱')
+                    ->label(__('sn-user::user.auth.register.email'))
+                    ->placeholder(__('sn-user::user.auth.register.email_placeholder'))
                     ->required()
                     ->email(),
                 Components\TextInput::make('password')
-                    ->label('密码')
-                    ->placeholder('请输入密码')
+                    ->label(__('sn-user::user.auth.register.password'))
+                    ->placeholder(__('sn-user::user.auth.register.password_placeholder'))
                     ->required()
                     ->rule(Password::default())
                     ->same('password_confirmation')
                     ->password()
                     ->revealable(),
                 Components\TextInput::make('password_confirmation')
-                    ->label('确认密码')
-                    ->placeholder('请确认密码')
+                    ->label(__('sn-user::user.auth.register.password_confirmation'))
+                    ->placeholder(__('sn-user::user.auth.register.password_confirmation_placeholder'))
                     ->required()
                     ->password()
                     ->revealable()
@@ -80,7 +80,7 @@ class Register extends Base implements HasSchemas
         try {
             $user = $createNewUser($formData);
         } catch (UniqueConstraintViolationException) {
-            $this->addError('formData.email', '该邮箱已注册, 请直接登录');
+            $this->addError('formData.email', __('sn-user::user.auth.register.email_exists'));
 
             return;
         }
@@ -96,7 +96,7 @@ class Register extends Base implements HasSchemas
         event(new Registered($user));
 
         Notification::make()
-            ->title('注册成功')
+            ->title(__('sn-user::user.auth.register.success'))
             ->success()->send();
 
         Auth::guard(UserConfig::getConfig($this->module, 'guard'))->login($user);

@@ -47,21 +47,21 @@ class ResetPassword extends Base implements HasSchemas
                 Components\Hidden::make('token')
                     ->required(),
                 Components\TextInput::make('email')
-                    ->label('邮箱')
-                    ->placeholder('请输入邮箱')
+                    ->label(__('sn-user::user.auth.reset_password.email'))
+                    ->placeholder(__('sn-user::user.auth.reset_password.email_placeholder'))
                     ->required()
                     ->email(),
                 Components\TextInput::make('password')
-                    ->label('新密码')
-                    ->placeholder('请输入新密码')
+                    ->label(__('sn-user::user.auth.reset_password.password'))
+                    ->placeholder(__('sn-user::user.auth.reset_password.password_placeholder'))
                     ->required()
                     ->rule(Rules\Password::default())
                     ->same('password_confirmation')
                     ->password()
                     ->revealable(),
                 Components\TextInput::make('password_confirmation')
-                    ->label('确认新密码')
-                    ->placeholder('请确认新密码')
+                    ->label(__('sn-user::user.auth.reset_password.password_confirmation'))
+                    ->placeholder(__('sn-user::user.auth.reset_password.password_confirmation_placeholder'))
                     ->required()
                     ->password()
                     ->revealable()
@@ -74,7 +74,7 @@ class ResetPassword extends Base implements HasSchemas
     {
         return [
             Action::make('resetPassword')
-                ->label('重置密码')
+                ->label(__('sn-user::user.auth.reset_password.submit'))
                 ->submit('resetPassword'),
         ];
     }

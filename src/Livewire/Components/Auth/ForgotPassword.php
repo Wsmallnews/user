@@ -32,9 +32,9 @@ class ForgotPassword extends Base implements HasSchemas
         return $schema
             ->components([
                 Components\TextInput::make('email')
-                    ->label('邮箱')
-                    ->aboveLabel('忘记密码了？没关系。只需告诉我们您注册时使用的电子邮箱地址，我们将向您发送一个密码重置链接，通过该链接您即可设置一个新密码')
-                    ->placeholder('请输入邮箱')
+                    ->label(__('sn-user::user.auth.forgot_password.email'))
+                    ->aboveLabel(__('sn-user::user.auth.forgot_password.description'))
+                    ->placeholder(__('sn-user::user.auth.forgot_password.email_placeholder'))
                     ->required()
                     ->email(),
             ])
@@ -45,7 +45,7 @@ class ForgotPassword extends Base implements HasSchemas
     {
         return [
             Action::make('sendPasswordResetLink')
-                ->label('发送密码重置链接')
+                ->label(__('sn-user::user.auth.forgot_password.submit'))
                 ->submit('sendPasswordResetLink'),
         ];
     }

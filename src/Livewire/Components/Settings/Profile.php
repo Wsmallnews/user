@@ -43,29 +43,29 @@ class Profile extends Base implements HasSchemas
     {
         return $schema
             ->components([
-                Text::make(__('Update your profile information')),
+                Text::make(__('sn-user::user.settings.profile.title')),
                 FormComponents::localImageUpload('avatar_url')
-                    ->label(__('Avatar'))
+                    ->label(__('sn-user::user.settings.profile.avatar'))
                     ->avatar()
                     ->directory(Utils::getFileDirectory('avatars'))
-                    ->uploadingMessage('头像上传中...'),
+                    ->uploadingMessage(__('sn-user::user.settings.profile.avatar_uploading')),
                 Components\TextInput::make('name')
-                    ->label(__('Name'))
-                    ->placeholder('请输入你的名称')
+                    ->label(__('sn-user::user.settings.profile.name'))
+                    ->placeholder(__('sn-user::user.settings.profile.name_placeholder'))
                     ->required(),
                 Components\TextInput::make('email')
-                    ->label('邮箱')
-                    ->placeholder('请输入邮箱')
+                    ->label(__('sn-user::user.settings.profile.email'))
+                    ->placeholder(__('sn-user::user.settings.profile.email_placeholder'))
                     ->required()
                     ->email()
                     ->unique(ignoreRecord: true),
                 Components\Radio::make('gender')
-                    ->label('性别')
+                    ->label(__('sn-user::user.settings.profile.gender'))
                     ->default(Gender::Undisclosed)
                     ->inline()
                     ->options(Gender::class),
                 Components\DatePicker::make('birthday')
-                    ->label('生日')
+                    ->label(__('sn-user::user.settings.profile.birthday'))
                     ->default(null),
             ])
             ->statePath('formData');
@@ -75,7 +75,7 @@ class Profile extends Base implements HasSchemas
     {
         return [
             Action::make('updateProfileInformation')
-                ->label('更新个人信息')
+                ->label(__('sn-user::user.settings.profile.submit'))
                 ->submit('updateProfileInformation'),
         ];
     }
@@ -89,7 +89,7 @@ class Profile extends Base implements HasSchemas
         $updateUserProfileInformation($user, $formData);
 
         Notification::make()
-            ->title('个人信息更新成功')
+            ->title(__('sn-user::user.settings.profile.success'))
             ->success()->send();
 
         if ($user->email !== $originalEmail) {

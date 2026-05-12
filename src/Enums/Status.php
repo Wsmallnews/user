@@ -17,8 +17,8 @@ enum Status: string implements HasColor, HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Normal => '正常',
-            self::Disabled => '已禁用',
+            self::Normal => __('sn-user::user.status.normal'),
+            self::Disabled => __('sn-user::user.status.disabled'),
         };
     }
 

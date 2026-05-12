@@ -47,18 +47,18 @@ class ChooseAddress extends Component implements HasActions, HasForms
     public function createAction(): Action
     {
         return CreateAction::make()
-            ->label('使用新地址')
-            ->mutateFormDataUsing(function (array $data): array {
+            ->label(__('sn-user::user.address.use_new_address'))
+            ->mutateDataUsing(function (array $data): array {
                 // 处理数据
                 return $this->operDistrict($data);
             })
-            ->form($this->schema())
+            ->schema($this->schema())
             ->using(function (array $data): UserAddressModel {
                 return $this->user->addresses()->create($data);
             })
             ->link()
             ->createAnother(false)
-            ->successNotificationTitle('创建成功');
+            ->successNotificationTitle(__('sn-user::user.address.create_success'));
     }
 
     public function editAction(): Action
@@ -69,21 +69,21 @@ class ChooseAddress extends Component implements HasActions, HasForms
 
                 return $this->user->addresses()->findOrFail($id);
             })
-            ->mutateFormDataUsing(function (array $data): array {
+            ->mutateDataUsing(function (array $data): array {
                 // 处理数据
                 return $this->operDistrict($data);
             })
-            ->form($this->schema())
+            ->schema($this->schema())
             ->link()
-            ->successNotificationTitle('编辑成功');
+            ->successNotificationTitle(__('sn-user::user.address.edit_success'));
     }
 
     public function manageAction(): Action
     {
         return Action::make('manage')
-            ->label('管理地址')
+            ->label(__('sn-user::user.address.manage_address'))
             ->link()
-            ->url(fn (): string => '跳转新地址');
+            ->url(fn(): string => __('sn-user::user.address.manage_url'));
     }
 
     public function choose($id)
@@ -95,23 +95,23 @@ class ChooseAddress extends Component implements HasActions, HasForms
     {
         return [
             TextInput::make('consignee')
-                ->label('收货人')
-                ->placeholder('请输入收货人')
+                ->label(__('sn-user::user.address.consignee'))
+                ->placeholder(__('sn-user::user.address.consignee_placeholder'))
                 ->required(),
             Radio::make('gender')
-                ->label('性别')
+                ->label(__('sn-user::user.address.gender'))
                 ->default(Enums\Gender::Other)
                 ->inline()
                 ->options(Enums\Gender::class),
             TextInput::make('mobile')
-                ->label('手机号')
+                ->label(__('sn-user::user.address.mobile'))
                 ->required()
                 ->rules(['regex:/^1[3456789][0-9]{9}$/']),
             DistrictSelect::make('district')
-                ->label('地区')
+                ->label(__('sn-user::user.address.district'))
                 ->required(),
             Textarea::make('address')
-                ->label('详细地址')
+                ->label(__('sn-user::user.address.address'))
                 ->required(),
         ];
     }
@@ -135,7 +135,6 @@ class ChooseAddress extends Component implements HasActions, HasForms
 
     public function render()
     {
-        return view('sn-user::livewire.choose-address.index', [
-        ])->title('选择收货地址');
+        return view('sn-user::livewire.choose-address.index', [])->title(__('sn-user::user.address.choose_title'));
     }
 }

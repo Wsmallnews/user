@@ -43,14 +43,14 @@ class RecoveryCodes extends Base implements HasActions, HasSchemas
     public function regenerateAction(): Action
     {
         return Action::make('regenerate')
-            ->label(__('Regenerate Recovery Codes'))
+            ->label(__('sn-user::user.settings.recovery_codes.regenerate'))
             ->icon(Heroicon::ArrowPath)
             ->color('gray')
             ->requiresConfirmation()
             ->modalIconColor('danger')
-            ->modalHeading('Regenerate Recovery Codes')
-            ->modalDescription('Are you sure you\'d like to regenerate recovery codes? ')
-            ->successNotificationTitle(__('Recovery codes regenerated successfully'))
+            ->modalHeading(__('sn-user::user.settings.recovery_codes.regenerate_confirmation_title'))
+            ->modalDescription(__('sn-user::user.settings.recovery_codes.regenerate_confirmation_description'))
+            ->successNotificationTitle(__('sn-user::user.settings.recovery_codes.regenerate_success'))
             ->action(function (GenerateNewRecoveryCodes $generateNewRecoveryCodes) {
                 $user = Auth::guard($this->guard)->user();
 
@@ -71,7 +71,7 @@ class RecoveryCodes extends Base implements HasActions, HasSchemas
             try {
                 $this->recoveryCodes = json_decode(decrypt($user->two_factor_recovery_codes), true);
             } catch (\Exception) {
-                $this->addError('recoveryCodes', 'Failed to load recovery codes');
+                $this->addError('recoveryCodes', __('sn-user::user.settings.recovery_codes.load_failed'));
 
                 $this->recoveryCodes = [];
             }

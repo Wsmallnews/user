@@ -11,10 +11,10 @@
                     <livewire:sn-user-components-user-menu :module="app(UserPlugin::class)->getId()" switch-dark-mode="{{ Utils::hasDarkMode() && !Utils::hasDarkModeForced() }}" />
                 @else
                     <x-filament::button tag="a" href="{{ Utils::route('login') }}">
-                        登录
+                        {{ __('sn-user::user.auth.login.submit') }}
                     </x-filament::button>
                     <x-filament::button color="gray" tag="a" href="{{ Utils::route('register') }}">
-                        注册
+                        {{ __('sn-user::user.auth.register.submit') }}
                     </x-filament::button>
                 @endauth
             </div>

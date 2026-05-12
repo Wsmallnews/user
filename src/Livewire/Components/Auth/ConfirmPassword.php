@@ -31,9 +31,9 @@ class ConfirmPassword extends Base implements HasSchemas
         return $schema
             ->components([
                 Components\TextInput::make('password')
-                    ->label('密码')
-                    ->aboveLabel('敏感操作，请在继续之前确认您的密码。')
-                    ->placeholder('请确认密码')
+                    ->label(__('sn-user::user.auth.confirm_password.password'))
+                    ->aboveLabel(__('sn-user::user.auth.confirm_password.description'))
+                    ->placeholder(__('sn-user::user.auth.confirm_password.password_placeholder'))
                     ->required()
                     ->password()
                     ->revealable(),
@@ -45,7 +45,7 @@ class ConfirmPassword extends Base implements HasSchemas
     {
         return [
             Action::make('confirmPassword')
-                ->label('确认密码')
+                ->label(__('sn-user::user.auth.confirm_password.submit'))
                 ->submit('confirmPassword'),
         ];
     }

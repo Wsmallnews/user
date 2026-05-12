@@ -46,18 +46,18 @@ class Address extends Component implements HasActions, HasForms
     public function createAction(): Action
     {
         return CreateAction::make()
-            ->label('创建新地址')
-            ->mutateFormDataUsing(function (array $data): array {
+            ->label(__('sn-user::user.address.create'))
+            ->mutateDataUsing(function (array $data): array {
                 // 处理数据
                 return $this->operDistrict($data);
             })
-            ->form($this->schema())
+            ->schema($this->schema())
             ->using(function (array $data): UserAddressModel {
                 return $this->user->addresses()->create($data);
             })
             ->link()
             ->createAnother(false)
-            ->successNotificationTitle('创建成功');
+            ->successNotificationTitle(__('sn-user::user.address.create_success'));
     }
 
     public function editAction(): Action
@@ -68,19 +68,19 @@ class Address extends Component implements HasActions, HasForms
 
                 return $this->user->addresses()->findOrFail($id);
             })
-            ->mutateFormDataUsing(function (array $data): array {
+            ->mutateDataUsing(function (array $data): array {
                 // 处理数据
                 return $this->operDistrict($data);
             })
-            ->form($this->schema())
+            ->schema($this->schema())
             ->link()
-            ->successNotificationTitle('编辑成功');
+            ->successNotificationTitle(__('sn-user::user.address.edit_success'));
     }
 
     public function setDefaultAction(): Action
     {
         return Action::make('setDefault')
-            ->label('设为默认')
+            ->label(__('sn-user::user.address.set_default'))
             ->record(function (array $arguments) {
                 $id = $arguments['id'] ?? 0;
 
@@ -98,6 +98,7 @@ class Address extends Component implements HasActions, HasForms
     public function deleteAction(): Action
     {
         return DeleteAction::make('delete')
+            ->label(__('sn-user::user.address.delete'))
             ->record(function (array $arguments) {
                 $id = $arguments['id'] ?? 0;
 
@@ -112,23 +113,23 @@ class Address extends Component implements HasActions, HasForms
     {
         return [
             TextInput::make('consignee')
-                ->label('收货人')
-                ->placeholder('请输入收货人')
+                ->label(__('sn-user::user.address.consignee'))
+                ->placeholder(__('sn-user::user.address.consignee_placeholder'))
                 ->required(),
             Radio::make('gender')
-                ->label('性别')
+                ->label(__('sn-user::user.address.gender'))
                 ->default(Enums\Gender::Other)
                 ->inline()
                 ->options(Enums\Gender::class),
             TextInput::make('mobile')
-                ->label('手机号')
+                ->label(__('sn-user::user.address.mobile'))
                 ->required()
                 ->rules(['regex:/^1[3456789][0-9]{9}$/']),
             DistrictSelect::make('district')
-                ->label('地区')
+                ->label(__('sn-user::user.address.district'))
                 ->required(),
             Textarea::make('address')
-                ->label('详细地址')
+                ->label(__('sn-user::user.address.address'))
                 ->required(),
         ];
     }
@@ -152,7 +153,6 @@ class Address extends Component implements HasActions, HasForms
 
     public function render()
     {
-        return view('sn-user::livewire.address.index', [
-        ])->title('我的收货地址');
+        return view('sn-user::livewire.address.index', [])->title(__('sn-user::user.address.my_title'));
     }
 }

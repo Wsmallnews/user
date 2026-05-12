@@ -8,9 +8,9 @@
     <div class="flex flex-col mt-6 gap-4">
         @if (UserConfig::getConfig($module, 'urls.login'))
             <div class="flex text-sm items-center justify-center">
-                已有账号？
+                {{ __('sn-user::user.links.has_account') }}
                 <x-filament::link href="{{ UserConfig::getConfig($module, 'urls.login') }}">
-                    去登录
+                    {{ __('sn-user::user.links.go_login') }}
                 </x-filament::link>
             </div>
         @endif

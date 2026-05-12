@@ -28,7 +28,7 @@
 
     <x-filament::dropdown.list>
         <x-filament::dropdown.list.item tag="a" href="{{ UserConfig::getConfig($module, 'urls.profile') }}" >
-            个人中心
+            {{ __('sn-user::user.links.profile') }}
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
 
@@ -45,7 +45,7 @@
                     icon="heroicon-m-arrow-left-end-on-rectangle"
                     :size="IconSize::Small"
                 />
-                退出登录
+                {{ __('sn-user::user.links.logout') }}
             </div>
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>

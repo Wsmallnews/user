@@ -186,28 +186,28 @@ class UserServiceProvider extends PackageServiceProvider
         SidebarMenuRegistryFacade::registers(app(UserPlugin::class)->getId(), [
             fn () => [
                 'key' => 'profile',
-                'label' => '个人中心',
+                'label' => __('sn-user::user.settings.sidebar.profile'),
                 'url' => Utils::route('profile'),
                 'icon' => Heroicon::OutlinedUser,
                 'active_icon' => Heroicon::User,
             ],
             fn () => [
                 'key' => 'settings-profile',
-                'label' => '修改资料',
+                'label' => __('sn-user::user.settings.sidebar.settings_profile'),
                 'url' => Utils::route('settings.profile'),
                 'icon' => Heroicon::OutlinedPencilSquare,
                 'active_icon' => Heroicon::PencilSquare,
             ],
             fn () => [
                 'key' => 'settings-password',
-                'label' => '修改密码',
+                'label' => __('sn-user::user.settings.sidebar.settings_password'),
                 'url' => Utils::route('settings.password'),
                 'icon' => Heroicon::OutlinedLockClosed,
                 'active_icon' => Heroicon::LockClosed,
             ],
             fn () => [
                 'key' => 'settings-two-factor',
-                'label' => '双因素认证',
+                'label' => __('sn-user::user.settings.sidebar.settings_two_factor'),
                 'url' => fn () => Utils::route('settings.two-factor'),
                 'icon' => Heroicon::OutlinedKey,
                 'active_icon' => Heroicon::Key,

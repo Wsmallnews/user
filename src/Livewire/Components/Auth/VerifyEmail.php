@@ -36,9 +36,9 @@ class VerifyEmail extends Base implements HasSchemas
     {
         return $schema
             ->components([
-                Text::make('感谢您的注册！在开始之前，您能否点击我们刚刚发送给您的电子邮件中的链接，以验证您的电子邮件地址？如果您没有收到该电子邮件，我们很乐意为您重新发送一封。')->visible($this->type === 'register'),
-                Text::make('您更新了您的电子邮箱，在继续之前，您能否点击我们刚刚发送给您的电子邮件中的链接，以验证您的电子邮件地址？如果您没有收到该电子邮件，我们很乐意为您重新发送一封。')->visible($this->type == 'update'),
-                Text::make('您的电子邮箱还未验证，在继续之前，请先发送一封电子邮件，然后点击电子邮件中的链接，以验证您的电子邮件地址')->visible($this->type == 'check'),
+                Text::make(__('sn-user::user.auth.verify_email.register_description'))->visible($this->type === 'register'),
+                Text::make(__('sn-user::user.auth.verify_email.update_description'))->visible($this->type == 'update'),
+                Text::make(__('sn-user::user.auth.verify_email.check_description'))->visible($this->type == 'check'),
             ])
             ->statePath('formData');
     }
@@ -47,7 +47,7 @@ class VerifyEmail extends Base implements HasSchemas
     {
         return [
             Action::make('sendVerification')
-                ->label($this->type === 'register' || $this->type === 'update' || session('status') ? '重新发送验证邮箱' : '发送验证邮箱')
+                ->label($this->type === 'register' || $this->type === 'update' || session('status') ? __('sn-user::user.auth.verify_email.resend') : __('sn-user::user.auth.verify_email.send'))
                 ->submit('sendVerification'),
         ];
     }
@@ -71,7 +71,7 @@ class VerifyEmail extends Base implements HasSchemas
 
         Auth::guard($guard)->user()->sendEmailVerificationNotification();
 
-        Session::flash('status', '验证邮件已发送');
+        Session::flash('status', __('sn-user::user.auth.verify_email.sent'));
     }
 
     /**
@@ -84,7 +84,7 @@ class VerifyEmail extends Base implements HasSchemas
 
         // 通知用户退出登录
         Notification::make()
-            ->title('您已退出登录')
+            ->title(__('sn-user::user.auth.verify_email.logged_out'))
             ->success()->send();
 
         $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());

@@ -22,9 +22,9 @@ enum Gender: string implements HasColor, HasIcon, HasLabel
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Undisclosed => '保密',
-            self::Male => '先生',
-            self::Female => '女士',
+            self::Undisclosed => __('sn-user::user.gender.undisclosed'),
+            self::Male => __('sn-user::user.gender.male'),
+            self::Female => __('sn-user::user.gender.female'),
         };
     }
 

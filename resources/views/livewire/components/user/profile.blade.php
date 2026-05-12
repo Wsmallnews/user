@@ -26,7 +26,7 @@
     </div>
 
     <x-filament::button color="gray" tag="button" wire:click="logout">
-        注销登录
+        {{ __('sn-user::user.links.sign_out') }}
     </x-filament::button>
 
 </div>

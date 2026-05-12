@@ -6,10 +6,9 @@
     <div class="px-6 space-y-2">
         <div class="flex items-center gap-2">
             <x-filament::icon icon="heroicon-o-lock-closed" />
-            <div class="text-lg">{{ __('2FA Recovery Codes') }}</div>
+            <div class="text-lg">{{ __('sn-user::user.settings.recovery_codes.title') }}</div>
         </div>
-
-        <div class="text-sm text-gray-500">{{ __('Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.') }}</div>
+        <div class="text-sm text-gray-500">{{ __('sn-user::user.settings.recovery_codes.description') }}</div>
     </div>
 
     <div class="px-6">
@@ -22,7 +21,7 @@
                 aria-expanded="false"
                 aria-controls="recovery-codes-section"
             >
-                {{ __('View Recovery Codes') }}
+                {{ __('sn-user::user.settings.recovery_codes.view') }}
             </x-filament::button>
 
             <x-filament::button
@@ -33,7 +32,7 @@
                 aria-expanded="true"
                 aria-controls="recovery-codes-section"
             >
-                {{ __('Hide Recovery Codes') }}
+                {{ __('sn-user::user.settings.recovery_codes.hide') }}
             </x-filament::button>
 
             @if (filled($recoveryCodes))
@@ -67,7 +66,7 @@
                             </div>
                         @endforeach
                     </div>
-                    <div class="text-sm text-gray-500">{{ __('Each recovery code can be used once to access your account and will be removed after use. If you need more, click Regenerate Codes above.') }}}</div>
+                    <div class="text-sm text-gray-500">{{ __('sn-user::user.settings.recovery_codes.usage') }}</div>
                 @endif
             </div>
         </div>

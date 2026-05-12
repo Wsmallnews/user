@@ -2,7 +2,6 @@
 
 namespace Wsmallnews\User\Livewire\Auth;
 
-use Livewire\Attributes\Title;
 use Wsmallnews\User\Livewire\Base;
 use Wsmallnews\User\Support\Utils;
 
@@ -15,10 +14,10 @@ class VerifyEmail extends Base
         $this->type = request()->query('type', 'check');
     }
 
-    #[Title('验证邮箱')]
     public function render()
     {
-        return view($this->getViewPath('auth.verify-email'), [
-        ])->layout(Utils::getLayout());
+        return view($this->getViewPath('auth.verify-email'), [])
+            ->layout(Utils::getLayout())
+            ->title(__('sn-user::user.titles.verify_email'));
     }
 }

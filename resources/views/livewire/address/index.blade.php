@@ -2,7 +2,7 @@
     <div class="w-full flex flex-col gap-4">
         <div class="flex justify-between items-center">
             <div class="text-base font-bold">
-                我的收货地址
+                {{ __('sn-user::user.address.my_addresses') }}
             </div>
     
             <div class="flex justify-between items-center gap-4">
@@ -30,7 +30,7 @@
                     <div class="flex">
                         @if($address->is_default)
                             <x-filament::badge size="sm">
-                                默认
+                                {{ __('sn-user::user.address.default') }}
                             </x-filament::badge>
                         @endif
                         <div class="text-sm text-gray-400">

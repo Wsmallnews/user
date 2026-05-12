@@ -68,7 +68,7 @@ class TwoFactor extends Base implements HasActions, HasSchemas
     public function enableAction(): Action
     {
         return Action::make('enable')
-            ->label(__('Enable 2FA'))
+            ->label(__('sn-user::user.settings.two_factor.enable'))
             ->icon(Heroicon::ShieldCheck)
             ->schema(function (EnableTwoFactorAuthentication $enableTwoFactorAuthentication) {
                 $user = Auth::guard($this->guard)->user();
@@ -90,7 +90,7 @@ class TwoFactor extends Base implements HasActions, HasSchemas
                         ]),
 
                     Action::make('close')       // 不需要确认，关闭当前modal
-                        ->label(__('Close'))
+                        ->label(__('sn-user::user.settings.two_factor.close'))
                         ->cancelParentActions()     // 确认后将父级modal 也关闭
                         ->extraAttributes([
                             'class' => 'w-full',
@@ -98,30 +98,30 @@ class TwoFactor extends Base implements HasActions, HasSchemas
                         ->action(function () {})
                         ->visible(! $this->requiresConfirmation),
                     Action::make('continue')
-                        ->label(__('Continue'))
+                        ->label(__('sn-user::user.settings.two_factor.continue'))
                         ->schema(function () {
                             return [
                                 Components\OneTimeCodeInput::make('code')
-                                    ->label(__('Code'))
+                                    ->label(__('sn-user::user.settings.two_factor.code_label'))
                                     ->hiddenLabel()
                                     ->required()
                                     ->extraAttributes(['class' => 'mx-auto'], true),
                             ];
                         })
                         ->modalIcon(Heroicon::QrCode)
-                        ->modalHeading('Verify Authentication Code')
-                        ->modalDescription('Enter the 6-digit code from your authenticator app.')
+                        ->modalHeading(__('sn-user::user.settings.two_factor.code_label'))
+                        ->modalDescription(__('sn-user::user.settings.two_factor.code_placeholder'))
                         ->modalAlignment(Alignment::Center)
                         ->modalWidth(Width::Medium)
-                        ->modalCancelActionLabel(__('Back'))
-                        ->modalSubmitActionLabel(__('Confirm'))
+                        ->modalCancelActionLabel(__('sn-user::user.settings.two_factor.close'))
+                        ->modalSubmitActionLabel(__('sn-user::user.settings.two_factor.continue'))
                         ->modalFooterActionsAlignment(Alignment::Center)
                         ->closeModalByClickingAway(false)
                         ->cancelParentActions()     // 确认后将父级modal 也关闭
                         ->extraAttributes([
                             'class' => 'w-full',
                         ])
-                        ->successNotificationTitle(__('2FA enabled successfully'))
+                        ->successNotificationTitle(__('sn-user::user.settings.two_factor.success'))
                         ->action(function (ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication, array $data) {
                             $user = Auth::guard($this->guard)->user();
 
@@ -130,25 +130,25 @@ class TwoFactor extends Base implements HasActions, HasSchemas
                             $this->twoFactorEnabled = true;     // 用户双因素启用成功
                         })
                         ->visible($this->requiresConfirmation),
-                    Text::make('or, enter the code manually')
+                    Text::make(__('sn-user::user.settings.two_factor.or_enter_code_manually'))
                         ->view('sn-user::filament.schema.divide'),
                     Components\TextInput::make('setup_key')
                         ->hiddenLabel()
                         ->readOnly()
                         ->default($this->manualSetupKey)
-                        ->copyable(copyMessage: 'Copied!', copyMessageDuration: 1500),
+                        ->copyable(copyMessage: __('sn-user::user.settings.two_factor.copied'), copyMessageDuration: 1500),
                 ];
             })
             ->modalIcon(Heroicon::QrCode)
             ->modalHeading(function () {
                 return $this->requiresConfirmation
-                    ? __('Enable Two-Factor Authentication')
-                    : __('Two-Factor Authentication Enabled');
+                    ? __('sn-user::user.settings.two_factor.enable_two_factor')
+                    : __('sn-user::user.settings.two_factor.two_factor_enabled');
             })
             ->modalDescription(function () {
                 match ($this->requiresConfirmation) {
-                    true => __('To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app.'),
-                    false => __('Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.'),
+                    true => __('sn-user::user.settings.two_factor.two_factor_enable_description'),
+                    false => __('sn-user::user.settings.two_factor.two_factor_enabled_description'),
                 };
             })
             ->modalAlignment(Alignment::Center)
@@ -163,12 +163,12 @@ class TwoFactor extends Base implements HasActions, HasSchemas
     public function disableAction(): Action
     {
         return Action::make('disable')
-            ->label(__('Disable 2FA'))
+            ->label(__('sn-user::user.settings.two_factor.disable'))
             ->icon(Heroicon::ShieldExclamation)
             ->color('danger')
             ->requiresConfirmation()
-            ->modalHeading('Disable 2FA')
-            ->modalDescription('Are you sure you\'d like to disable two-factor authentication? ')
+            ->modalHeading(__('sn-user::user.settings.two_factor.disable'))
+            ->modalDescription(__('sn-user::user.settings.two_factor.disable_confirmation'))
             ->action(function (DisableTwoFactorAuthentication $disableTwoFactorAuthentication) {
                 $user = Auth::guard($this->guard)->user();
 

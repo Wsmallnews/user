@@ -42,12 +42,12 @@ class Login extends Base implements HasActions, HasSchemas
         return $schema
             ->components([
                 Components\TextInput::make('account')
-                    ->label('账号')
-                    ->placeholder('请输入邮箱或手机号')
+                    ->label(__('sn-user::user.auth.login.account'))
+                    ->placeholder(__('sn-user::user.auth.login.account_placeholder'))
                     ->required(),
                 Components\TextInput::make('password')
-                    ->label('密码')
-                    ->placeholder('请输入密码')
+                    ->label(__('sn-user::user.auth.login.password'))
+                    ->placeholder(__('sn-user::user.auth.login.password_placeholder'))
                     ->required()
                     ->password()
                     ->revealable()
@@ -56,11 +56,11 @@ class Login extends Base implements HasActions, HasSchemas
 
                         return $forgotPasswordUrl ?
                             Action::make('forget-password')
-                                ->label('忘记密码？')
-                                ->url((string) $forgotPasswordUrl)
+                            ->label(__('sn-user::user.auth.login.forgot_password'))
+                            ->url((string) $forgotPasswordUrl)
                             : null;
                     }),
-                Components\Checkbox::make('remember')->label('记住我')->inline(),
+                Components\Checkbox::make('remember')->label(__('sn-user::user.auth.login.remember'))->inline(),
             ])
             ->statePath('formData');
     }
@@ -73,30 +73,30 @@ class Login extends Base implements HasActions, HasSchemas
                     ->default(false),
 
                 Components\OneTimeCodeInput::make('code')
-                    ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.label'))
+                    ->label(__('sn-user::user.auth.login.two_factor_code'))
                     ->belowContent(
-                        fn (Get $get): Action => Action::make('useRecoveryCode')
-                            ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.actions.use_recovery_code.label'))
+                        fn(Get $get): Action => Action::make('useRecoveryCode')
+                            ->label(__('sn-user::user.auth.login.use_recovery_code'))
                             ->link()
-                            ->action(fn (Set $set) => $set('useRecoveryCode', true))
+                            ->action(fn(Set $set) => $set('useRecoveryCode', true))
                     )
-                    ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
-                    ->required(fn (Get $get): bool => ! (bool) $get('useRecoveryCode'))
-                    ->visible(fn (Get $get): bool => ! (bool) $get('useRecoveryCode')),
+                    ->validationAttribute(__('sn-user::user.auth.login.two_factor_code_validation_attribute'))
+                    ->required(fn(Get $get): bool => ! (bool) $get('useRecoveryCode'))
+                    ->visible(fn(Get $get): bool => ! (bool) $get('useRecoveryCode')),
 
                 Components\TextInput::make('recoveryCode')
-                    ->label('使用恢复码')
+                    ->label(__('sn-user::user.auth.login.use_recovery_code'))
                     ->belowContent(
-                        fn (Get $get): Action => Action::make('useCode')
-                            ->label('使用 Authenticator App 密码')
+                        fn(Get $get): Action => Action::make('useCode')
+                            ->label(__('sn-user::user.auth.login.use_authenticator_code'))
                             ->link()
-                            ->action(fn (Set $set) => $set('useRecoveryCode', false))
+                            ->action(fn(Set $set) => $set('useRecoveryCode', false))
                     )
-                    ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.validation_attribute'))
+                    ->validationAttribute(__('sn-user::user.auth.login.recovery_code_validation_attribute'))
                     ->password()
                     ->revealable()
-                    ->required(fn (Get $get): bool => (bool) $get('useRecoveryCode'))
-                    ->visible(fn (Get $get): bool => (bool) $get('useRecoveryCode')),
+                    ->required(fn(Get $get): bool => (bool) $get('useRecoveryCode'))
+                    ->visible(fn(Get $get): bool => (bool) $get('useRecoveryCode')),
             ])
             ->statePath('formData.twoFactor');
     }
@@ -105,7 +105,7 @@ class Login extends Base implements HasActions, HasSchemas
     {
         return [
             Action::make('login')
-                ->label('登录')
+                ->label(__('sn-user::user.auth.login.submit'))
                 ->submit('login'),
         ];
     }
@@ -114,7 +114,7 @@ class Login extends Base implements HasActions, HasSchemas
     {
         return [
             Action::make('login')
-                ->label('验证登录')
+                ->label(__('sn-user::user.auth.login.two_factor_submit'))
                 ->submit('login'),
         ];
     }
@@ -163,9 +163,9 @@ class Login extends Base implements HasActions, HasSchemas
                 if (! $attemptTwoFactorAuthenticate($user)) {
                     $recoveryCode = $twoFactorChallengeForm['recoveryCode'] ?? null;
                     if ($recoveryCode) {
-                        $this->addError('formData.twoFactor.recoveryCode', '恢复码不正确或已失效');
+                        $this->addError('formData.twoFactor.recoveryCode', __('sn-user::user.auth.login.invalid_recovery_code'));
                     } else {
-                        $this->addError('formData.twoFactor.code', '双因素认证失败');
+                        $this->addError('formData.twoFactor.code', __('sn-user::user.auth.login.two_factor_failed'));
                     }
 
                     return;
@@ -184,7 +184,7 @@ class Login extends Base implements HasActions, HasSchemas
         $attemptToAuthenticate->finishLogin($user);
 
         Notification::make()
-            ->title('登录成功')
+            ->title(__('sn-user::user.auth.login.success'))
             ->success()->send();
 
         // 退回上个url
@@ -208,7 +208,7 @@ class Login extends Base implements HasActions, HasSchemas
             ->footer([
                 $this->getFormActionsContentComponent(),
             ])
-            ->visible(fn (): bool => blank($this->userUndertakingMultiFactorAuthentication));
+            ->visible(fn(): bool => blank($this->userUndertakingMultiFactorAuthentication));
     }
 
     public function getFormActionsContentComponent(): SchemaComponent
@@ -226,7 +226,7 @@ class Login extends Base implements HasActions, HasSchemas
             ->footer([
                 $this->getTwoFactorChallengeFormActionsContentComponent(),
             ])
-            ->visible(fn (): bool => filled($this->userUndertakingMultiFactorAuthentication));
+            ->visible(fn(): bool => filled($this->userUndertakingMultiFactorAuthentication));
     }
 
     public function getTwoFactorChallengeFormActionsContentComponent(): SchemaComponent
