@@ -83,7 +83,7 @@ class ChooseAddress extends Component implements HasActions, HasForms
         return Action::make('manage')
             ->label(__('sn-user::user.address.manage_address'))
             ->link()
-            ->url(fn(): string => __('sn-user::user.address.manage_url'));
+            ->url(fn (): string => __('sn-user::user.address.manage_url'));
     }
 
     public function choose($id)

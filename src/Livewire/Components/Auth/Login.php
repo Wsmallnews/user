@@ -56,8 +56,8 @@ class Login extends Base implements HasActions, HasSchemas
 
                         return $forgotPasswordUrl ?
                             Action::make('forget-password')
-                            ->label(__('sn-user::user.auth.login.forgot_password'))
-                            ->url((string) $forgotPasswordUrl)
+                                ->label(__('sn-user::user.auth.login.forgot_password'))
+                                ->url((string) $forgotPasswordUrl)
                             : null;
                     }),
                 Components\Checkbox::make('remember')->label(__('sn-user::user.auth.login.remember'))->inline(),
@@ -75,28 +75,28 @@ class Login extends Base implements HasActions, HasSchemas
                 Components\OneTimeCodeInput::make('code')
                     ->label(__('sn-user::user.auth.login.two_factor_code'))
                     ->belowContent(
-                        fn(Get $get): Action => Action::make('useRecoveryCode')
+                        fn (Get $get): Action => Action::make('useRecoveryCode')
                             ->label(__('sn-user::user.auth.login.use_recovery_code'))
                             ->link()
-                            ->action(fn(Set $set) => $set('useRecoveryCode', true))
+                            ->action(fn (Set $set) => $set('useRecoveryCode', true))
                     )
                     ->validationAttribute(__('sn-user::user.auth.login.two_factor_code_validation_attribute'))
-                    ->required(fn(Get $get): bool => ! (bool) $get('useRecoveryCode'))
-                    ->visible(fn(Get $get): bool => ! (bool) $get('useRecoveryCode')),
+                    ->required(fn (Get $get): bool => ! (bool) $get('useRecoveryCode'))
+                    ->visible(fn (Get $get): bool => ! (bool) $get('useRecoveryCode')),
 
                 Components\TextInput::make('recoveryCode')
                     ->label(__('sn-user::user.auth.login.use_recovery_code'))
                     ->belowContent(
-                        fn(Get $get): Action => Action::make('useCode')
+                        fn (Get $get): Action => Action::make('useCode')
                             ->label(__('sn-user::user.auth.login.use_authenticator_code'))
                             ->link()
-                            ->action(fn(Set $set) => $set('useRecoveryCode', false))
+                            ->action(fn (Set $set) => $set('useRecoveryCode', false))
                     )
                     ->validationAttribute(__('sn-user::user.auth.login.recovery_code_validation_attribute'))
                     ->password()
                     ->revealable()
-                    ->required(fn(Get $get): bool => (bool) $get('useRecoveryCode'))
-                    ->visible(fn(Get $get): bool => (bool) $get('useRecoveryCode')),
+                    ->required(fn (Get $get): bool => (bool) $get('useRecoveryCode'))
+                    ->visible(fn (Get $get): bool => (bool) $get('useRecoveryCode')),
             ])
             ->statePath('formData.twoFactor');
     }
@@ -208,7 +208,7 @@ class Login extends Base implements HasActions, HasSchemas
             ->footer([
                 $this->getFormActionsContentComponent(),
             ])
-            ->visible(fn(): bool => blank($this->userUndertakingMultiFactorAuthentication));
+            ->visible(fn (): bool => blank($this->userUndertakingMultiFactorAuthentication));
     }
 
     public function getFormActionsContentComponent(): SchemaComponent
@@ -226,7 +226,7 @@ class Login extends Base implements HasActions, HasSchemas
             ->footer([
                 $this->getTwoFactorChallengeFormActionsContentComponent(),
             ])
-            ->visible(fn(): bool => filled($this->userUndertakingMultiFactorAuthentication));
+            ->visible(fn (): bool => filled($this->userUndertakingMultiFactorAuthentication));
     }
 
     public function getTwoFactorChallengeFormActionsContentComponent(): SchemaComponent
