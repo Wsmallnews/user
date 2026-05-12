@@ -4,11 +4,11 @@ namespace Wsmallnews\User\Livewire\Components\User;
 
 use Filament\Support\Facades\FilamentView;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Wsmallnews\User\Actions\Logout;
+use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
 
-class Profile extends Component
+class Profile extends Base
 {
     #[Locked]
     public string $module;

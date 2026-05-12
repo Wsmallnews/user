@@ -3,9 +3,9 @@
 namespace Wsmallnews\User\Livewire\Components\User;
 
 use Livewire\Attributes\Locked;
-use Livewire\Component;
+use Wsmallnews\User\Livewire\Components\Base;
 
-class SidebarMenu extends Component
+class SidebarMenu extends Base
 {
     #[Locked]
     public string $module;

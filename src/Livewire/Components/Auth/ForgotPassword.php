@@ -15,10 +15,10 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Password;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 
-class ForgotPassword extends Component implements HasSchemas
+class ForgotPassword extends Base implements HasSchemas
 {
     use InteractsWithSchemas;
 

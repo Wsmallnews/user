@@ -2,10 +2,10 @@
 
 namespace Wsmallnews\User\Livewire;
 
-use Livewire\Component;
+use Wsmallnews\Support\Livewire\Base as BaseComponent;
 use Wsmallnews\User\Support\Utils;
 
-class Base extends Component
+class Base extends BaseComponent
 {
     public function getViewPath($name): string
     {

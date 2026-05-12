@@ -19,11 +19,11 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Wsmallnews\User\Actions\CreateNewUser;
+use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
 
-class Register extends Component implements HasSchemas
+class Register extends Base implements HasSchemas
 {
     use InteractsWithSchemas;
 
@@ -85,13 +85,6 @@ class Register extends Component implements HasSchemas
             return;
         }
 
-        // 用户注册事件
-        event(new Registered($user));
-
-        Notification::make()
-            ->title('注册成功')
-            ->success()->send();
-
         // 自定义邮箱验证链接
         VerifyEmailNotification::createUrlUsing(function ($notifiable) {
             return UserConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [
@@ -99,6 +92,12 @@ class Register extends Component implements HasSchemas
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]);
         });
+        // 用户注册事件 （ 这里会自动发送邮件，所以邮箱联接要提前设置好）
+        event(new Registered($user));
+
+        Notification::make()
+            ->title('注册成功')
+            ->success()->send();
 
         Auth::guard(UserConfig::getConfig($this->module, 'guard'))->login($user);
 

@@ -14,10 +14,10 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 
-class ConfirmPassword extends Component implements HasSchemas
+class ConfirmPassword extends Base implements HasSchemas
 {
     use InteractsWithSchemas;
 

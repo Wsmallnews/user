@@ -16,11 +16,11 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Wsmallnews\User\Actions\UpdateUserPassword;
+use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
 
-class Password extends Component implements HasSchemas
+class Password extends Base implements HasSchemas
 {
     use InteractsWithSchemas;
 

@@ -10,11 +10,11 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Wsmallnews\User\Actions\GenerateNewRecoveryCodes;
+use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
 
-class RecoveryCodes extends Component implements HasActions, HasSchemas
+class RecoveryCodes extends Base implements HasActions, HasSchemas
 {
     use InteractsWithActions;
     use InteractsWithSchemas;

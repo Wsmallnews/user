@@ -17,11 +17,11 @@ use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Wsmallnews\User\Actions\Logout;
+use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
 
-class VerifyEmail extends Component implements HasSchemas
+class VerifyEmail extends Base implements HasSchemas
 {
     use InteractsWithSchemas;
 

@@ -20,10 +20,10 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Locked;
-use Livewire\Component;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 
-class ResetPassword extends Component implements HasSchemas
+class ResetPassword extends Base implements HasSchemas
 {
     use InteractsWithSchemas;
 
