@@ -20,9 +20,9 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\AttemptToAuthenticate;
-use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Actions\AttemptTwoFactorAuthenticate;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 
 class Login extends Base implements HasActions, HasSchemas
 {
@@ -56,8 +56,8 @@ class Login extends Base implements HasActions, HasSchemas
 
                         return $forgotPasswordUrl ?
                             Action::make('forget-password')
-                            ->label('忘记密码？')
-                            ->url((string) $forgotPasswordUrl)
+                                ->label('忘记密码？')
+                                ->url((string) $forgotPasswordUrl)
                             : null;
                     }),
                 Components\Checkbox::make('remember')->label('记住我')->inline(),
@@ -75,28 +75,28 @@ class Login extends Base implements HasActions, HasSchemas
                 Components\OneTimeCodeInput::make('code')
                     ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.label'))
                     ->belowContent(
-                        fn(Get $get): Action => Action::make('useRecoveryCode')
+                        fn (Get $get): Action => Action::make('useRecoveryCode')
                             ->label(__('filament-panels::auth/multi-factor/app/provider.login_form.code.actions.use_recovery_code.label'))
                             ->link()
-                            ->action(fn(Set $set) => $set('useRecoveryCode', true))
+                            ->action(fn (Set $set) => $set('useRecoveryCode', true))
                     )
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
-                    ->required(fn(Get $get): bool => ! (bool) $get('useRecoveryCode'))
-                    ->visible(fn(Get $get): bool => ! (bool) $get('useRecoveryCode')),
+                    ->required(fn (Get $get): bool => ! (bool) $get('useRecoveryCode'))
+                    ->visible(fn (Get $get): bool => ! (bool) $get('useRecoveryCode')),
 
                 Components\TextInput::make('recoveryCode')
                     ->label('使用恢复码')
                     ->belowContent(
-                        fn(Get $get): Action => Action::make('useCode')
+                        fn (Get $get): Action => Action::make('useCode')
                             ->label('使用 Authenticator App 密码')
                             ->link()
-                            ->action(fn(Set $set) => $set('useRecoveryCode', false))
+                            ->action(fn (Set $set) => $set('useRecoveryCode', false))
                     )
                     ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.recovery_code.validation_attribute'))
                     ->password()
                     ->revealable()
-                    ->required(fn(Get $get): bool => (bool) $get('useRecoveryCode'))
-                    ->visible(fn(Get $get): bool => (bool) $get('useRecoveryCode')),
+                    ->required(fn (Get $get): bool => (bool) $get('useRecoveryCode'))
+                    ->visible(fn (Get $get): bool => (bool) $get('useRecoveryCode')),
             ])
             ->statePath('formData.twoFactor');
     }
@@ -208,7 +208,7 @@ class Login extends Base implements HasActions, HasSchemas
             ->footer([
                 $this->getFormActionsContentComponent(),
             ])
-            ->visible(fn(): bool => blank($this->userUndertakingMultiFactorAuthentication));
+            ->visible(fn (): bool => blank($this->userUndertakingMultiFactorAuthentication));
     }
 
     public function getFormActionsContentComponent(): SchemaComponent
@@ -226,7 +226,7 @@ class Login extends Base implements HasActions, HasSchemas
             ->footer([
                 $this->getTwoFactorChallengeFormActionsContentComponent(),
             ])
-            ->visible(fn(): bool => filled($this->userUndertakingMultiFactorAuthentication));
+            ->visible(fn (): bool => filled($this->userUndertakingMultiFactorAuthentication));
     }
 
     public function getTwoFactorChallengeFormActionsContentComponent(): SchemaComponent

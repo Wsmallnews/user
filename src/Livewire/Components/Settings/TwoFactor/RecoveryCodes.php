@@ -11,8 +11,8 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\GenerateNewRecoveryCodes;
-use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 
 class RecoveryCodes extends Base implements HasActions, HasSchemas
 {

@@ -18,10 +18,10 @@ use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Locked;
 use Wsmallnews\Support\Filament\Forms\FormComponents;
-use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Actions\UpdateUserProfileInformation;
 use Wsmallnews\User\Enums\Gender;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Support\Utils;
 
 class Profile extends Base implements HasSchemas

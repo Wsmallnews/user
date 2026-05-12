@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\Logout;
-use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 
 class VerifyEmail extends Base implements HasSchemas
 {

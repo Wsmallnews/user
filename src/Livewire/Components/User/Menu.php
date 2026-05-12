@@ -5,8 +5,8 @@ namespace Wsmallnews\User\Livewire\Components\User;
 use Filament\Support\Facades\FilamentView;
 use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\Logout;
-use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 
 class Menu extends Base
 {

@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\CreateNewUser;
-use Wsmallnews\User\Livewire\Components\Base;
 use Wsmallnews\User\Facades\UserConfig;
+use Wsmallnews\User\Livewire\Components\Base;
 
 class Register extends Base implements HasSchemas
 {
