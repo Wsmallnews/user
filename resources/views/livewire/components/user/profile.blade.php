@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\Icons\Heroicon;
     use Wsmallnews\User\Enums\Gender;
     use Wsmallnews\User\Facades\UserConfig;
     $user = auth()->guard(UserConfig::getConfig($module, 'guard'))->user();
@@ -7,7 +8,15 @@
 
 <div class="w-full flex flex-col items-start gap-4" >
     <div class="w-full flex gap-4">
-        <img src="{{ $user->getFilamentAvatarUrl() }}" alt="{{ $user->getFilamentName() }}" class="w-32 h-32 rounded-full" />
+        <div class="w-32 h-32 rounded-full shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800">
+            @if($user->getFilamentAvatarUrl())
+                <img src="{{ $user->getFilamentAvatarUrl() }}" alt="{{ $user->getFilamentName() }}" class="w-full h-full object-cover sn-motion-scale" />
+            @else
+                <div class="sn-image-placeholder">
+                    <x-filament::icon :icon="Heroicon::User" class="w-32 h-32" aria-hidden="true" />
+                </div>
+            @endif
+        </div>
 
         <div class="flex flex-col gap-2">
             <span class="flex items-center text-lg font-bold gap-2">
