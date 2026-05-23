@@ -8,15 +8,14 @@ use Wsmallnews\User\Enums\Status;
 
 trait Userable
 {
-
     /**
      * status cast
      */
     protected function gender(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => Gender::from($value),
-            set: fn($value) => $value,
+            get: fn (string $value) => Gender::from($value),
+            set: fn ($value) => $value,
         );
     }
 
@@ -26,8 +25,8 @@ trait Userable
     protected function genderIcon(): Attribute
     {
         return Attribute::make(
-            get: fn(mixed $value, array $attributes) => $attributes['gender']?->getIcon(),
-            set: fn($value) => $value,
+            get: fn (mixed $value, array $attributes) => $attributes['gender']?->getIcon(),
+            set: fn ($value) => $value,
         );
     }
 
@@ -37,8 +36,8 @@ trait Userable
     protected function status(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => Status::from($value),
-            set: fn($value) => $value,
+            get: fn (string $value) => Status::from($value),
+            set: fn ($value) => $value,
         );
     }
 }
