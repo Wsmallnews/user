@@ -10,10 +10,10 @@
     <div class="w-full flex gap-4">
         <div class="w-32 h-32 rounded-full shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800">
             @if($user->getFilamentAvatarUrl())
-                <img src="{{ $user->getFilamentAvatarUrl() }}" alt="{{ $user->getFilamentName() }}" class="w-full h-full object-cover sn-motion-scale" />
+                <img class="w-full h-full object-cover" src="{{ $user->getFilamentAvatarUrl() }}" alt="{{ $user->getFilamentName() }}" />
             @else
                 <div class="sn-image-placeholder">
-                    <x-filament::icon :icon="Heroicon::User" class="w-32 h-32" aria-hidden="true" />
+                    <x-filament::icon :icon="Heroicon::User" class="w-full h-full" aria-hidden="true" />
                 </div>
             @endif
         </div>
