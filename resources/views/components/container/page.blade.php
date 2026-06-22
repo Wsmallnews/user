@@ -8,7 +8,7 @@
         <div class="container mx-auto flex items-center justify-between">
             <div class="flex gap-4">
                 @auth
-                    <livewire:sn-user-components-user-menu :module="app(UserPlugin::class)->getId()" switch-dark-mode="{{ Utils::hasDarkMode() && !Utils::hasDarkModeForced() }}" />
+                    <livewire:sn-user::components.user.menu :module="app(UserPlugin::class)->getId()" switch-dark-mode="{{ Utils::hasDarkMode() && !Utils::hasDarkModeForced() }}" />
                 @else
                     <x-filament::button tag="a" href="{{ Utils::route('login') }}">
                         {{ __('sn-user::user.auth.login.submit') }}

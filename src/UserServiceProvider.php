@@ -21,8 +21,6 @@ use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\User\Commands\UserCommand;
-use Wsmallnews\User\Components\Address;
-use Wsmallnews\User\Components\ChooseAddress;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
 use Wsmallnews\User\Facades\SidebarMenuRegistry as SidebarMenuRegistryFacade;
 use Wsmallnews\User\Facades\UserConfig as UserConfigFacade;
@@ -30,19 +28,6 @@ use Wsmallnews\User\Http\Middleware\Authenticate;
 use Wsmallnews\User\Http\Middleware\EnsureEmailIsVerified;
 use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
 use Wsmallnews\User\Http\Middleware\RequirePassword;
-use Wsmallnews\User\Livewire\Components\Auth\ConfirmPassword;
-use Wsmallnews\User\Livewire\Components\Auth\ForgotPassword;
-use Wsmallnews\User\Livewire\Components\Auth\Login;
-use Wsmallnews\User\Livewire\Components\Auth\Register;
-use Wsmallnews\User\Livewire\Components\Auth\ResetPassword;
-use Wsmallnews\User\Livewire\Components\Auth\VerifyEmail;
-use Wsmallnews\User\Livewire\Components\Settings\Password;
-use Wsmallnews\User\Livewire\Components\Settings\Profile;
-use Wsmallnews\User\Livewire\Components\Settings\TwoFactor;
-use Wsmallnews\User\Livewire\Components\Settings\TwoFactor\RecoveryCodes;
-use Wsmallnews\User\Livewire\Components\User\Menu as UserMenu;
-use Wsmallnews\User\Livewire\Components\User\Profile as UserProfile;
-use Wsmallnews\User\Livewire\Components\User\SidebarMenu;
 use Wsmallnews\User\Support\Utils;
 
 class UserServiceProvider extends PackageServiceProvider
@@ -127,27 +112,11 @@ class UserServiceProvider extends PackageServiceProvider
             }
         }
 
-        Livewire::component('sn-user-components-auth-login', Login::class);
-        Livewire::component('sn-user-components-auth-register', Register::class);
-        Livewire::component('sn-user-components-auth-forgot-password', ForgotPassword::class);
-        Livewire::component('sn-user-components-auth-reset-password', ResetPassword::class);
-        Livewire::component('sn-user-components-auth-verify-email', VerifyEmail::class);
-        Livewire::component('sn-user-components-auth-confirm-password', ConfirmPassword::class);
-
-        Livewire::component('sn-user-components-user-menu', UserMenu::class);
-        Livewire::component('sn-user-components-user-sidebar-menu', SidebarMenu::class);
-        Livewire::component('sn-user-components-user-profile', UserProfile::class);
-
-        // 用户设置
-        Livewire::component('sn-user-components-settings-two-factor', TwoFactor::class);
-        Livewire::component('sn-user-components-settings-two-factor-recovery-codes', RecoveryCodes::class);
-        Livewire::component('sn-user-components-settings-profile', Profile::class);
-        Livewire::component('sn-user-components-settings-password', Password::class);
-
-        // // 管理收货地址
-        // Livewire::component('sn-user-address', Address::class);
-        // // 选择收货地址
-        // Livewire::component('sn-user-choose-address', ChooseAddress::class);
+        // 注册 livewire 命名空间（自动发现 src/Livewire/ 下的组件）
+        Livewire::addNamespace(
+            namespace: 'sn-user',
+            classNamespace: 'Wsmallnews\\User\\Livewire'
+        );
 
         // 注册用户认证信息
         UserConfigFacade::config(app(UserPlugin::class)->getId(), function () {

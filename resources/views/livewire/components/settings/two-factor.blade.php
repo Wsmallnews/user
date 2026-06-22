@@ -9,7 +9,7 @@
                 {{ __('sn-user::user.settings.two_factor.two_factor_info_enabled') }}
             </div>
 
-            <livewire:sn-user-components-settings-two-factor-recovery-codes :module="$module" :$requiresConfirmation />
+            <livewire:sn-user::components.settings.two-factor.recovery-codes :module="$module" :$requiresConfirmation />
 
             <div class="flex justify-start">
                 {{ $this->disableAction }}

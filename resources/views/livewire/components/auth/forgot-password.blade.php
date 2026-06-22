@@ -12,7 +12,7 @@
     <div class="flex flex-col mt-6 gap-4">
         @if (UserConfig::getConfig($module, 'urls.login'))
             <div class="flex text-sm items-center justify-center">
-                {{ __('sn-user::user.auth.forgot_password.or') }}
+                {{ __('sn-user::user.auth.forgot_password.or') }}&nbsp;
                 <x-filament::link href="{{ UserConfig::getConfig($module, 'urls.login') }}">
                     {{ __('sn-user::user.links.go_login') }}
                 </x-filament::link>
