@@ -24,7 +24,7 @@ class Utils
         $model = self::getConfig('models')[$name] ?? null;
 
         if (blank($model) && $shouldException) {
-            throw new UserException("模型 {$name} 不存在");
+            throw new UserException("Model {$name} not found.");
         }
 
         return $model;
