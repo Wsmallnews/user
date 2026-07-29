@@ -17,22 +17,23 @@ use Wsmallnews\User\Livewire\Settings\TwoFactor;
 use Wsmallnews\User\Support\Utils;
 
 $middlewares = Utils::getConfig('routes.middleware') ?? [];
+$guard = Utils::getConfig('guard', 'web');
 SupportUtils::isTenancyEnabled() && array_unshift($middlewares, IdentifyTenant::class);
 
 Route::domain(Utils::getConfig('routes.domain'))
     ->middleware($middlewares)
     ->prefix(Utils::getConfig('routes.prefix'))
     ->name(Utils::getConfig('routes.name'))
-    ->group(function () {
+    ->group(function () use ($guard) {
         // 不登录api
-        Route::middleware('user-guest:' . Utils::getConfig('guard'))->group(function () {
+        Route::middleware('user-guest:' . $guard)->group(function () {
             Route::get(Utils::getConfig('routes.uri.login'), Login::class)->name('login');
             Route::get(Utils::getConfig('routes.uri.register'), Register::class)->name('register');
             Route::get(Utils::getConfig('routes.uri.forgot-password'), ForgotPassword::class)->name('forgot.password');
             Route::get(Utils::getConfig('routes.uri.reset-password'), ResetPassword::class)->name('reset.password');
         });
 
-        Route::middleware('user-auth:' . Utils::getConfig('guard'))->group(function () {
+        Route::middleware('user-auth:' . $guard)->group(function () {
             // 验证邮箱
             Route::get(Utils::getConfig('routes.uri.verify-email'), VerifyEmail::class)->name('verify.email');
             Route::get(Utils::getConfig('routes.uri.verify-email-verification'), VerifyEmailController::class)
