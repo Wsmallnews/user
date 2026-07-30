@@ -9,8 +9,8 @@
 <div class="w-full flex flex-col items-start gap-4" >
     <div class="w-full flex gap-4">
         <div class="w-32 h-32 rounded-full shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800">
-            @if($user->getFilamentAvatarUrl())
-                <img class="w-full h-full object-cover" src="{{ $user->getFilamentAvatarUrl() }}" alt="{{ $user->getFilamentName() }}" />
+            @if($user->getSnAvatarUrl())
+                <img class="w-full h-full object-cover" src="{{ files_url($user->getSnAvatarUrl()) }}" alt="{{ $user->getSnName() }}" />
             @else
                 <div class="sn-image-placeholder">
                     <x-filament::icon :icon="Heroicon::User" class="w-full h-full" aria-hidden="true" />
@@ -20,7 +20,7 @@
 
         <div class="flex flex-col gap-2">
             <span class="flex items-center text-lg font-bold gap-2">
-                {{ $user->getFilamentName() }} 
+                {{ $user->getSnName() }}
 
                 @if($user->gender !== Gender::Undisclosed->value)
                     <x-filament::icon @class([
