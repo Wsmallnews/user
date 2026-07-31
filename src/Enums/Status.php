@@ -30,7 +30,7 @@ enum Status: string implements HasColor, HasIcon, HasLabel
     {
         return match ($this) {
             self::Normal => 'success',
-            self::Disabled => 'gray',
+            self::Disabled => 'danger',
         };
     }
 

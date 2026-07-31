@@ -28,6 +28,44 @@ return [
         'disabled' => '禁用',
     ],
 
+    'global_default' => [
+        'navigation_group' => '用户管理',
+    ],
+
+    'user_resource' => [
+        'model_label' => '用户',
+        'plural_model_label' => '用户管理',
+        'navigation_label' => '用户管理',
+        'tabs' => [
+            'all' => '全部',
+        ],
+        'table' => [
+            'username' => '用户名',
+            'name' => '名称',
+            'email' => '邮箱',
+            'mobile' => '手机号',
+            'status' => '状态',
+            'created_at' => '注册时间',
+            'updated_at' => '更新时间',
+            'search_placeholder' => '搜索用户...',
+        ],
+        'filter' => [
+            'status' => '状态',
+        ],
+        'action' => [
+            'enable' => '启用',
+            'disable' => '禁用',
+            'enable_description' => '确定要启用该用户吗？',
+            'disable_description' => '确定要禁用该用户吗？禁用后该用户将无法登录。',
+            'bulk_enable' => '批量启用',
+            'bulk_disable' => '批量禁用',
+            'bulk_enable_description' => '确定要启用选中的用户吗？',
+            'bulk_disable_description' => '确定要禁用选中的用户吗？禁用后该用户将无法登录。',
+            'enable_success' => '用户已启用',
+            'disable_success' => '用户已禁用',
+        ],
+    ],
+
     // 认证相关
     'auth' => [
         'login' => [

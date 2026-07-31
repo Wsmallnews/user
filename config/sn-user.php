@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Wsmallnews\User\Filament\Resources\Users\UserResource;
 use Wsmallnews\User\Models;
 
 return [
@@ -40,6 +41,16 @@ return [
     /**
      * 文件基础目录，会自动拼接当前年月日 (仅用于 filament 默认上传组件 (Forms\Components\FileUpload))
      */
+    'panel_register' => [
+        'global_default' => [
+            'navigation_group' => 'sn-user::user.global_default.navigation_group',
+        ],
+        'resources' => [
+            UserResource::class,
+        ],
+        'pages' => [],
+    ],
+
     'file_directory' => 'sn/user/',
 
     'routes' => [

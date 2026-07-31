@@ -28,6 +28,44 @@ return [
         'disabled' => 'Disabled',
     ],
 
+    'global_default' => [
+        'navigation_group' => 'User Management',
+    ],
+
+    'user_resource' => [
+        'model_label' => 'User',
+        'plural_model_label' => 'User Management',
+        'navigation_label' => 'User Management',
+        'tabs' => [
+            'all' => 'All',
+        ],
+        'table' => [
+            'username' => 'Username',
+            'name' => 'Name',
+            'email' => 'Email',
+            'mobile' => 'Mobile',
+            'status' => 'Status',
+            'created_at' => 'Registered At',
+            'updated_at' => 'Updated At',
+            'search_placeholder' => 'Search users...',
+        ],
+        'filter' => [
+            'status' => 'Status',
+        ],
+        'action' => [
+            'enable' => 'Enable',
+            'disable' => 'Disable',
+            'enable_description' => 'Are you sure you want to enable this user?',
+            'disable_description' => 'Are you sure you want to disable this user? They will not be able to log in.',
+            'bulk_enable' => 'Bulk Enable',
+            'bulk_disable' => 'Bulk Disable',
+            'bulk_enable_description' => 'Are you sure you want to enable the selected users?',
+            'bulk_disable_description' => 'Are you sure you want to disable the selected users? They will not be able to log in.',
+            'enable_success' => 'User enabled',
+            'disable_success' => 'User disabled',
+        ],
+    ],
+
     // Auth
     'auth' => [
         'login' => [
