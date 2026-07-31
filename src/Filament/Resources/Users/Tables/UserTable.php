@@ -91,10 +91,11 @@ class UserTable
             ->toggleable();
     }
 
-    protected static function statusColumn(): Tables\Columns\IconColumn
+    protected static function statusColumn(): Tables\Columns\TextColumn
     {
-        return Tables\Columns\IconColumn::make('status')
+        return Tables\Columns\TextColumn::make('status')
             ->label(__('sn-user::user.user_resource.table.status'))
+            ->badge()
             ->toggleable();
     }
 
