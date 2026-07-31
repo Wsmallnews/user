@@ -5,8 +5,8 @@ namespace Wsmallnews\User;
 use BadMethodCallException;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Wsmallnews\User\Support\Utils;
 use Wsmallnews\Support\Filament\Concerns\RegistersConfigurable;
+use Wsmallnews\User\Support\Utils;
 
 /**
  * @method static mixed getPanelRegister(?string $type = null)
