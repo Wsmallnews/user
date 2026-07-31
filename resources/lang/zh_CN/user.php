@@ -85,6 +85,7 @@ return [
             'two_factor_code_placeholder' => '输入 Authenticator App 中的6位数字代码',
             'two_factor_code_validation_attribute' => '验证码',
             'recovery_code_validation_attribute' => '恢复码',
+            'account_disabled' => '该账号已被禁用，请联系管理员',
         ],
         'register' => [
             'name' => '昵称',
@@ -242,5 +243,10 @@ return [
     // 布局相关
     'layout' => [
         'current_location' => '当前位置 :',
+    ],
+
+    // 通知
+    'notification' => [
+        'account_disabled' => '您的账号已被禁用，请联系管理员',
     ],
 ];

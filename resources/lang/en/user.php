@@ -85,6 +85,7 @@ return [
             'two_factor_code' => 'Enter the 6-digit code from the authenticator app',
             'two_factor_code_validation_attribute' => 'code',
             'recovery_code_validation_attribute' => 'recovery code',
+            'account_disabled' => 'This account has been disabled. Please contact the administrator.',
         ],
         'register' => [
             'name' => 'Name',
@@ -242,5 +243,10 @@ return [
     // Layout
     'layout' => [
         'current_location' => 'Current location :',
+    ],
+
+    // Notification
+    'notification' => [
+        'account_disabled' => 'Your account has been disabled. Please contact the administrator.',
     ],
 ];

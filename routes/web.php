@@ -20,6 +20,9 @@ $middlewares = Utils::getConfig('routes.middleware') ?? [];
 $guard = Utils::getConfig('guard', 'web');
 SupportUtils::isTenancyEnabled() && array_unshift($middlewares, IdentifyTenant::class);
 
+// 用户可用性校验
+$middlewares[] = 'user-active:' . $guard;
+
 Route::domain(Utils::getConfig('routes.domain'))
     ->middleware($middlewares)
     ->prefix(Utils::getConfig('routes.prefix'))

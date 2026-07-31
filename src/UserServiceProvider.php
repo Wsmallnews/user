@@ -26,6 +26,7 @@ use Wsmallnews\User\Facades\SidebarMenuRegistry as SidebarMenuRegistryFacade;
 use Wsmallnews\User\Facades\UserConfig as UserConfigFacade;
 use Wsmallnews\User\Http\Middleware\Authenticate;
 use Wsmallnews\User\Http\Middleware\EnsureEmailIsVerified;
+use Wsmallnews\User\Http\Middleware\EnsureUserIsActive;
 use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
 use Wsmallnews\User\Http\Middleware\RequirePassword;
 use Wsmallnews\User\Support\Utils;
@@ -85,6 +86,7 @@ class UserServiceProvider extends PackageServiceProvider
 
         // 定义中间件别名
         $this->app['router']->aliasMiddleware('user-auth', Authenticate::class);
+        $this->app['router']->aliasMiddleware('user-active', EnsureUserIsActive::class);
         $this->app['router']->aliasMiddleware('user-guest', RedirectIfAuthenticated::class);
         $this->app['router']->aliasMiddleware('user-password.confirm', RequirePassword::class);
         $this->app['router']->aliasMiddleware('user-email.verified', EnsureEmailIsVerified::class);

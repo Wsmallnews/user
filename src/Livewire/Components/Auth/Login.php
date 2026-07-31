@@ -21,6 +21,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\AttemptToAuthenticate;
 use Wsmallnews\User\Actions\AttemptTwoFactorAuthenticate;
+use Wsmallnews\User\Enums\Status;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Components\Base;
 
@@ -144,6 +145,13 @@ class Login extends Base implements HasActions, HasSchemas
             $this->userUndertakingMultiFactorAuthentication = null;
 
             $this->addError('formData.account', trans('auth.failed'));
+
+            return;
+        }
+
+        // 校验用户状态
+        if (isset($user->status) && $user->status !== Status::Normal) {
+            $this->addError('formData.account', __('sn-user::user.auth.login.account_disabled'));
 
             return;
         }
