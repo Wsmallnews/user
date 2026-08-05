@@ -4,9 +4,11 @@ namespace Wsmallnews\User\Filament\Resources\Users;
 
 use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
+use Wsmallnews\User\Filament\Resources\Users\Schemas\UserForm;
 use Wsmallnews\User\Filament\Resources\Users\Tables\UserTable;
 use Wsmallnews\User\Support\Utils;
 
@@ -45,6 +47,11 @@ abstract class BaseResource extends Resource
     public static function getNavigationGroup(): string | UnitEnum | null
     {
         return static::$navigationGroup ?? __('sn-user::user.global_default.navigation_group');
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return UserForm::configure($schema);
     }
 
     public static function table(Table $table): Table

@@ -4,10 +4,14 @@ namespace Wsmallnews\User\Filament\Resources\Users\Tables;
 
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
+use Filament\Actions\EditAction;
+use Filament\Support\Enums\Width;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Wsmallnews\Support\Filament\Actions\ActionComponents;
+use Wsmallnews\Support\Filament\Filters\FilterComponents;
+use Wsmallnews\Support\Filament\Resources\ActivityLogs\Concerns\CauserTimelineAction;
 use Wsmallnews\User\Enums\Status;
 
 class UserTable
@@ -20,18 +24,22 @@ class UserTable
                 static::usernameColumn(),
                 static::nameColumn(),
                 static::emailColumn(),
-                static::mobileColumn(),
+                // static::mobileColumn(),
                 static::statusColumn(),
                 static::createdAtColumn(),
                 static::updatedAtColumn(),
             ])
             ->defaultSort('created_at', 'desc')
             ->searchPlaceholder(__('sn-user::user.user_resource.table.search_placeholder'))
+            ->filtersFormWidth(Width::Medium)
             ->filters([
                 static::statusFilter(),
+                ...FilterComponents::createUpdateRangeFilter(),
             ])
             ->recordActions([
                 ...ActionComponents::recordActions([
+                    EditAction::make(),
+                    CauserTimelineAction::make()->color('info'),
                     static::toggleStatusAction(),
                 ]),
             ])
@@ -82,14 +90,14 @@ class UserTable
             ->toggleable();
     }
 
-    protected static function mobileColumn(): Tables\Columns\TextColumn
-    {
-        return Tables\Columns\TextColumn::make('mobile')
-            ->label(__('sn-user::user.user_resource.table.mobile'))
-            ->searchable()
-            ->sortable()
-            ->toggleable();
-    }
+    // protected static function mobileColumn(): Tables\Columns\TextColumn
+    // {
+    //     return Tables\Columns\TextColumn::make('mobile')
+    //         ->label(__('sn-user::user.user_resource.table.mobile'))
+    //         ->searchable()
+    //         ->sortable()
+    //         ->toggleable();
+    // }
 
     protected static function statusColumn(): Tables\Columns\TextColumn
     {

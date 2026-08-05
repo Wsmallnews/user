@@ -40,6 +40,7 @@ return [
             'all' => 'All',
         ],
         'table' => [
+            'user_info' => 'User Info',
             'username' => 'Username',
             'name' => 'Name',
             'email' => 'Email',

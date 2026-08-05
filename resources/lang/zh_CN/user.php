@@ -40,6 +40,7 @@ return [
             'all' => '全部',
         ],
         'table' => [
+            'user_info' => '用户信息',
             'username' => '用户名',
             'name' => '名称',
             'email' => '邮箱',

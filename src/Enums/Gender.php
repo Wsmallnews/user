@@ -3,6 +3,7 @@
 namespace Wsmallnews\User\Enums;
 
 use BackedEnum;
+use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -33,8 +34,8 @@ enum Gender: string implements HasColor, HasIcon, HasLabel
     {
         return match ($this) {
             self::Undisclosed => 'gray',
-            self::Male => 'success',
-            self::Female => 'gray',
+            self::Male => Color::Blue,
+            self::Female => Color::Pink,
         };
     }
 
