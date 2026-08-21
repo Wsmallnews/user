@@ -18,7 +18,7 @@ use Wsmallnews\User\Filament\Resources\Users\BaseResource;
 
 // BaseResource 已提供：
 // - getModel() → Utils::getUserModel()
-// - form() → UserForm（含 FormComponents::localImageUpload）
+// - form() → UserForm（含 FormComponents::plainImageUpload）
 // - table() → UserTable（含 ActionComponents、FilterComponents、CauserTimelineAction）
 // - 图标、slug、导航排序、翻译标签
 ```

@@ -23,7 +23,7 @@ class UserForm
     {
         return [
             Schemas\Components\Section::make(__('sn-user::user.user_resource.table.user_info'))->schema([
-                FormComponents::localImageUpload('avatar_url')
+                FormComponents::plainImageUpload('avatar_url')
                     ->label(__('sn-user::user.settings.profile.avatar'))
                     ->avatar()
                     ->columnSpanFull(),
