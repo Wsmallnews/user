@@ -16,6 +16,12 @@ class Menu extends Base
     public bool $switchDarkMode = false;
 
     /**
+     * 下拉弹卡位置（Filament dropdown placement）；
+     * 页头靠右用 bottom-end，窄屏移动菜单靠左用 bottom-start 避免超出视口
+     */
+    public string $placement = 'bottom-end';
+
+    /**
      * Log the current user out of the application.
      */
     public function logout(Logout $logout): void

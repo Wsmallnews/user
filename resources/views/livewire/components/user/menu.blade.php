@@ -5,7 +5,7 @@
 @endphp
 
 <x-filament::dropdown
-    placement="bottom-end"
+    :placement="$placement"
     class="fi-user-menu"
     :teleport="true"
 >
