@@ -1,7 +1,7 @@
 <div class="w-full">
     <div class="w-full flex flex-col gap-4">
         <div class="flex justify-between items-center">
-            <div class="text-base font-bold">
+            <div class="sn-h3-text">
                 {{ __('sn-user::user.address.my_addresses') }}
             </div>
     
