@@ -2,8 +2,8 @@
 
 namespace Wsmallnews\User\Livewire\Auth;
 
-use Wsmallnews\User\Livewire\Base;
 use Wsmallnews\Support\Facades\Seo;
+use Wsmallnews\User\Livewire\Base;
 use Wsmallnews\User\Support\Utils;
 
 class VerifyEmail extends Base
@@ -18,6 +18,7 @@ class VerifyEmail extends Base
     public function render()
     {
         Seo::title(__('sn-user::user.titles.verify_email'))->robots('noindex');
+
         return view($this->getViewPath('auth.verify-email'), [])
             ->layout(Utils::getLayout());
     }

@@ -2,8 +2,8 @@
 
 namespace Wsmallnews\User\Livewire\Settings;
 
-use Wsmallnews\User\Livewire\Base;
 use Wsmallnews\Support\Facades\Seo;
+use Wsmallnews\User\Livewire\Base;
 use Wsmallnews\User\Support\Utils;
 
 class Password extends Base
