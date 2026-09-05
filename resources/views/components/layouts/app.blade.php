@@ -6,9 +6,8 @@
         <meta name="csrf-token" content="{{ csrf_token() }}" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <title>{{ $title ?? config('app.name') }}</title>
-
-        @stack('seo')
+        {{-- 页面 SEO 标签（title/OG/canonical 等，模块归属由 seo-init 路由中间件声明） --}}
+        @snSeo
 
         @php
             use Wsmallnews\User\Support\Utils;
@@ -75,6 +74,9 @@
 
         @filamentScripts
         @vite('resources/js/app.js')
+
+        {{-- 统计代码，注入在 </body> 前 --}}
+        @snSeoAnalytics
 
         <script>
             document.addEventListener('livewire:init', () => {

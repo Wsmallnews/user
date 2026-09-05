@@ -15,6 +15,7 @@ use Wsmallnews\User\Livewire\Settings\Password as SettingsPassword;
 use Wsmallnews\User\Livewire\Settings\Profile as SettingsProfile;
 use Wsmallnews\User\Livewire\Settings\TwoFactor;
 use Wsmallnews\User\Support\Utils;
+use Wsmallnews\User\UserPlugin;
 
 $middlewares = Utils::getConfig('routes.middleware') ?? [];
 $guard = Utils::getConfig('guard', 'web');
@@ -22,6 +23,9 @@ SupportUtils::isTenancyEnabled() && array_unshift($middlewares, IdentifyTenant::
 
 // 用户可用性校验
 $middlewares[] = 'user-active:' . $guard;
+
+// 首屏初始化页面 SEO 上下文（模块归属由路由声明，seo-init 中间件在 support 包注册）
+$middlewares[] = 'seo-init:' . app(UserPlugin::class)->getId();
 
 Route::domain(Utils::getConfig('routes.domain'))
     ->middleware($middlewares)
