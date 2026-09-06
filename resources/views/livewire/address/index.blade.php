@@ -1,5 +1,5 @@
 <div class="w-full">
-    <div class="w-full flex flex-col gap-4">
+    <div class="w-full flex flex-col sn-gap">
         <div class="flex justify-between items-center">
             <div class="sn-h3-text">
                 {{ __('sn-user::user.address.my_addresses') }}
@@ -18,12 +18,12 @@
             :lg="$this->getColumns('lg')"
             :xl="$this->getColumns('xl')"
             :two-xl="$this->getColumns('2xl')"
-            class="gap-4"
+            class="sn-gap"
         >
             @foreach($addresses as $key => $address)
                 <div
                     @class([
-                        'w-full flex flex-col border rounded-lg p-4',
+                        'w-full flex flex-col border rounded-lg sn-padded',
                         "ring-1 ring-gray-950/10 hover:ring-2 dark:ring-white/20 hover:ring-primary-600",
                     ])
                 >

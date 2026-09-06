@@ -1,6 +1,6 @@
 <x-dynamic-component :component="$this->getPageContainer()">
     <div class="sn-page">
-        <div class="w-full mx-auto md:w-96 p-4">
+        <div class="w-full mx-auto md:w-96 sn-padded">
             <livewire:sn-user::components.auth.login :module="app(\Wsmallnews\User\UserPlugin::class)->getId()" />
         </div>
     </div>

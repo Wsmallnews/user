@@ -6,8 +6,8 @@
     $user = auth()->guard(UserConfig::getConfig($module, 'guard'))->user();
 @endphp
 
-<div class="w-full flex flex-col items-start gap-4" >
-    <div class="w-full flex gap-4">
+<div class="w-full flex flex-col items-start sn-gap" >
+    <div class="w-full flex sn-gap">
         <div class="w-32 h-32 rounded-full shrink-0 overflow-hidden bg-gray-100 dark:bg-gray-800">
             @if($user->getSnAvatarUrl())
                 <img class="w-full h-full object-cover" src="{{ files_url($user->getSnAvatarUrl()) }}" alt="{{ $user->getSnName() }}" />

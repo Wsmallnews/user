@@ -1,5 +1,5 @@
 <div class="w-full">
-    <div class="w-full flex flex-col gap-4">
+    <div class="w-full flex flex-col sn-gap">
         <div class="flex justify-between items-center">
             <div class="text-base font-bold">
                 {{ __('sn-user::user.address.confirm') }}
@@ -18,7 +18,7 @@
             :lg="$this->getColumns('lg')"
             :xl="$this->getColumns('xl')"
             :two-xl="$this->getColumns('2xl')"
-            class="gap-4"
+            class="sn-gap"
         >
             @foreach($addresses as $key => $address)
                 <div

@@ -4,12 +4,12 @@
 
 <div class="w-full" >
     @if (session('status'))
-        <x-sn-support::alert class="mb-4" color="success" :title="session('status')" />
+        <x-sn-support::alert class="sn-mb" color="success" :title="session('status')" />
     @endif
 
     {{ $this->content }}
 
-    <div class="flex flex-col mt-6 gap-4">
+    <div class="flex flex-col sn-mt gap-4">
         @if ($type === 'register')
             <x-filament::link tag="button" wire:click="logout">
                 {{ __('sn-user::user.settings.verify.sign_out') }}
