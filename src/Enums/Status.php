@@ -29,7 +29,7 @@ enum Status: string implements HasColor, HasIcon, HasLabel
     public function getColor(): string | array | null
     {
         return match ($this) {
-            self::Normal => 'success',
+            self::Normal => 'primary',
             self::Disabled => 'danger',
         };
     }
