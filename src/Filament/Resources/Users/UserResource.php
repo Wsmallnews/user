@@ -6,7 +6,6 @@ use Wsmallnews\Support\Filament\Concerns\CanBeConfigured;
 use Wsmallnews\Support\Filament\Resources\ResourceConfiguration;
 use Wsmallnews\User\Filament\Resources\Users\Pages\EditUser;
 use Wsmallnews\User\Filament\Resources\Users\Pages\ListUsers;
-use Wsmallnews\User\UserPlugin;
 
 final class UserResource extends BaseResource
 {
@@ -20,10 +19,5 @@ final class UserResource extends BaseResource
             'index' => ListUsers::route('/'),
             'edit' => EditUser::route('/{record}'),
         ];
-    }
-
-    public static function getEssentialsPlugin(): ?UserPlugin
-    {
-        return UserPlugin::get();
     }
 }
