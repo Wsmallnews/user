@@ -30,6 +30,9 @@ use Wsmallnews\User\Http\Middleware\EnsureUserIsActive;
 use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
 use Wsmallnews\User\Http\Middleware\RequirePassword;
 use Wsmallnews\User\Support\Utils;
+use Wsmallnews\Support\Features\Modules\Module;
+use Wsmallnews\Support\Features\Modules\ModuleRegistry;
+use Wsmallnews\User\UserPlugin;
 
 class UserServiceProvider extends PackageServiceProvider
 {
@@ -64,6 +67,12 @@ class UserServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
+        ModuleRegistry::register(new Module(
+            id: static::$name,
+            namespace: 'Wsmallnews\User',
+            plugin: UserPlugin::class,
+        ));
+
         $this->app->singleton(TwoFactorAuthenticationProviderContract::class, function ($app): TwoFactorAuthenticationProviderContract {
             return new TwoFactorAuthenticationProvider(
                 $app->make(Google2FA::class),
