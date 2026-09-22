@@ -20,6 +20,8 @@ use PragmaRX\Google2FA\Google2FA;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Wsmallnews\Support\Features\Modules\Module;
+use Wsmallnews\Support\Features\Modules\ModuleRegistry;
 use Wsmallnews\User\Commands\UserCommand;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
 use Wsmallnews\User\Facades\SidebarMenuRegistry as SidebarMenuRegistryFacade;
@@ -30,9 +32,6 @@ use Wsmallnews\User\Http\Middleware\EnsureUserIsActive;
 use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
 use Wsmallnews\User\Http\Middleware\RequirePassword;
 use Wsmallnews\User\Support\Utils;
-use Wsmallnews\Support\Features\Modules\Module;
-use Wsmallnews\Support\Features\Modules\ModuleRegistry;
-use Wsmallnews\User\UserPlugin;
 
 class UserServiceProvider extends PackageServiceProvider
 {
