@@ -17,12 +17,11 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use PragmaRX\Google2FA\Google2FA;
-use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\Support\Features\Modules\Module;
 use Wsmallnews\Support\Features\Modules\ModuleRegistry;
-use Wsmallnews\User\Commands\UserCommand;
+use Wsmallnews\User\Commands\UserInstallCommand;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
 use Wsmallnews\User\Facades\SidebarMenuRegistry as SidebarMenuRegistryFacade;
 use Wsmallnews\User\Facades\UserConfig as UserConfigFacade;
@@ -45,14 +44,7 @@ class UserServiceProvider extends PackageServiceProvider
             ->hasCommands($this->getCommands())
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews(static::$viewNamespace)
-            ->hasInstallCommand(function (InstallCommand $command) {
-                $command
-                    ->publishConfigFile()
-                    ->publishMigrations()
-                    ->askToRunMigrations()
-                    ->askToStarRepoOnGitHub('wsmallnews/user');
-            });
+            ->hasViews(static::$viewNamespace);
 
         if (Utils::getConfig('routes.enabled') !== false) {     // 只要不等于 false 就注册路由
             $package->hasRoutes($this->getRoutes());
@@ -218,7 +210,7 @@ class UserServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         return [
-            UserCommand::class,
+            UserInstallCommand::class,
         ];
     }
 
