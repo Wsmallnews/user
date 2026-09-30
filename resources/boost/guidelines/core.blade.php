@@ -1,12 +1,11 @@
 ## User 包（wsmallnews/user）
 
-`wsmallnews/user` 是用户管理插件，提供用户认证、注册、个人资料管理、双因素认证和地址管理。命名空间根为 `Wsmallnews\User`，Blade 视图前缀为 `sn-user`，配置文件为 `config/sn-user.php`。
+`wsmallnews/user` 是用户管理插件，提供用户认证、注册、个人资料管理、双因素认证。命名空间根为 `Wsmallnews\User`，Blade 视图前缀为 `sn-user`，配置文件为 `config/sn-user.php`。
 
 ### 核心架构
 
 - **UserResource**：Filament 资源，使用 `CanBeConfigured` 支持插件配置覆盖
 - **Livewire 组件**：完整的认证流程（登录/注册/找回密码/邮箱验证）+ 设置页面（个人资料/密码/双因素认证）
-- **Address 模型**：继承 `SupportModel`，支持省市区三级联动
 - **双因素认证**：基于 TOTP 的 2FA，支持恢复码
 
 ### User 资源
@@ -32,16 +31,9 @@ use Wsmallnews\User\Filament\Resources\Users\UserResource;
 $panel->resources([UserResource::class]);
 ```
 
-### Address 模型
+### 收货地址（已迁移 profile 包）
 
-`Wsmallnews\User\Models\Address` 继承 `SupportModel`，用于用户地址管理：
-
-```php
-use Wsmallnews\User\Models\Address;
-
-// 使用 DistrictSelect 组件实现省市区三级联动
-// 模型字段：province_name, province_id, city_name, city_id, district_name, district_id
-```
+地址功能由 **profile 包**承载（`Wsmallnews\Profile\Models\Address`）：owner 多态（User/Member 经 `Addressable` trait 挂 `addresses()` 关联），区划 code 与名称快照成对存储（`administrative_area/locality/dependent_locality/township` + `*_name`），级联选择用 profile 包 `RegionCascade` 字段。user 包不再含地址模型。
 
 ### Livewire 组件
 
@@ -165,7 +157,6 @@ use Wsmallnews\User\Models\Address;
 | BaseResource | `Wsmallnews\User\Filament\Resources\Users\BaseResource` |
 | UserPlugin | `Wsmallnews\User\UserPlugin` |
 | UserConfig | `Wsmallnews\User\UserConfig` |
-| Address 模型 | `Wsmallnews\User\Models\Address` |
 | Gender 枚举 | `Wsmallnews\User\Enums\Gender` |
 | Status 枚举 | `Wsmallnews\User\Enums\Status` |
 | Utils | `Wsmallnews\User\Support\Utils` |
@@ -178,5 +169,4 @@ use Wsmallnews\User\Models\Address;
 - **`CanPagination` 已包含 `WithPagination`**，不要在 Livewire 组件中重复 `use WithPagination`。
 - **`Utils` 所有方法都是静态的**，使用 `Utils::getConfig()` 而非 `(new Utils)->getConfig()`。
 - **`Utils::getModel()` 默认会抛异常**，传递 `false` 作为第二个参数以允许返回 `null`。
-- **Address 模型使用 DistrictSelect 组件**，确保模型中存在 `province_name/id`、`city_name/id`、`district_name/id` 字段。
 - **路由名称带前缀**，使用 `Utils::route('login')` 而非直接写 `'sn-user.login'`。
