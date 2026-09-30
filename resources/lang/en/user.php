@@ -206,30 +206,6 @@ return [
         ],
     ],
 
-    // Address
-    'address' => [
-        'confirm' => 'Confirm Shipping Address',
-        'my_addresses' => 'My Shipping Addresses',
-        'default' => 'Default',
-        'create' => 'Create New Address',
-        'create_success' => 'Created successfully',
-        'edit' => 'Edit',
-        'edit_success' => 'Edited successfully',
-        'set_default' => 'Set as Default',
-        'delete' => 'Delete',
-        'use_new_address' => 'Use New Address',
-        'manage_address' => 'Manage Address',
-        'manage_url' => 'Go to new address',
-        'choose_title' => 'Choose Shipping Address',
-        'my_title' => 'My Shipping Addresses',
-        'consignee' => 'Consignee',
-        'consignee_placeholder' => 'Please enter consignee',
-        'gender' => 'Gender',
-        'mobile' => 'Mobile',
-        'district' => 'District',
-        'address' => 'Detailed Address',
-    ],
-
     // Links
     'links' => [
         'no_account' => 'Don\'t have an account?',

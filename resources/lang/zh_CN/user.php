@@ -206,30 +206,6 @@ return [
         ],
     ],
 
-    // 地址相关
-    'address' => [
-        'confirm' => '确认收货地址',
-        'my_addresses' => '我的收货地址',
-        'default' => '默认',
-        'create' => '创建新地址',
-        'create_success' => '创建成功',
-        'edit' => '编辑',
-        'edit_success' => '编辑成功',
-        'set_default' => '设为默认',
-        'delete' => '删除',
-        'use_new_address' => '使用新地址',
-        'manage_address' => '管理地址',
-        'manage_url' => '跳转新地址',
-        'choose_title' => '选择收货地址',
-        'my_title' => '我的收货地址',
-        'consignee' => '收货人',
-        'consignee_placeholder' => '请输入收货人',
-        'gender' => '性别',
-        'mobile' => '手机号',
-        'district' => '地区',
-        'address' => '详细地址',
-    ],
-
     // 通用链接
     'links' => [
         'no_account' => '还没有账号？',

@@ -10,7 +10,6 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Cache\Repository;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
@@ -79,11 +78,6 @@ class UserServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        // 注册模型别名
-        Relation::enforceMorphMap([
-            'sn_user_address' => 'Wsmallnews\User\Models\Address',
-        ]);
-
         // 定义中间件别名
         $this->app['router']->aliasMiddleware('user-auth', Authenticate::class);
         $this->app['router']->aliasMiddleware('user-active', EnsureUserIsActive::class);
@@ -246,7 +240,6 @@ class UserServiceProvider extends PackageServiceProvider
         return [
             '2025_01_20_113724_add_two_factor_columns_to_users_table',
             '2025_01_20_113724_add_user_columns_to_users_table',
-            // '2025_02_28_111049_create_sn_user_addresses_table',
         ];
     }
 }
