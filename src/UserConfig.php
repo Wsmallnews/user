@@ -7,62 +7,53 @@ use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
+use Wsmallnews\Support\Features\Site\Site;
 
 class UserConfig
 {
-    // $auth = [
-    //     'guard' => 'web',
-    //     'two_factor' => [
-    //         'enabled' => true,
-    //         'confirm' => true,
-    //         'window' => 1,
-    //     ],
-    //     @var \Illuminate\Contracts\Encryption\Encrypter|null
-    //     encrypter => null,
-    //     'urls' => [
-    //         'index' => '/index',
-    //         'login' => '/login',
-    //         'register' => '/register',
-    //         'profile' => '/profile',
-    //         'forgot-password' => '/forgot-password',
-    //         'reset-password' => '/reset-password/{token}',
-    //         'verify-email' => '/verify-email',
-    //         'verify-email-verification' => '/verify-email/{id}/{hash}',
-    //         'password-confirm' => '/password-confirm',
-    //         'two-factor' => '/two-factor',
-    //     ],
-    // ];
-    protected ?Collection $auths;
+    /** Per-site registrations: module => siteId => auth array|closure. */
+    protected ?Collection $configs;
 
     public function __construct()
     {
-        $this->auths = collect();
+        $this->configs = collect();
     }
 
-    public function config($module, array | Closure $auth): self
+    /** Register auth config for one site (values may be a closure resolved per call). */
+    public function config(string $module, array | Closure $auth, Site $site): self
     {
-        $this->auths->put($module, $auth);
+        $sites = $this->configs->get($module, collect());
+        $sites->put($site->id(), $auth);
+        $this->configs->put($module, $sites);
 
         return $this;
+    }
+
+    /** Resolve the auth entry of the given site. */
+    protected function resolveAuth($module, Site $site): array | Closure | null
+    {
+        return $this->configs->get($module, collect())->get($site->id());
     }
 
     /**
      * 获取设置
      *
      * @param  string  $module  所属模块
+     * @param  Site  $site  站点必传；无站点上下文的场景由调用方以 SiteContext::run 显式绑定后传入
      * @param  string  $name  设置项名称
      * @param  mixed  $default  默认值
      * @param  array  $params  配置动态参数
      * @param  array  $fieldParams  字段参数
      */
-    public function getConfig($module, $name = null, $default = null, $params = [], $fieldParams = []): mixed
+    public function getConfig(string $module, Site $site, $name = null, $default = null, $params = [], $fieldParams = []): mixed
     {
-        $module = $this->auths->get($module);
+        $auth = $this->resolveAuth($module, $site);
 
-        $config = $module instanceof Closure ? $module($params) : $module;
+        $config = $auth instanceof Closure ? $auth($params) : $auth;
 
         if ($name) {
-            $nameValue = data_get($config, $name) ?? $default;
+            // 站点分区 > user 包兜底配置（如 sn-user.two_factor.*）> 调用方默认
+            $nameValue = data_get($config, $name) ?? config("sn-user.{$name}") ?? $default;
             if ($nameValue instanceof Closure) {
                 $nameValue = $nameValue($fieldParams);
             }
@@ -78,16 +69,16 @@ class UserConfig
      *
      * @param  string  $module  所属模块
      */
-    public function confirmsTwoFactorAuthentication($module): bool
+    public function confirmsTwoFactorAuthentication($module, Site $site): bool
     {
-        return $this->getConfig($module, 'two_factor.enabled', false) && $this->getConfig($module, 'two_factor.confirm', false);
+        return $this->getConfig($module, $site, 'two_factor.enabled', false) && $this->getConfig($module, $site, 'two_factor.confirm', false);
     }
 
     /**
      * Get the current encrypter being used by the model.
      */
-    public function currentEncrypter(string $module): Encrypter
+    public function currentEncrypter(string $module, Site $site): Encrypter
     {
-        return $this->getConfig($module, 'encrypter', null) ?? Model::$encrypter ?? Crypt::getFacadeRoot();
+        return $this->getConfig($module, $site, 'encrypter') ?? Model::$encrypter ?? Crypt::getFacadeRoot();
     }
 }

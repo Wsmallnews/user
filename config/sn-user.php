@@ -13,12 +13,17 @@ return [
     ],
 
     /**
-     * auth guard
+     * 本包组件不消费 scope：引入无需声明 scopeable。
+     *
+     * 资源清单（默认解开即注册；内存注入 resources([...]) 对同类覆盖）。
      */
-    'guard' => 'web',
-
+    'panel_register' => [
+        'resources' => [
+            UserResource::class,
+        ],
+    ],
     /**
-     * 2FA 配置
+     * 2FA 配置（站点 / 使用方模块未声明时的兜底）
      */
     'two_factor' => [
         /**
@@ -38,85 +43,5 @@ return [
         'window' => 1,
     ],
 
-    /**
-     * 文件基础目录，会自动拼接当前年月日 (仅用于 filament 默认上传组件 (Forms\Components\FileUpload))
-     */
-    'panel_register' => [
-        'global_default' => [
-            'navigation_group' => 'sn-user::user.global_default.navigation_group',
-        ],
-        'resources' => [
-            UserResource::class,
-        ],
-        'pages' => [],
-    ],
-
     'file_directory' => 'sn/user/',
-
-    'routes' => [
-        /**
-         * Whether to enable the cms routes.
-         */
-        'enabled' => true,
-        /**
-         * The domain where the cms routes should be registered.
-         * If you differentiate tenants by domain, you should set it like this: {tenant:slug}.example.com
-         */
-        'domain' => null,
-        /**
-         * the middleware you want to apply on all the cms routes
-         * for example if you want to make your cms for users only, add the middleware 'auth'.
-         */
-        'middleware' => ['web'],
-        /**
-         * Default path for the blog homepage.
-         * If you differentiate tenants by url, you should set it like this: user/{tenant:slug}
-         */
-        'prefix' => 'user',
-        /**
-         * Default name prefix for the user routes.
-         */
-        'name' => 'sn-user.',
-        /**
-         * default uri for the user routes
-         */
-        'uri' => [
-            'index' => '/',
-
-            'login' => 'login',
-            'register' => 'register',
-            'profile' => 'profile',
-            'forgot-password' => 'forgot-password',
-            'reset-password' => 'reset-password/{token}',
-            'verify-email' => 'verify-email',
-            'verify-email-verification' => 'verify-email/{id}/{hash}',
-            'password-confirm' => 'password-confirm',
-
-            // 用户设置
-            'settings' => [
-                'profile' => 'settings/profile',
-                'password' => 'settings/password',
-                'two-factor' => 'settings/two-factor',
-            ],
-        ],
-    ],
-
-    'themes' => [
-        // 是否启用暗黑模式
-        'dark_mode' => true,
-
-        // 默认主题模式
-        'default_dark_mode' => 'system',
-
-        // 强制暗黑主题
-        'dark_mode_forced' => false,
-
-        'layout' => 'sn-user::components.layouts.app',
-
-        // 页面容器
-        'page_container' => 'sn-user::container.page',
-
-        // 视图命名空间
-        'view_namespace' => 'sn-user::livewire.',
-    ],
 ];
