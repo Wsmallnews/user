@@ -6,120 +6,63 @@ use Closure;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Wsmallnews\Support\Features\Site\Site;
 
 use function Filament\Support\generate_icon_html;
 
 class SidebarMenuRegistry
 {
     /**
-     * 存储所有 module sidebar 信息的集合
+     * 站点级菜单：module => siteId => menus
      */
-    protected ?Collection $menus;
-
-    /**
-     * 存储所有 module sidebar 排序信息的集合
-     */
-    protected ?Collection $sortBy;
+    protected ?Collection $siteMenus;
 
     public function __construct()
     {
-        $this->menus = collect();
-        $this->sortBy = collect();
+        $this->siteMenus = collect();
     }
 
     /**
-     * 注册 module sidebar 菜单
+     * 注册 module sidebar 菜单（按站点）
      *
      * @param  string  $module  模块名称
      * @param  array  $menuInfo  菜单信息数组
      */
-    public function register(string $module, array | Closure $menuInfo): static
+    public function register(string $module, array | Closure $menuInfo, Site $site): static
     {
-        $menus = $this->getOriginalMenus($module);
-
-        $this->menus->put($module, $menus->push($menuInfo));
+        $sites = $this->siteMenus->get($module, collect());
+        $sites->put($site->id(), $sites->get($site->id(), collect())->push($menuInfo));
+        $this->siteMenus->put($module, $sites);
 
         return $this;
     }
 
     /**
-     * 注册多个范围类型
+     * 注册多个 sidebar 菜单项（按站点）
      *
      * @param  string  $module  模块名称
      * @param  array  $menuInfos  sidebar 菜单信息数组，每个元素为一个 sidebar 菜单信息数组
      */
-    public function registers(string $module, array | Closure $menuInfos): static
+    public function registers(string $module, array | Closure $menuInfos, Site $site): static
     {
         $menuInfos = $menuInfos instanceof Closure ? $menuInfos() : $menuInfos;
 
         foreach ($menuInfos as $menuInfo) {
-            $this->register($module, $menuInfo);
+            $this->register($module, $menuInfo, $site);
         }
 
         return $this;
     }
 
     /**
-     * 获取所有模块
-     *
-     * @return Collection 所有模块
-     */
-    public function getModules(): Collection
-    {
-        return $this->menus;
-    }
-
-    /**
-     * 获取指定模块的所有 sidebar 菜单 （原始值，里面会有 Closure）
+     * 获取指定模块在指定站点的处理后 sidebar 菜单
      *
      * @param  string  $module  模块名称
      * @return Collection sidebar 菜单信息集合
      */
-    public function getOriginalMenus(string $module): Collection
+    public function getMenus(string $module, Site $site): Collection
     {
-        return $this->menus->get($module, collect());
-    }
-
-    /**
-     * 注册排序顺序
-     *
-     * @return void
-     */
-    public function registerSortBy(string $module, array $sortBy = [], string $field = 'label'): static
-    {
-        $this->sortBy->put($module, [
-            'sort' => $sortBy,
-            'field' => $field,
-        ]);
-
-        return $this;
-    }
-
-    /**
-     * 获取排序顺序 sort
-     */
-    public function getSort(string $module): array
-    {
-        return $this->sortBy->get($module, [])['sort'] ?? [];
-    }
-
-    /**
-     * 获取排序字段
-     */
-    public function getSortField(string $module): string
-    {
-        return $this->sortBy->get($module, [])['field'] ?? 'label';
-    }
-
-    /**
-     * 获取指定模块的所有 sidebar 菜单
-     *
-     * @param  string  $module  模块名称
-     * @return Collection sidebar 菜单信息集合
-     */
-    public function getMenus(string $module): Collection
-    {
-        $originalMenus = $this->getOriginalMenus($module);
+        $originalMenus = $this->siteMenus->get($module, collect())->get($site->id(), collect());
 
         // 处理 menus
         $menus = $originalMenus->map(function ($menuInfo) {
@@ -139,9 +82,6 @@ class SidebarMenuRegistry
         $menus = $menus->map(function ($menuInfo) {
             return $this->handleMenu($menuInfo);
         });
-
-        // 按照给定的排序字段排序
-        $menus = $this->sortMenus($module, $menus);
 
         return $menus;
     }
@@ -198,21 +138,5 @@ class SidebarMenuRegistry
         $recordLabel .= $menuInfo['label'] . '</span>';
 
         return new HtmlString($recordLabel);
-    }
-
-    /**
-     * 根据传入排序顺序字段，排序 sidebar 菜单
-     */
-    protected function sortMenus(string $module, Collection $menus): Collection
-    {
-        $sorts = $this->getSort($module);
-        $sortField = $this->getSortField($module);
-
-        return $menus->sortBy(function ($menu) use ($sorts, $sortField) {
-            $position = array_search($menu[$sortField], $sorts);
-
-            // 在顺序数组中的按位置排序，不在的放在最后
-            return $position === false ? 999 : $position;
-        })->values();
     }
 }

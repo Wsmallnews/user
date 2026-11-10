@@ -8,12 +8,8 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
 use PragmaRX\Google2FA\Google2FA;
 use Spatie\LaravelPackageTools\Package;
@@ -22,14 +18,7 @@ use Wsmallnews\Support\Features\Modules\Module;
 use Wsmallnews\Support\Features\Modules\ModuleRegistry;
 use Wsmallnews\User\Commands\UserInstallCommand;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
-use Wsmallnews\User\Facades\SidebarMenuRegistry as SidebarMenuRegistryFacade;
-use Wsmallnews\User\Facades\UserConfig as UserConfigFacade;
-use Wsmallnews\User\Http\Middleware\Authenticate;
-use Wsmallnews\User\Http\Middleware\EnsureEmailIsVerified;
 use Wsmallnews\User\Http\Middleware\EnsureUserIsActive;
-use Wsmallnews\User\Http\Middleware\RedirectIfAuthenticated;
-use Wsmallnews\User\Http\Middleware\RequirePassword;
-use Wsmallnews\User\Support\Utils;
 
 class UserServiceProvider extends PackageServiceProvider
 {
@@ -44,10 +33,6 @@ class UserServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews(static::$viewNamespace);
-
-        if (Utils::getConfig('routes.enabled') !== false) {     // 只要不等于 false 就注册路由
-            $package->hasRoutes($this->getRoutes());
-        }
 
         if (file_exists($package->basePath('/../database/migrations'))) {
             $package->hasMigrations($this->getMigrations());
@@ -79,11 +64,7 @@ class UserServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         // 定义中间件别名
-        $this->app['router']->aliasMiddleware('user-auth', Authenticate::class);
         $this->app['router']->aliasMiddleware('user-active', EnsureUserIsActive::class);
-        $this->app['router']->aliasMiddleware('user-guest', RedirectIfAuthenticated::class);
-        $this->app['router']->aliasMiddleware('user-password.confirm', RequirePassword::class);
-        $this->app['router']->aliasMiddleware('user-email.verified', EnsureEmailIsVerified::class);
 
         // Asset Registration
         FilamentAsset::register(
@@ -114,71 +95,9 @@ class UserServiceProvider extends PackageServiceProvider
             classNamespace: 'Wsmallnews\\User\\Livewire'
         );
 
-        // 注册用户认证信息
-        UserConfigFacade::config(app(UserPlugin::class)->getId(), function () {
-            return [
-                'guard' => Utils::getConfig('guard', 'web'),
-                'two_factor' => Utils::getConfig('two_factor', []),
-                'urls' => [
-                    'index' => Utils::route('index'),           // @sn todo 用户默认页面的首页不应该是这个路由
-                    'login' => Utils::route('login'),
-                    'register' => Utils::route('register'),
-                    'profile' => Utils::route('profile'),
-                    'forgot-password' => Utils::route('forgot.password'),
-                    'reset-password' => fn ($params) => Utils::route('reset.password', $params),
-                    'verify-email' => Utils::route('verify.email'),
-                    'verify-email-verification' => function ($parameters) {
-                        // @sn todo ，这里先直接填入 租户参数
-                        if (! isset($parameters['tenant'])) {        // 没有租户参数,则添加租户参数
-                            $tenant = current_tenant();
-                            $parameters['tenant'] = $tenant;        // 租户参数
-                        }
-
-                        $parameters['module'] = app(UserPlugin::class)->getId();             // 当前模块名
-
-                        return URL::temporarySignedRoute(
-                            Utils::getConfig('routes.name', '') . 'verify.email.verification',
-                            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-                            $parameters
-                        );
-                    },
-                    'password-confirm' => Utils::route('password.confirm'),
-                ],
-            ];
-        });
-
-        // 注册用户侧边栏菜单
-        SidebarMenuRegistryFacade::registers(app(UserPlugin::class)->getId(), [
-            fn () => [
-                'key' => 'profile',
-                'label' => __('sn-user::user.settings.sidebar.profile'),
-                'url' => Utils::route('profile'),
-                'icon' => Heroicon::OutlinedUser,
-                'active_icon' => Heroicon::User,
-            ],
-            fn () => [
-                'key' => 'settings-profile',
-                'label' => __('sn-user::user.settings.sidebar.settings_profile'),
-                'url' => Utils::route('settings.profile'),
-                'icon' => Heroicon::OutlinedPencilSquare,
-                'active_icon' => Heroicon::PencilSquare,
-            ],
-            fn () => [
-                'key' => 'settings-password',
-                'label' => __('sn-user::user.settings.sidebar.settings_password'),
-                'url' => Utils::route('settings.password'),
-                'icon' => Heroicon::OutlinedLockClosed,
-                'active_icon' => Heroicon::LockClosed,
-            ],
-            fn () => [
-                'key' => 'settings-two-factor',
-                'label' => __('sn-user::user.settings.sidebar.settings_two_factor'),
-                'url' => fn () => Utils::route('settings.two-factor'),
-                'icon' => Heroicon::OutlinedKey,
-                'active_icon' => Heroicon::Key,
-                'hidden' => fn () => ! Utils::getConfig('two_factor.enabled', false),
-            ],
-        ]);
+        // auth 配置由使用方（cms 等）按站点注册（RegisterUserConfig），本包不再提供模块级默认。
+        // 侧边栏按站点注册（见 cms 的 RegisterSiteSidebar）；user 包没有自己的站点，
+        // 这里不再提供模块级默认菜单。
     }
 
     protected function getAssetPackageName(): ?string
@@ -214,14 +133,6 @@ class UserServiceProvider extends PackageServiceProvider
     protected function getIcons(): array
     {
         return [];
-    }
-
-    /**
-     * @return array<string>
-     */
-    protected function getRoutes(): array
-    {
-        return ['web'];
     }
 
     /**

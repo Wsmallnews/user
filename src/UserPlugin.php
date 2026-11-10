@@ -5,25 +5,27 @@ namespace Wsmallnews\User;
 use BadMethodCallException;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
-use Wsmallnews\Support\Filament\Concerns\RegistersConfigurable;
+use Wsmallnews\Support\Enums\ScopePolicy;
+use Wsmallnews\Support\Filament\Concerns\IntroducesComponents;
 use Wsmallnews\User\Support\Utils;
 
-/**
- * @method static mixed getPanelRegister(?string $type = null)
- */
 class UserPlugin implements Plugin
 {
-    use RegistersConfigurable;
-
+    use IntroducesComponents;
     public function getId(): string
     {
         return 'sn-user';
     }
 
+    /** 组件不消费 scope（表无 scopeable 字段）：引入无需声明。 */
+    public function scopePolicy(): ScopePolicy
+    {
+        return ScopePolicy::None;
+    }
+
     public function register(Panel $panel): void
     {
-        $this->registerConfigurableResources($panel);
-        $this->registerConfigurablePages($panel);
+        $this->registerIntroducedComponents($panel);
     }
 
     public function boot(Panel $panel): void
