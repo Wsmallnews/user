@@ -8,12 +8,20 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
+use Wsmallnews\Support\Filament\Concerns\RequiresConfiguration;
+use Wsmallnews\Support\Filament\Resources\ResourceConfiguration;
 use Wsmallnews\User\Filament\Resources\Users\Schemas\UserForm;
 use Wsmallnews\User\Filament\Resources\Users\Tables\UserTable;
 use Wsmallnews\User\Support\Utils;
 
 abstract class BaseResource extends Resource
 {
+    use RequiresConfiguration;
+
+    protected static bool $isScopedToTenant = false;
+
+    protected static ?string $configurationClass = ResourceConfiguration::class;
+
     protected static string | BackedEnum | null $navigationIcon = Heroicon::OutlinedUser;
 
     protected static string | BackedEnum | null $activeNavigationIcon = Heroicon::User;

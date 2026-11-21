@@ -15,7 +15,7 @@
                 {{ __('sn-user::user.settings.verify.sign_out') }}
             </x-filament::link>
         @elseif (session('status'))
-            <x-filament::button tag="a" color="gray" href="{{ session('verify-previous-url') ?? UserConfig::getConfig($module, 'urls.index') }}">
+            <x-filament::button tag="a" color="gray" href="{{ session('verify-previous-url') ?? UserConfig::getConfig($this->site(), 'urls.index') }}">
                 {{ __('sn-user::user.settings.verify.continue') }}
             </x-filament::button>
         @endif

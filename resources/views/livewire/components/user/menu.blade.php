@@ -1,7 +1,7 @@
 @php
     use Filament\Support\Enums\IconSize;
     use Wsmallnews\User\Facades\UserConfig;
-    $user = auth()->guard(UserConfig::getConfig($module, 'guard'))->user();
+    $user = auth()->guard(UserConfig::getConfig($this->site(), 'guard'))->user();
 @endphp
 
 <x-filament::dropdown
@@ -27,7 +27,7 @@
 
 
     <x-filament::dropdown.list>
-        <x-filament::dropdown.list.item tag="a" href="{{ UserConfig::getConfig($module, 'urls.profile') }}" >
+        <x-filament::dropdown.list.item tag="a" href="{{ UserConfig::getConfig($this->site(), 'urls.profile') }}" >
             {{ __('sn-user::user.links.profile') }}
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>

@@ -3,7 +3,7 @@
     use Filament\Support\Icons\Heroicon;
     use Wsmallnews\User\Enums\Gender;
     use Wsmallnews\User\Facades\UserConfig;
-    $user = auth()->guard(UserConfig::getConfig($module, 'guard'))->user();
+    $user = auth()->guard(UserConfig::getConfig($this->site(), 'guard'))->user();
 @endphp
 
 <div class="w-full flex flex-col items-start sn-gap" >
