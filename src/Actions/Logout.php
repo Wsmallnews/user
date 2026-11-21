@@ -4,6 +4,7 @@ namespace Wsmallnews\User\Actions;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Wsmallnews\Support\Features\Site\Site;
 use Wsmallnews\User\Facades\UserConfig;
 
 class Logout
@@ -13,9 +14,9 @@ class Logout
      *
      * @param  string  $guard
      */
-    public function __invoke(string $module): void
+    public function __invoke(string $module, Site $site): void
     {
-        $guard = UserConfig::getConfig($module, 'guard');
+        $guard = UserConfig::getConfig($site, 'guard');
 
         // 退出登录
         Auth::guard($guard)->logout();

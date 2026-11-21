@@ -3,6 +3,7 @@
 namespace Wsmallnews\User\Actions;
 
 use App\Models\User;
+use Wsmallnews\Support\Features\Site\Site;
 use Wsmallnews\User\Events\TwoFactorAuthenticationDisabled;
 use Wsmallnews\User\Facades\UserConfig;
 
@@ -13,7 +14,7 @@ class DisableTwoFactorAuthentication
      *
      * @param  mixed  $user
      */
-    public function __invoke(string $module, User $user): void
+    public function __invoke(string $module, Site $site, User $user): void
     {
         if (! is_null($user->two_factor_secret) ||
             ! is_null($user->two_factor_recovery_codes) ||
@@ -21,7 +22,7 @@ class DisableTwoFactorAuthentication
             $user->forceFill([
                 'two_factor_secret' => null,
                 'two_factor_recovery_codes' => null,
-            ] + (UserConfig::confirmsTwoFactorAuthentication($module) || ! is_null($user->two_factor_confirmed_at) ? [
+            ] + (UserConfig::confirmsTwoFactorAuthentication($site) || ! is_null($user->two_factor_confirmed_at) ? [
                 'two_factor_confirmed_at' => null,
             ] : []))->save();
 

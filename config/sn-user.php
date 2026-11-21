@@ -17,11 +17,6 @@ return [
      *
      * 资源清单（默认解开即注册；内存注入 resources([...]) 对同类覆盖）。
      */
-    'panel_register' => [
-        'resources' => [
-            UserResource::class,
-        ],
-    ],
     /**
      * 2FA 配置（站点 / 使用方模块未声明时的兜底）
      */

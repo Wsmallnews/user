@@ -146,7 +146,6 @@ $panel->resources([UserResource::class]);
 | `hasDarkModeForced()` | 是否强制暗黑主题 |
 | `getLayout()` | 获取当前布局视图 |
 | `getPageContainer()` | 获取页面容器视图 |
-| `getViewNamespace()` | 获取视图命名空间 |
 | `route($name, $params, $absolute)` | 用户内部路由（自动添加路由前缀 + 租户参数） |
 
 ### 正确命名空间速查
@@ -155,7 +154,6 @@ $panel->resources([UserResource::class]);
 |---|---|
 | UserResource | `Wsmallnews\User\Filament\Resources\Users\UserResource` |
 | BaseResource | `Wsmallnews\User\Filament\Resources\Users\BaseResource` |
-| UserPlugin | `Wsmallnews\User\UserPlugin` |
 | UserConfig | `Wsmallnews\User\UserConfig` |
 | Gender 枚举 | `Wsmallnews\User\Enums\Gender` |
 | Status 枚举 | `Wsmallnews\User\Enums\Status` |

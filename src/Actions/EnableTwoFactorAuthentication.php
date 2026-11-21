@@ -4,6 +4,7 @@ namespace Wsmallnews\User\Actions;
 
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Wsmallnews\Support\Features\Site\Site;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\Events\TwoFactorAuthenticationEnabled;
 use Wsmallnews\User\Facades\UserConfig;
@@ -33,14 +34,14 @@ class EnableTwoFactorAuthentication
      *
      * @param  mixed  $user
      */
-    public function __invoke(string $module, User $user, bool $force = false): void
+    public function __invoke(string $module, Site $site, User $user, bool $force = false): void
     {
         if (empty($user->two_factor_secret) || $force === true) {
             $secretLength = 16;
 
             $user->forceFill([
-                'two_factor_secret' => UserConfig::currentEncrypter($module)->encrypt($this->provider->generateSecretKey($secretLength)),
-                'two_factor_recovery_codes' => UserConfig::currentEncrypter($module)->encrypt(json_encode(Collection::times(8, function () {
+                'two_factor_secret' => UserConfig::currentEncrypter()->encrypt($this->provider->generateSecretKey($secretLength)),
+                'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(json_encode(Collection::times(8, function () {
                     return RecoveryCode::generate();
                 })->all())),
             ])->save();

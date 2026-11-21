@@ -67,7 +67,7 @@ class TwoFactorAuthenticationProvider implements TwoFactorAuthenticationProvider
      */
     public function verify($module, $secret, $code)
     {
-        if (is_int($customWindow = UserConfig::getConfig($module, 'two_factor.window'))) {
+        if (is_int($customWindow = UserConfig::getConfig($site, 'two_factor.window'))) {
             $this->engine->setWindow($customWindow);
         }
 

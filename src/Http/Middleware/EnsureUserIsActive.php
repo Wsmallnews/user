@@ -7,13 +7,17 @@ use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use Wsmallnews\Support\Features\Site\SiteContext;
 use Wsmallnews\User\Enums\Status;
 
 class EnsureUserIsActive
 {
     public function handle(Request $request, Closure $next, ?string $guard = null): Response
     {
-        $user = $request->user($guard);
+        // The site already knows its guard; a route may still pass one explicitly.
+        $guard ??= app(SiteContext::class)->getGuard();
+
+        $user = Auth::guard($guard)->user();
 
         if ($user && isset($user->status) && $user->status !== Status::Normal) {
             Auth::guard($guard)->logout();

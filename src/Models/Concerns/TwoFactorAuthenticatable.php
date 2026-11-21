@@ -8,6 +8,7 @@ use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\RendererStyle\Fill;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
+use Wsmallnews\Support\Features\Site\Site;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider;
 use Wsmallnews\User\Events\RecoveryCodeReplaced;
 use Wsmallnews\User\Facades\UserConfig;
@@ -17,12 +18,10 @@ trait TwoFactorAuthenticatable
 {
     /**
      * Determine if two-factor authentication has been enabled.
-     *
-     * @return bool
      */
-    public function hasEnabledTwoFactorAuthentication(?string $module = null)
+    public function hasEnabledTwoFactorAuthentication(Site $site)
     {
-        if (UserConfig::confirmsTwoFactorAuthentication($module)) {
+        if (UserConfig::confirmsTwoFactorAuthentication($site)) {
             return ! is_null($this->two_factor_secret) &&
                    ! is_null($this->two_factor_confirmed_at);
         }
@@ -32,27 +31,22 @@ trait TwoFactorAuthenticatable
 
     /**
      * Get the user's two factor authentication recovery codes.
-     *
-     * @return array
      */
-    public function recoveryCodes(string $module)
+    public function recoveryCodes(Site $site)
     {
-        return json_decode(UserConfig::currentEncrypter($module)->decrypt($this->two_factor_recovery_codes), true);
+        return json_decode(UserConfig::currentEncrypter()->decrypt($this->two_factor_recovery_codes), true);
     }
 
     /**
      * Replace the given recovery code with a new one in the user's stored codes.
-     *
-     * @param  string  $code
-     * @return void
      */
-    public function replaceRecoveryCode(string $module, $code)
+    public function replaceRecoveryCode(Site $site, $code)
     {
         $this->forceFill([
-            'two_factor_recovery_codes' => UserConfig::currentEncrypter($module)->encrypt(str_replace(
+            'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(str_replace(
                 $code,
                 RecoveryCode::generate(),
-                UserConfig::currentEncrypter($module)->decrypt($this->two_factor_recovery_codes)
+                UserConfig::currentEncrypter()->decrypt($this->two_factor_recovery_codes)
             )),
         ])->save();
 
@@ -61,32 +55,28 @@ trait TwoFactorAuthenticatable
 
     /**
      * Get the QR code SVG of the user's two factor authentication QR code URL.
-     *
-     * @return string
      */
-    public function twoFactorQrCodeSvg(string $module)
+    public function twoFactorQrCodeSvg(Site $site)
     {
         $svg = (new Writer(
             new ImageRenderer(
                 new RendererStyle(192, 0, null, null, Fill::uniformColor(new Rgb(255, 255, 255), new Rgb(45, 55, 72))),
                 new SvgImageBackEnd
             )
-        ))->writeString($this->twoFactorQrCodeUrl($module));
+        ))->writeString($this->twoFactorQrCodeUrl($site));
 
         return trim(substr($svg, strpos($svg, "\n") + 1));
     }
 
     /**
      * Get the two factor authentication QR code URL.
-     *
-     * @return string
      */
-    public function twoFactorQrCodeUrl(string $module)
+    public function twoFactorQrCodeUrl(Site $site)
     {
         return app(TwoFactorAuthenticationProvider::class)->qrCodeUrl(
             config('app.name'),
             $this->email,
-            UserConfig::currentEncrypter($module)->decrypt($this->two_factor_secret)
+            UserConfig::currentEncrypter()->decrypt($this->two_factor_secret)
         );
     }
 }

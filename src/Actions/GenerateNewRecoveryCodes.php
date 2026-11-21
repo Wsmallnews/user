@@ -4,6 +4,7 @@ namespace Wsmallnews\User\Actions;
 
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Wsmallnews\Support\Features\Site\Site;
 use Wsmallnews\User\Events\RecoveryCodesGenerated;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\RecoveryCode;
@@ -15,10 +16,10 @@ class GenerateNewRecoveryCodes
      *
      * @param  mixed  $user
      */
-    public function __invoke(string $module, User $user): void
+    public function __invoke(string $module, Site $site, User $user): void
     {
         $user->forceFill([
-            'two_factor_recovery_codes' => UserConfig::currentEncrypter($module)->encrypt(json_encode(Collection::times(8, function () {
+            'two_factor_recovery_codes' => UserConfig::currentEncrypter()->encrypt(json_encode(Collection::times(8, function () {
                 return RecoveryCode::generate();
             })->all())),
         ])->save();

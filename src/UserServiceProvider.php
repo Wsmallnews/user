@@ -10,12 +10,15 @@ use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 use PragmaRX\Google2FA\Google2FA;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Wsmallnews\Support\Features\Modules\Module;
 use Wsmallnews\Support\Features\Modules\ModuleRegistry;
+use Wsmallnews\Support\Features\Site\Site;
+use Wsmallnews\Support\Features\Site\SiteContext;
 use Wsmallnews\User\Commands\UserInstallCommand;
 use Wsmallnews\User\Contracts\TwoFactorAuthenticationProvider as TwoFactorAuthenticationProviderContract;
 use Wsmallnews\User\Http\Middleware\EnsureUserIsActive;
@@ -45,7 +48,7 @@ class UserServiceProvider extends PackageServiceProvider
         ModuleRegistry::register(new Module(
             id: static::$name,
             namespace: 'Wsmallnews\User',
-            plugin: UserPlugin::class,
+            plugin: null,
         ));
 
         $this->app->singleton(TwoFactorAuthenticationProviderContract::class, function ($app): TwoFactorAuthenticationProviderContract {
@@ -63,8 +66,11 @@ class UserServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        // Site auth.user_type = user: the guard user is the site identity as-is
+        SiteContext::registerAuthUser('user', fn (Site $site, string $guard) => Auth::guard($guard)->user());
+
         // 定义中间件别名
-        $this->app['router']->aliasMiddleware('user-active', EnsureUserIsActive::class);
+        $this->app['router']->aliasMiddleware('sn-ensure-user-active', EnsureUserIsActive::class);
 
         // Asset Registration
         FilamentAsset::register(

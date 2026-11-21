@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
+use Wsmallnews\Support\Features\Site\Site;
 use Wsmallnews\User\Facades\UserConfig;
 
 class AttemptToAuthenticate
@@ -19,16 +20,18 @@ class AttemptToAuthenticate
 
     protected string $guard;
 
+    protected Site $site;
+
     protected string $throttleKey;
 
     /**
      * AttemptToAuthenticate constructor.
      */
-    public function __construct(string $module, array $formData)
+    public function __construct(string $module, Site $site, array $formData)
     {
         $this->module = $module;
         $this->formData = $formData;
-        $this->guard = UserConfig::getConfig($module, 'guard');
+        $this->guard = UserConfig::getConfig($site, 'guard');
 
         $this->throttleKey = $this->throttleKey($formData);
     }
