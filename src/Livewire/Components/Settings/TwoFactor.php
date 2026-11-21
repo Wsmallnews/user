@@ -30,9 +30,6 @@ class TwoFactor extends Base implements HasActions, HasSchemas
     public ?array $formData = [];
 
     #[Locked]
-    public string $module;
-
-    #[Locked]
     public bool $twoFactorEnabled;      // 当前用户是否启用双因素
 
     #[Locked]
@@ -53,16 +50,16 @@ class TwoFactor extends Base implements HasActions, HasSchemas
      */
     public function mount(DisableTwoFactorAuthentication $disableTwoFactorAuthentication): void
     {
-        abort_unless(UserConfig::getConfig($this->module, 'two_factor.enabled', true), Response::HTTP_FORBIDDEN);
+        abort_unless(UserConfig::getConfig($this->site(), 'two_factor.enabled', true), Response::HTTP_FORBIDDEN);
 
-        $this->guard = UserConfig::getConfig($this->module, 'guard');
-        if (UserConfig::confirmsTwoFactorAuthentication($this->module) && is_null(Auth::guard($this->guard)->user()->two_factor_confirmed_at)) {
+        $this->guard = UserConfig::getConfig($this->site(), 'guard');
+        if (UserConfig::confirmsTwoFactorAuthentication($this->site()) && is_null(Auth::guard($this->guard)->user()->two_factor_confirmed_at)) {
             // 如果用户未确认，双因素启用失败，清空 two_factor_secret， two_factor_recovery_codes 数据
-            $disableTwoFactorAuthentication($this->module, Auth::guard($this->guard)->user());
+            $disableTwoFactorAuthentication($this->getModuleId(), $this->site(), Auth::guard($this->guard)->user());
         }
 
-        $this->twoFactorEnabled = Auth::guard($this->guard)->user()->hasEnabledTwoFactorAuthentication($this->module);
-        $this->requiresConfirmation = UserConfig::confirmsTwoFactorAuthentication($this->module);
+        $this->twoFactorEnabled = Auth::guard($this->guard)->user()->hasEnabledTwoFactorAuthentication($this->site());
+        $this->requiresConfirmation = UserConfig::confirmsTwoFactorAuthentication($this->site());
     }
 
     public function enableAction(): Action
@@ -74,11 +71,11 @@ class TwoFactor extends Base implements HasActions, HasSchemas
                 $user = Auth::guard($this->guard)->user();
 
                 // 填充双因素字段
-                $enableTwoFactorAuthentication($this->module, $user);
+                $enableTwoFactorAuthentication($this->getModuleId(), $this->site(), $user);
 
                 if (! $this->requiresConfirmation) {
                     // 如果不需要确认，直接启用双因素
-                    $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication($this->module);
+                    $this->twoFactorEnabled = $user->hasEnabledTwoFactorAuthentication($this->site());
                 }
 
                 $this->loadSetupData();
@@ -125,7 +122,7 @@ class TwoFactor extends Base implements HasActions, HasSchemas
                         ->action(function (ConfirmTwoFactorAuthentication $confirmTwoFactorAuthentication, array $data) {
                             $user = Auth::guard($this->guard)->user();
 
-                            $confirmTwoFactorAuthentication($this->module, $user, (string) $data['code'] ?? '', 'mountedActions.1.data');
+                            $confirmTwoFactorAuthentication($this->getModuleId(), $this->site(), $user, (string) $data['code'] ?? '', 'mountedActions.1.data');
 
                             $this->twoFactorEnabled = true;     // 用户双因素启用成功
                         })
@@ -172,7 +169,7 @@ class TwoFactor extends Base implements HasActions, HasSchemas
             ->action(function (DisableTwoFactorAuthentication $disableTwoFactorAuthentication) {
                 $user = Auth::guard($this->guard)->user();
 
-                $disableTwoFactorAuthentication($this->module, $user);
+                $disableTwoFactorAuthentication($this->getModuleId(), $this->site(), $user);
 
                 $this->twoFactorEnabled = false;
             });
@@ -186,7 +183,7 @@ class TwoFactor extends Base implements HasActions, HasSchemas
         $user = Auth::guard($this->guard)->user();
 
         try {
-            $this->qrCodeSvg = $user?->twoFactorQrCodeSvg($this->module);
+            $this->qrCodeSvg = $user?->twoFactorQrCodeSvg($this->site());
             $this->manualSetupKey = decrypt($user->two_factor_secret);
         } catch (\Exception) {
             $this->addError('setupData', 'Failed to fetch setup data.');

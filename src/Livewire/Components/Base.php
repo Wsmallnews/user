@@ -3,5 +3,9 @@
 namespace Wsmallnews\User\Livewire\Components;
 
 use Wsmallnews\Support\Livewire\Base as BaseComponent;
+use Wsmallnews\Support\Livewire\Concerns\ResolvesModule;
 
-class Base extends BaseComponent {}
+abstract class Base extends BaseComponent
+{
+    use ResolvesModule;
+}

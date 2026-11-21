@@ -15,7 +15,6 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password as PasswordRule;
-use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\UpdateUserPassword;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Components\Base;
@@ -26,9 +25,6 @@ class Password extends Base implements HasSchemas
 
     public ?array $formData = [];
 
-    #[Locked]
-    public string $module;
-
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -38,7 +34,7 @@ class Password extends Base implements HasSchemas
                     ->label(__('sn-user::user.settings.password.current_password'))
                     ->placeholder(__('sn-user::user.settings.password.current_password_placeholder'))
                     ->required()
-                    ->rule(['current_password:' . UserConfig::getConfig($this->module, 'guard')])
+                    ->rule(['current_password:' . UserConfig::getConfig($this->site(), 'guard')])
                     ->password()
                     ->revealable(),
                 Components\TextInput::make('password')
@@ -72,7 +68,7 @@ class Password extends Base implements HasSchemas
     public function updatePassword(UpdateUserPassword $updateUserPassword): void
     {
         $formData = $this->form->getState();
-        $user = Auth::guard(UserConfig::getConfig($this->module, 'guard'))->user();
+        $user = Auth::guard(UserConfig::getConfig($this->site(), 'guard'))->user();
 
         $updateUserPassword($user, $formData);
 

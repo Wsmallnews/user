@@ -16,7 +16,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Locked;
 use Wsmallnews\Support\Filament\Forms\FormComponents;
 use Wsmallnews\User\Actions\UpdateUserProfileInformation;
 use Wsmallnews\User\Enums\Gender;
@@ -30,12 +29,9 @@ class Profile extends Base implements HasSchemas
 
     public ?array $formData = [];
 
-    #[Locked]
-    public string $module;
-
     public function mount()
     {
-        $user = Auth::guard(UserConfig::getConfig($this->module, 'guard'))->user();
+        $user = Auth::guard(UserConfig::getConfig($this->site(), 'guard'))->user();
         $this->form->fill($user->toArray());
     }
 
@@ -83,7 +79,7 @@ class Profile extends Base implements HasSchemas
     public function updateProfileInformation(UpdateUserProfileInformation $updateUserProfileInformation): void
     {
         $formData = $this->form->getState();
-        $user = Auth::guard(UserConfig::getConfig($this->module, 'guard'))->user();
+        $user = Auth::guard(UserConfig::getConfig($this->site(), 'guard'))->user();
 
         $originalEmail = $user->email;
         $updateUserProfileInformation($user, $formData);
@@ -95,7 +91,7 @@ class Profile extends Base implements HasSchemas
         if ($user->email !== $originalEmail) {
             // 自定义邮箱验证链接
             VerifyEmailNotification::createUrlUsing(function ($notifiable) {
-                return UserConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [
+                return UserConfig::getConfig($this->site(), 'urls.verify-email-verification', fieldParams: [
                     'id' => $notifiable->getKey(),
                     'hash' => sha1($notifiable->getEmailForVerification()),
                 ]);
@@ -105,7 +101,7 @@ class Profile extends Base implements HasSchemas
             $user->sendEmailVerificationNotification();
 
             // 跳转到邮箱验证
-            $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?type=update', FilamentView::hasSpaMode());
+            $this->redirect(UserConfig::getConfig($this->site(), 'urls.verify-email') . '?type=update', FilamentView::hasSpaMode());
         }
     }
 

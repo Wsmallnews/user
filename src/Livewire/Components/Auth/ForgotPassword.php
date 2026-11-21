@@ -14,7 +14,6 @@ use Filament\Schemas\Schema;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Password;
-use Livewire\Attributes\Locked;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Components\Base;
 
@@ -23,9 +22,6 @@ class ForgotPassword extends Base implements HasSchemas
     use InteractsWithSchemas;
 
     public ?array $formData = [];
-
-    #[Locked]
-    public string $module;
 
     public function form(Schema $schema): Schema
     {
@@ -56,7 +52,7 @@ class ForgotPassword extends Base implements HasSchemas
 
         // 自定义密码重置链接
         ResetPassword::createUrlUsing(function ($notifiable, string $token) {
-            return UserConfig::getConfig($this->module, 'urls.reset-password', fieldParams: [
+            return UserConfig::getConfig($this->site(), 'urls.reset-password', fieldParams: [
                 'token' => $token,
                 'email' => $notifiable->getEmailForPasswordReset(),
             ]);

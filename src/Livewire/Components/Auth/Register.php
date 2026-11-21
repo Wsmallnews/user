@@ -18,7 +18,6 @@ use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
-use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\CreateNewUser;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Components\Base;
@@ -28,9 +27,6 @@ class Register extends Base implements HasSchemas
     use InteractsWithSchemas;
 
     public ?array $formData = [];
-
-    #[Locked]
-    public string $module;
 
     public function form(Schema $schema): Schema
     {
@@ -87,7 +83,7 @@ class Register extends Base implements HasSchemas
 
         // 自定义邮箱验证链接
         VerifyEmailNotification::createUrlUsing(function ($notifiable) {
-            return UserConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [
+            return UserConfig::getConfig($this->site(), 'urls.verify-email-verification', fieldParams: [
                 'id' => $notifiable->getKey(),
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]);
@@ -99,10 +95,10 @@ class Register extends Base implements HasSchemas
             ->title(__('sn-user::user.auth.register.success'))
             ->success()->send();
 
-        Auth::guard(UserConfig::getConfig($this->module, 'guard'))->login($user);
+        Auth::guard(UserConfig::getConfig($this->site(), 'guard'))->login($user);
 
         // 跳转到邮箱验证
-        $this->redirect(UserConfig::getConfig($this->module, 'urls.verify-email') . '?type=register', FilamentView::hasSpaMode());
+        $this->redirect(UserConfig::getConfig($this->site(), 'urls.verify-email') . '?type=register', FilamentView::hasSpaMode());
     }
 
     public function content(Schema $schema): Schema

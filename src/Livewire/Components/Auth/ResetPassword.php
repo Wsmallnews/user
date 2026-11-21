@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
-use Livewire\Attributes\Locked;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Components\Base;
 
@@ -28,9 +27,6 @@ class ResetPassword extends Base implements HasSchemas
     use InteractsWithSchemas;
 
     public ?array $formData = [];
-
-    #[Locked]
-    public string $module;
 
     public function mount(): void
     {
@@ -115,7 +111,7 @@ class ResetPassword extends Base implements HasSchemas
             ->title(__($status))
             ->success()->send();
 
-        $this->redirect(UserConfig::getConfig($this->module, 'urls.login'), FilamentView::hasSpaMode());
+        $this->redirect(UserConfig::getConfig($this->site(), 'urls.login'), FilamentView::hasSpaMode());
     }
 
     public function content(Schema $schema): Schema

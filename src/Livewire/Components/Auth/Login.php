@@ -33,9 +33,6 @@ class Login extends Base implements HasActions, HasSchemas
     public ?array $formData = [];
 
     #[Locked]
-    public string $module;
-
-    #[Locked]
     public ?string $userUndertakingMultiFactorAuthentication = null;
 
     public function form(Schema $schema): Schema
@@ -53,7 +50,7 @@ class Login extends Base implements HasActions, HasSchemas
                     ->password()
                     ->revealable()
                     ->afterLabel(function () {
-                        $forgotPasswordUrl = UserConfig::getConfig($this->module, 'urls.forgot-password');
+                        $forgotPasswordUrl = UserConfig::getConfig($this->site(), 'urls.forgot-password');
 
                         return $forgotPasswordUrl ?
                             Action::make('forget-password')
@@ -123,7 +120,7 @@ class Login extends Base implements HasActions, HasSchemas
     public function login()
     {
         $formData = $this->form->getState();
-        $attemptToAuthenticate = new AttemptToAuthenticate($this->module, $formData);
+        $attemptToAuthenticate = new AttemptToAuthenticate($this->getModuleId(), $this->site(), $formData);
 
         // 登录限制
         if (! $attemptToAuthenticate->ensureIsNotRateLimited()) {
@@ -157,15 +154,15 @@ class Login extends Base implements HasActions, HasSchemas
         }
 
         if (
-            UserConfig::getConfig($this->module, 'two_factor.enabled', true)        // 启用了双因素
-            && $user->hasEnabledTwoFactorAuthentication($this->module)              // 用户已开启双因素
+            UserConfig::getConfig($this->site(), 'two_factor.enabled', true)        // 启用了双因素
+            && $user->hasEnabledTwoFactorAuthentication($this->site())              // 用户已开启双因素
         ) {
             if (
                 filled($this->userUndertakingMultiFactorAuthentication) &&
                 (decrypt($this->userUndertakingMultiFactorAuthentication) === $user->getAuthIdentifier())
             ) {
                 $twoFactorChallengeForm = $this->twoFactorChallengeForm->getState();
-                $attemptTwoFactorAuthenticate = new AttemptTwoFactorAuthenticate($this->module, $twoFactorChallengeForm);
+                $attemptTwoFactorAuthenticate = new AttemptTwoFactorAuthenticate($this->getModuleId(), $this->site(), $twoFactorChallengeForm);
 
                 // 验证多因素认证
                 if (! $attemptTwoFactorAuthenticate($user)) {
@@ -196,7 +193,7 @@ class Login extends Base implements HasActions, HasSchemas
             ->success()->send();
 
         // 退回上个url
-        $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
+        $this->redirectIntended(UserConfig::getConfig($this->site(), 'urls.index'), FilamentView::hasSpaMode());
     }
 
     public function content(Schema $schema): Schema

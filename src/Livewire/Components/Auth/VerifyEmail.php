@@ -16,7 +16,6 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Notifications\VerifyEmail as VerifyEmailNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Livewire\Attributes\Locked;
 use Wsmallnews\User\Actions\Logout;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Components\Base;
@@ -28,9 +27,6 @@ class VerifyEmail extends Base implements HasSchemas
     public ?array $formData = [];
 
     public string $type = 'check';
-
-    #[Locked]
-    public string $module;
 
     public function form(Schema $schema): Schema
     {
@@ -54,16 +50,16 @@ class VerifyEmail extends Base implements HasSchemas
 
     public function sendVerification(): void
     {
-        $guard = UserConfig::getConfig($this->module, 'guard');
+        $guard = UserConfig::getConfig($this->site(), 'guard');
         if (Auth::guard($guard)->user()->hasVerifiedEmail()) {
-            $this->redirectIntended(UserConfig::getConfig($this->module, 'urls.profile'), FilamentView::hasSpaMode());
+            $this->redirectIntended(UserConfig::getConfig($this->site(), 'urls.profile'), FilamentView::hasSpaMode());
 
             return;
         }
 
         // 自定义邮箱验证链接
         VerifyEmailNotification::createUrlUsing(function ($notifiable) {
-            return UserConfig::getConfig($this->module, 'urls.verify-email-verification', fieldParams: [
+            return UserConfig::getConfig($this->site(), 'urls.verify-email-verification', fieldParams: [
                 'id' => $notifiable->getKey(),
                 'hash' => sha1($notifiable->getEmailForVerification()),
             ]);
@@ -80,14 +76,14 @@ class VerifyEmail extends Base implements HasSchemas
     public function logout(Logout $logout): void
     {
         // 退出登录
-        $logout($this->module);
+        $logout($this->getModuleId(), $this->site());
 
         // 通知用户退出登录
         Notification::make()
             ->title(__('sn-user::user.auth.verify_email.logged_out'))
             ->success()->send();
 
-        $this->redirect(UserConfig::getConfig($this->module, 'urls.index'), FilamentView::hasSpaMode());
+        $this->redirect(UserConfig::getConfig($this->site(), 'urls.index'), FilamentView::hasSpaMode());
     }
 
     public function content(Schema $schema): Schema

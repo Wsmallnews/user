@@ -13,7 +13,6 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Locked;
 use Wsmallnews\User\Facades\UserConfig;
 use Wsmallnews\User\Livewire\Components\Base;
 
@@ -22,9 +21,6 @@ class ConfirmPassword extends Base implements HasSchemas
     use InteractsWithSchemas;
 
     public ?array $formData = [];
-
-    #[Locked]
-    public string $module;
 
     public function form(Schema $schema): Schema
     {
@@ -58,7 +54,7 @@ class ConfirmPassword extends Base implements HasSchemas
         $formData = $this->form->getState();
 
         // 当前 guard
-        $guard = UserConfig::getConfig($this->module, 'guard');
+        $guard = UserConfig::getConfig($this->site(), 'guard');
 
         if (! Auth::guard($guard)->validate([
             'email' => Auth::guard($guard)->user()->email,
@@ -71,7 +67,7 @@ class ConfirmPassword extends Base implements HasSchemas
 
         session(['auth.password_confirmed_at' => time()]);
 
-        $this->redirectIntended(default: UserConfig::getConfig($this->module, 'urls.index'), navigate: FilamentView::hasSpaMode());
+        $this->redirectIntended(default: UserConfig::getConfig($this->site(), 'urls.index'), navigate: FilamentView::hasSpaMode());
     }
 
     public function content(Schema $schema): Schema

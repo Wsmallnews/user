@@ -22,9 +22,6 @@ class RecoveryCodes extends Base implements HasActions, HasSchemas
     #[Locked]
     public array $recoveryCodes = [];
 
-    #[Locked]
-    public string $module;
-
     protected ?string $guard = null;
 
     /**
@@ -32,7 +29,7 @@ class RecoveryCodes extends Base implements HasActions, HasSchemas
      */
     public function mount(): void
     {
-        $this->guard = UserConfig::getConfig($this->module, 'guard');
+        $this->guard = UserConfig::getConfig($this->site(), 'guard');
 
         $this->loadRecoveryCodes();
     }
@@ -54,7 +51,7 @@ class RecoveryCodes extends Base implements HasActions, HasSchemas
             ->action(function (GenerateNewRecoveryCodes $generateNewRecoveryCodes) {
                 $user = Auth::guard($this->guard)->user();
 
-                $generateNewRecoveryCodes($this->module, $user);
+                $generateNewRecoveryCodes($this->getModuleId(), $user);
 
                 $this->loadRecoveryCodes();
             });
@@ -67,7 +64,7 @@ class RecoveryCodes extends Base implements HasActions, HasSchemas
     {
         $user = Auth::guard($this->guard)->user();
 
-        if ($user->hasEnabledTwoFactorAuthentication($this->module) && $user->two_factor_recovery_codes) {
+        if ($user->hasEnabledTwoFactorAuthentication($this->site()) && $user->two_factor_recovery_codes) {
             try {
                 $this->recoveryCodes = json_decode(decrypt($user->two_factor_recovery_codes), true);
             } catch (\Exception) {
