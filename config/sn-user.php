@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use Wsmallnews\User\Filament\Resources\Users\UserResource;
 use Wsmallnews\User\Models;
 
 return [
