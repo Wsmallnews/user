@@ -25,7 +25,7 @@
                 {{ __('sn-user::user.settings.two_factor.two_factor_info_disabled') }}
             </div>
 
-            {{ $this->enableAction }}
+            {{ $this->enabledAction }}
         </div>
     @endif
     <x-filament-actions::modals />

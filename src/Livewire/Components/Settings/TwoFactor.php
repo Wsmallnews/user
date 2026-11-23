@@ -62,9 +62,11 @@ class TwoFactor extends Base implements HasActions, HasSchemas
         $this->requiresConfirmation = UserConfig::confirmsTwoFactorAuthentication($this->site());
     }
 
-    public function enableAction(): Action
+    // 方法名后缀必须与 Action::make 名一致：mountAction 按 "{name}Action" 方法寻址，
+    // 不一致时点击静默失效（resolveAction 返回 null → unmount，无报错）
+    public function enabledAction(): Action
     {
-        return Action::make('enable')
+        return Action::make('enabled')
             ->label(__('sn-user::user.settings.two_factor.enable'))
             ->icon(Heroicon::ShieldCheck)
             ->schema(function (EnableTwoFactorAuthentication $enableTwoFactorAuthentication) {
